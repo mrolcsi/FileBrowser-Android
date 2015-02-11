@@ -52,12 +52,4 @@
         android:text="Open File - Filtered"
         android:visibility="gone" />
 
-    <Button
-        android:id="@+id/btnShowBrowserDialog"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/buttonSaveFile"
-        android:layout_centerHorizontal="true"
-        android:text="Dialógus teszt" />
-
 </RelativeLayout>

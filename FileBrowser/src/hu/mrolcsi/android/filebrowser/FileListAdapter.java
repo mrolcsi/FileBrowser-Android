@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import hu.mrolcsi.android.filebrowser.option.SortMode;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,11 +25,11 @@ class FileListAdapter extends BaseAdapter {
 
     private final int layoutResourceId;
     private final Context context;
-    private final int sortMode;
+    private final SortMode sortMode;
     private final LayoutInflater inflater;
     private List<File> data = null;
 
-    public FileListAdapter(Context context, int layoutResourceId, File[] inputData, int sortMode, boolean isRoot) {
+    public FileListAdapter(Context context, int layoutResourceId, File[] inputData, SortMode sortMode, boolean isRoot) {
         super();
         this.context = context;
         this.layoutResourceId = layoutResourceId;
@@ -42,28 +43,28 @@ class FileListAdapter extends BaseAdapter {
 //        if (inputData.length > 0) {
         switch (this.sortMode) {
             default:
-            case BrowserActivity.SORT_BY_NAME_ASC:
+            case BY_NAME_ASC:
                 this.data.addAll(Utils.sortByNameAsc(inputData));
                 break;
-            case BrowserActivity.SORT_BY_NAME_DESC:
+            case BY_NAME_DESC:
                 this.data.addAll(Utils.sortByNameDesc(inputData));
                 break;
-            case BrowserActivity.SORT_BY_EXTENSION_ASC:
+            case BY_EXTENSION_ASC:
                 this.data.addAll(Utils.sortByExtensionAsc(inputData));
                 break;
-            case BrowserActivity.SORT_BY_EXTENSION_DESC:
+            case BY_EXTENSION_DESC:
                 this.data.addAll(Utils.sortByExtensionDesc(inputData));
                 break;
-            case BrowserActivity.SORT_BY_DATE_ASC:
+            case BY_DATE_ASC:
                 this.data.addAll(Utils.sortByDateAsc(inputData));
                 break;
-            case BrowserActivity.SORT_BY_DATE_DESC:
+            case BY_DATE_DESC:
                 this.data.addAll(Utils.sortByDateDesc(inputData));
                 break;
-            case BrowserActivity.SORT_BY_SIZE_ASC:
+            case BY_SIZE_ASC:
                 this.data.addAll(Utils.sortBySizeAsc(inputData));
                 break;
-            case BrowserActivity.SORT_BY_SIZE_DESC:
+            case BY_SIZE_DESC:
                 this.data.addAll(Utils.sortBySizeDesc(inputData));
                 break;
         }
@@ -120,13 +121,13 @@ class FileListAdapter extends BaseAdapter {
 
         switch (sortMode) {
             default:
-            case BrowserActivity.SORT_BY_NAME_ASC:
-            case BrowserActivity.SORT_BY_NAME_DESC:
+            case BY_NAME_ASC:
+            case BY_NAME_DESC:
                 holder.text.setText(holder.file.getName());
                 if (holder.extra != null) holder.extra.setText(null);
                 break;
-            case BrowserActivity.SORT_BY_EXTENSION_ASC:
-            case BrowserActivity.SORT_BY_EXTENSION_DESC:
+            case BY_EXTENSION_ASC:
+            case BY_EXTENSION_DESC:
                 if (holder.file.isFile() && Utils.getExtension(holder.file.getName()) != null) {
                     holder.text.setText(Utils.getNameWithoutExtension(holder.file.getName()));
                     if (holder.extra != null)
@@ -136,15 +137,15 @@ class FileListAdapter extends BaseAdapter {
                     if (holder.extra != null) holder.extra.setText(null);
                 }
                 break;
-            case BrowserActivity.SORT_BY_DATE_ASC:
-            case BrowserActivity.SORT_BY_DATE_DESC:
+            case BY_DATE_ASC:
+            case BY_DATE_DESC:
                 holder.text.setText(holder.file.getName());
                 if (!isUp && holder.extra != null)
                     holder.extra.setText(String.format("%1$tY.%1$tm.%1$td\n" +
                             "%1$tH:%1$tM", holder.file.lastModified()));
                 break;
-            case BrowserActivity.SORT_BY_SIZE_ASC:
-            case BrowserActivity.SORT_BY_SIZE_DESC:
+            case BY_SIZE_ASC:
+            case BY_SIZE_DESC:
 //                AsyncTask<Void, Long, Long> calculateSizeTask = new AsyncTask<Void, Long, Long>() {
 //
 //                    @Override

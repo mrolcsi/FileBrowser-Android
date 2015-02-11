@@ -10,6 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import hu.mrolcsi.android.filebrowser.option.BrowseMode;
+import hu.mrolcsi.android.filebrowser.option.Layout;
+import hu.mrolcsi.android.filebrowser.option.SortMode;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -26,95 +29,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BrowserDialog extends DialogFragment {
 
 
-    //<editor-fold desc="Publics">
-    /**
-     * Fájl megnyitása
-     *
-     * @see #OPTION_BROWSE_MODE
-     */
-    public static final int MODE_OPEN_FILE = 67363453;
-    /**
-     * Mappa kiválasztása
-     *
-     * @see #OPTION_BROWSE_MODE
-     */
-    public static final int MODE_SELECT_DIR = 735328347;
-    /**
-     * Fájl mentése
-     *
-     * @see #OPTION_BROWSE_MODE
-     */
-    public static final int MODE_SAVE_FILE = 72833453;
-    /**
-     * Lista nézet
-     *
-     * @see #OPTION_LAYOUT
-     */
-    public static final int LAYOUT_LIST = 5478;
-    /**
-     * Négyzetrács (grid) nézet
-     *
-     * @see #OPTION_LAYOUT
-     */
-    public static final int LAYOUT_GRID = 4743;
-    /**
-     * Név szerint rendezés, növekvő
-     *
-     * @see #OPTION_SORT_MODE
-     */
-    public static final int SORT_BY_NAME_ASC = 1015610500;
-    /**
-     * Név szerint rendezés,. csökkenő
-     *
-     * @see #OPTION_SORT_MODE
-     */
-    public static final int SORT_BY_NAME_DESC = 1618270814;
-    /**
-     * Kiterjesztés szerint rendezés, növekvő
-     *
-     * @see #OPTION_SORT_MODE
-     */
-    public static final int SORT_BY_EXTENSION_ASC = 749124600;
-    /**
-     * Kiterjesztés szerint rendezés, csökkenő
-     *
-     * @see #OPTION_SORT_MODE
-     */
-    public static final int SORT_BY_EXTENSION_DESC = 1947142506;
-    /**
-     * Módosítás dátuma szerint rendezés, növekvő
-     *
-     * @see #OPTION_SORT_MODE
-     */
-    public static final int SORT_BY_DATE_ASC = -1712925401;
-    /**
-     * Módosítás dátuma szerint rendezés, csökkenő
-     *
-     * @see #OPTION_SORT_MODE
-     */
-    public static final int SORT_BY_DATE_DESC = -1361963493;
-    /**
-     * Méret szerint rendezés, növekvő
-     * (Pontatlan, a nem olvasható mappák mérete 0 byte)
-     *
-     * @see #OPTION_SORT_MODE
-     */
-    public static final int SORT_BY_SIZE_ASC = -343875334;
-    /**
-     * Méret szerint rendezés, csökkenő
-     * (Pontatlan, a nem olvasható mappák mérete 0 byte)
-     *
-     * @see #OPTION_SORT_MODE
-     */
-    public static final int SORT_BY_SIZE_DESC = -1871084376;
+    //region Publics
     /**
      * Tallózás módja:
      * <ul>
-     * <li>Fájl megnyitása: {@link #MODE_OPEN_FILE MODE_OPEN_FILE}</li>
-     * <li>Mappa kiválasztása: {@link #MODE_SELECT_DIR MODE_SELECT_DIR}</li>
-     * <li>Fájl mentése: {@link #MODE_SAVE_FILE MODE_SAVE_FILE}</li>
+     * <li>Fájl megnyitása: {@link hu.mrolcsi.android.filebrowser.option.BrowseMode#OPEN_FILE OPEN_FILE}</li>
+     * <li>Mappa kiválasztása: {@link hu.mrolcsi.android.filebrowser.option.BrowseMode#SELECT_DIR SELECT_DIR}</li>
+     * <li>Fájl mentése: {@link hu.mrolcsi.android.filebrowser.option.BrowseMode#SAVE_FILE SAVE_FILE}</li>
      * </ul>
      * (Alapértelmezett: fájl megnyitása)
+     *
+     * @see hu.mrolcsi.android.filebrowser.option.BrowseMode
      */
     public static final String OPTION_BROWSE_MODE;
     /**
@@ -133,23 +58,24 @@ public class BrowserDialog extends DialogFragment {
     /**
      * Rendezés módja (mappák mindig elöl)
      * <ul>
-     * <li>Név szerint növekvő: {@link #SORT_BY_NAME_ASC SORT_BY_NAME_ASC}</li>
-     * <li>Név szerint csökkenő: {@link #SORT_BY_NAME_DESC SORT_BY_NAME_DESC}</li>
-     * <li>Kiterjesztés szerint növekvő: {@link #SORT_BY_EXTENSION_ASC SORT_BY_EXTENSION_ASC}</li>
-     * <li>Kiterjesztés szerint csökkenő: {@link #SORT_BY_EXTENSION_DESC SORT_BY_EXTENSION_DESC}</li>
-     * <li>Módosítás dátuma szerint növekvő: {@link #SORT_BY_DATE_ASC SORT_BY_DATE_ASC}</li>
-     * <li>Módosítás dátuma szerint csökkenő: {@link #SORT_BY_DATE_DESC SORT_BY_DATE_DESC}</li>
-     * <li>Méret szerint növekvő: {@link #SORT_BY_SIZE_ASC SORT_BY_SIZE_ASC}</li>
-     * <li>Méret szerint növekvő: {@link #SORT_BY_SIZE_DESC SORT_BY_SIZE_DESC}</li>
+     * <li>Név szerint növekvő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_NAME_ASC BY_NAME_ASC}</li>
+     * <li>Név szerint csökkenő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_NAME_DESC BY_NAME_DESC}</li>
+     * <li>Kiterjesztés szerint növekvő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_EXTENSION_ASC BY_EXTENSION_ASC}</li>
+     * <li>Kiterjesztés szerint csökkenő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_EXTENSION_DESC BY_EXTENSION_DESC}</li>
+     * <li>Módosítás dátuma szerint növekvő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_DATE_ASC BY_DATE_ASC}</li>
+     * <li>Módosítás dátuma szerint csökkenő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_DATE_DESC BY_DATE_DESC}</li>
+     * <li>Méret szerint növekvő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_SIZE_ASC BY_SIZE_ASC}</li>
+     * <li>Méret szerint növekvő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_SIZE_DESC BY_SIZE_DESC}</li>
      * </ul>
      * (Alapértelmezett: fájlnév szerint növekvő)
+     *
+     * @see hu.mrolcsi.android.filebrowser.option.SortMode
      */
     public static final String OPTION_SORT_MODE;
     /**
      * String:  Alapértelmezett fájlnév, csak fájlmentéskor van rá szükség.
      *
-     * @see #OPTION_BROWSE_MODE
-     * @see #MODE_SAVE_FILE
+     * @see hu.mrolcsi.android.filebrowser.option.BrowseMode
      */
     public static final String OPTION_DEFAULT_FILENAME;
     /**
@@ -161,10 +87,12 @@ public class BrowserDialog extends DialogFragment {
     /**
      * Kezdeti elrendezés (futás közben váltogatható)
      * <ul>
-     * <li>Lista {@link #LAYOUT_LIST LAYOUT_LIST}</li>
-     * <li>Négyzetrácsos(grid) {@link #LAYOUT_GRID LAYOUT_GRID}</li>
+     * <li>Lista {@link hu.mrolcsi.android.filebrowser.option.Layout#LIST LIST}</li>
+     * <li>Négyzetrácsos(grid) {@link hu.mrolcsi.android.filebrowser.option.Layout#GRID GRID}</li>
      * </ul>
      * Alapértelmezett: lista.
+     *
+     * @see hu.mrolcsi.android.filebrowser.option.Layout
      */
     public static final String OPTION_LAYOUT;
 
@@ -179,32 +107,30 @@ public class BrowserDialog extends DialogFragment {
         OPTION_LAYOUT = "layout";
     }
 
-    //</editor-fold>
-    //<editor-fold desc="Privates">
-    private static final int ERROR_FOLDER_NOT_READABLE = -394829994;
-    private static final int ERROR_CANT_CREATE_FOLDER = -227013011;
-    private static final int ERROR_INVALID_FILENAME = -1490604826;
-    private static final int ERROR_INVALID_FOLDERNAME = -1336390888;
-    private static final int[] SORT_HASHES = new int[]{
-            SORT_BY_NAME_ASC,
-            SORT_BY_NAME_DESC,
-            SORT_BY_EXTENSION_ASC,
-            SORT_BY_EXTENSION_DESC,
-            SORT_BY_DATE_ASC,
-            SORT_BY_DATE_DESC,
-            SORT_BY_SIZE_ASC,
-            SORT_BY_SIZE_DESC
+    //endregion
+    //region Privates
+
+    private static final SortMode[] SORT_HASHES = new SortMode[]{
+            SortMode.BY_NAME_ASC,
+            SortMode.BY_NAME_DESC,
+            SortMode.BY_EXTENSION_ASC,
+            SortMode.BY_EXTENSION_DESC,
+            SortMode.BY_DATE_ASC,
+            SortMode.BY_DATE_DESC,
+            SortMode.BY_SIZE_ASC,
+            SortMode.BY_SIZE_DESC
     };
 
     private AbsListView list;
-    private int browseMode = MODE_OPEN_FILE;
-    private int sortMode = SORT_BY_NAME_ASC;
+    private BrowseMode browseMode = BrowseMode.OPEN_FILE;
+    private SortMode sortMode = SortMode.BY_NAME_ASC;
     private String[] extensionFilter;
     private String defaultFileName;
     private String startPath = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ? Environment.getExternalStorageDirectory().getAbsolutePath() : "/";
+    private String rootPath = File.listRoots()[0].getAbsolutePath();
     private String currentPath = startPath;
     private boolean startIsRoot = true;
-    private int activeLayout = LAYOUT_LIST;
+    private Layout activeLayout = Layout.LIST;
     private TextView tvCurrentPath;
     private int itemLayoutID = R.layout.browser_listitem_layout;
     private ImageButton imgbtnSave;
@@ -239,11 +165,11 @@ public class BrowserDialog extends DialogFragment {
         if (savedInstanceState != null) {
             startPath = savedInstanceState.getString(OPTION_START_PATH, "/");
             currentPath = savedInstanceState.getString("currentPath", startPath);
-            browseMode = savedInstanceState.getInt(OPTION_BROWSE_MODE, MODE_OPEN_FILE);
-            sortMode = savedInstanceState.getInt(OPTION_SORT_MODE, SORT_BY_NAME_ASC);
+            browseMode = (BrowseMode) savedInstanceState.getSerializable(OPTION_BROWSE_MODE);
+            sortMode = (SortMode) savedInstanceState.getSerializable(OPTION_SORT_MODE);
             extensionFilter = savedInstanceState.getStringArray(OPTION_EXTENSION_FILTER);
             startIsRoot = savedInstanceState.getBoolean(OPTION_START_IS_ROOT, true);
-            activeLayout = savedInstanceState.getInt(OPTION_LAYOUT, LAYOUT_LIST);
+            activeLayout = (Layout) savedInstanceState.getSerializable(OPTION_LAYOUT);
             itemLayoutID = savedInstanceState.getInt("itemLayoutID");
             defaultFileName = savedInstanceState.getString(OPTION_DEFAULT_FILENAME);
         }
@@ -255,11 +181,11 @@ public class BrowserDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         switch (browseMode) {
             default:
-            case MODE_OPEN_FILE:
-            case MODE_SELECT_DIR:
+            case OPEN_FILE:
+            case SELECT_DIR:
                 rootView = inflater.inflate(R.layout.browser_layout_dialog, container, false);
                 break;
-            case MODE_SAVE_FILE:
+            case SAVE_FILE:
                 rootView = inflater.inflate(R.layout.browser_layout_dialog_save, container, false);
                 imgbtnSave = (imgbtnSave == null) ? (ImageButton) rootView.findViewById(R.id.browser_imageButtonSave) : imgbtnSave;
                 etFilename = (etFilename == null) ? (EditText) rootView.findViewById(R.id.browser_editTextFileName) : etFilename;
@@ -284,7 +210,7 @@ public class BrowserDialog extends DialogFragment {
                                 dismiss();
                             }
                         } else {
-                            showErrorDialog(ERROR_INVALID_FILENAME);
+                            showErrorDialog(Error.INVALID_FILENAME);
                         }
                     }
                 });
@@ -320,10 +246,10 @@ public class BrowserDialog extends DialogFragment {
         vf = (ViewFlipper) rootView.findViewById(R.id.browser_viewFlipper);
         switch (activeLayout) {
             default:
-            case LAYOUT_LIST:
+            case LIST:
                 toListView();
                 break;
-            case LAYOUT_GRID:
+            case GRID:
                 toGridView();
                 break;
         }
@@ -334,12 +260,12 @@ public class BrowserDialog extends DialogFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("currentPath", currentPath);
-        outState.putInt(OPTION_BROWSE_MODE, browseMode);
-        outState.putInt(OPTION_SORT_MODE, sortMode);
+        outState.putSerializable(OPTION_BROWSE_MODE, browseMode);
+        outState.putSerializable(OPTION_SORT_MODE, sortMode);
         outState.putStringArray(OPTION_EXTENSION_FILTER, extensionFilter);
         outState.putString(OPTION_START_PATH, startPath);
         outState.putBoolean(OPTION_START_IS_ROOT, startIsRoot);
-        outState.putInt(OPTION_LAYOUT, activeLayout);
+        outState.putSerializable(OPTION_LAYOUT, activeLayout);
         outState.putInt("itemLayoutID", itemLayoutID);
         outState.putString(OPTION_DEFAULT_FILENAME, defaultFileName);
         super.onSaveInstanceState(outState);
@@ -351,10 +277,10 @@ public class BrowserDialog extends DialogFragment {
     private void setLayout() {
         switch (activeLayout) {
             default:
-            case LAYOUT_LIST:
+            case LIST:
                 toGridView();
                 break;
-            case LAYOUT_GRID:
+            case GRID:
                 toListView();
                 break;
         }
@@ -368,7 +294,7 @@ public class BrowserDialog extends DialogFragment {
      */
     private void toListView() {
         vf.setDisplayedChild(0);
-        activeLayout = LAYOUT_LIST;
+        activeLayout = Layout.LIST;
         btnSwitchLayout.setImageResource(R.drawable.browser_view_as_grid);
         list = (ListView) rootView.findViewById(R.id.browser_listView);
         itemLayoutID = R.layout.browser_listitem_layout;
@@ -381,7 +307,7 @@ public class BrowserDialog extends DialogFragment {
      */
     private void toGridView() {
         vf.setDisplayedChild(1);
-        activeLayout = LAYOUT_GRID;
+        activeLayout = Layout.GRID;
         btnSwitchLayout.setImageResource(R.drawable.browser_view_as_list);
         list = (GridView) rootView.findViewById(R.id.browser_gridView);
         itemLayoutID = R.layout.browser_griditem_layout;
@@ -413,7 +339,7 @@ public class BrowserDialog extends DialogFragment {
     private void setListListeners() {
         switch (browseMode) {
             default:
-            case MODE_OPEN_FILE:
+            case OPEN_FILE:
                 list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -441,7 +367,7 @@ public class BrowserDialog extends DialogFragment {
                     }
                 });
                 break;
-            case MODE_SELECT_DIR:
+            case SELECT_DIR:
                 list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -463,7 +389,7 @@ public class BrowserDialog extends DialogFragment {
                     }
                 });
                 break;
-            case MODE_SAVE_FILE:
+            case SAVE_FILE:
                 list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -499,7 +425,7 @@ public class BrowserDialog extends DialogFragment {
      */
     private void loadList(final File directory) {
         if (!directory.canRead()) {
-            showErrorDialog(ERROR_FOLDER_NOT_READABLE);
+            showErrorDialog(Error.FOLDER_NOT_READABLE);
             return;
         }
 
@@ -534,11 +460,11 @@ public class BrowserDialog extends DialogFragment {
 
         switch (browseMode) {
             default:
-            case MODE_SAVE_FILE:
-            case MODE_OPEN_FILE:
+            case SAVE_FILE:
+            case OPEN_FILE:
                 fla = new FileListAdapter(getActivity(), itemLayoutID, filesToLoad, sortMode, isRoot);
                 break;
-            case MODE_SELECT_DIR:
+            case SELECT_DIR:
                 FileFilter filter = new FileFilter() {
                     @Override
                     public boolean accept(File file) {
@@ -551,11 +477,11 @@ public class BrowserDialog extends DialogFragment {
 
         //API Level 11 alatt castolni kell...
         switch (activeLayout) {
-            case LAYOUT_GRID:
+            case GRID:
                 //noinspection RedundantCast
                 ((GridView) list).setAdapter(fla);
                 break;
-            case LAYOUT_LIST:
+            case LIST:
                 //noinspection RedundantCast
                 ((ListView) list).setAdapter(fla);
                 break;
@@ -613,8 +539,8 @@ public class BrowserDialog extends DialogFragment {
                             File newDir = new File(currentPath + "/" + etFolderName.getText());
                             if (newDir.mkdir()) {
                                 loadList(new File(currentPath));
-                            } else showErrorDialog(ERROR_CANT_CREATE_FOLDER);
-                        } else showErrorDialog(ERROR_INVALID_FOLDERNAME);
+                            } else showErrorDialog(Error.CANT_CREATE_FOLDER);
+                        } else showErrorDialog(Error.INVALID_FOLDERNAME);
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -633,34 +559,23 @@ public class BrowserDialog extends DialogFragment {
      *
      * @param error a hiba oka
      */
-    private void showErrorDialog(int error) {
-        AlertDialog.Builder builder = null;
+    private void showErrorDialog(Error error) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
+        builder.setNeutralButton(android.R.string.ok, null);
+
         switch (error) {
-            case ERROR_CANT_CREATE_FOLDER:
+            case CANT_CREATE_FOLDER:
                 builder = new AlertDialog.Builder(getActivity())
-                        .setIcon(android.R.drawable.ic_dialog_alert)
                         .setMessage(R.string.browser_error_cantCreateFolder_message)
-                        .setTitle(R.string.browser_error_cantCreateFolder_title)
-                        .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                            }
-                        });
-//                Toast.makeText(getActivity(), R.string.browser_error_cantCreateFolder_message, Toast.LENGTH_LONG).show();
+                        .setTitle(R.string.browser_error_cantCreateFolder_title);
                 break;
-            case ERROR_FOLDER_NOT_READABLE:
+            case FOLDER_NOT_READABLE:
                 builder = new AlertDialog.Builder(getActivity())
-                        .setIcon(android.R.drawable.ic_dialog_alert)
                         .setMessage(R.string.browser_error_folderCantBeOpened_message)
-                        .setTitle(R.string.browser_error_folderCantBeOpened_title)
-                        .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                            }
-                        });
-//                Toast.makeText(getActivity(), R.string.browser_error_folderCantBeOpened_message, Toast.LENGTH_LONG).show();
+                        .setTitle(R.string.browser_error_folderCantBeOpened_title);
                 break;
-            case ERROR_INVALID_FILENAME:
+            case INVALID_FILENAME:
 //                builder = new AlertDialog.Builder(getActivity())
 //                        .setIcon(android.R.drawable.ic_dialog_alert)
 //                        .setMessage(R.string.browser_error_invalidFilename_message)
@@ -672,30 +587,21 @@ public class BrowserDialog extends DialogFragment {
 //                        });
 //                Toast.makeText(getActivity(), R.string.browser_error_invalidFilename_message, Toast.LENGTH_LONG).show();
                 break;
-            case ERROR_INVALID_FOLDERNAME:
+            case INVALID_FOLDERNAME:
                 builder = new AlertDialog.Builder(getActivity())
-                        .setIcon(android.R.drawable.ic_dialog_alert)
                         .setMessage(R.string.browser_error_invalidFolderName_message)
-                        .setTitle(R.string.browser_error_invalidFolderName_title)
-                        .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                            }
-                        });
-//                Toast.makeText(getActivity(), R.string.browser_error_invalidFolderName_message, Toast.LENGTH_LONG).show();
+                        .setTitle(R.string.browser_error_invalidFolderName_title);
                 break;
             default:
                 break;
         }
 
-        AlertDialog ad = builder != null ? builder.create() : null;
-        if (ad != null) {
-            ad.show();
-        }
+        builder.show();
     }
 
-    public void setOnDialogResultListener(OnDialogResultListener listener) {
+    public BrowserDialog setOnDialogResultListener(OnDialogResultListener listener) {
         this.onDialogResultListener = listener;
+        return this;
     }
 
     @Override
@@ -706,23 +612,23 @@ public class BrowserDialog extends DialogFragment {
 
     //<editor-fold desc="GETTERS & SETTERS">
     @SuppressWarnings("UnusedDeclaration")
-    public int getBrowseMode() {
+    public BrowseMode getBrowseMode() {
         return browseMode;
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public BrowserDialog setBrowseMode(int browseMode) {
+    public BrowserDialog setBrowseMode(BrowseMode browseMode) {
         this.browseMode = browseMode;
         return this;
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public int getSortMode() {
+    public SortMode getSortMode() {
         return sortMode;
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public BrowserDialog setSortMode(int sortMode) {
+    public BrowserDialog setSortMode(SortMode sortMode) {
         this.sortMode = sortMode;
         return this;
     }
@@ -757,6 +663,11 @@ public class BrowserDialog extends DialogFragment {
     @SuppressWarnings("UnusedDeclaration")
     public BrowserDialog setStartPath(String startPath) {
         this.startPath = startPath;
+        return this;
+    }
+
+    public BrowserDialog setRootPath(String rootPath) {
+        this.rootPath = rootPath;
         return this;
     }
 

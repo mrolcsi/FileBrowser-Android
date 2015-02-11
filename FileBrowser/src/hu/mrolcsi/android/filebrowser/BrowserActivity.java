@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+import hu.mrolcsi.android.filebrowser.option.SortMode;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -30,6 +31,7 @@ import static android.widget.AdapterView.OnItemLongClickListener;
  * Time: 16:49
  */
 
+@Deprecated
 public class BrowserActivity extends Activity {
 
     //<editor-fold desc="Publics">
@@ -212,21 +214,21 @@ public class BrowserActivity extends Activity {
     private static final int ERROR_CANT_CREATE_FOLDER = -227013011;
     private static final int ERROR_INVALID_FILENAME = -1490604826;
     private static final int ERROR_INVALID_FOLDERNAME = -1336390888;
-    private static final int[] SORT_HASHES = new int[]{
-            SORT_BY_NAME_ASC,
-            SORT_BY_NAME_DESC,
-            SORT_BY_EXTENSION_ASC,
-            SORT_BY_EXTENSION_DESC,
-            SORT_BY_DATE_ASC,
-            SORT_BY_DATE_DESC,
-            SORT_BY_SIZE_ASC,
-            SORT_BY_SIZE_DESC
+    private static final SortMode[] SORT_HASHES = new SortMode[]{
+            SortMode.BY_NAME_ASC,
+            SortMode.BY_NAME_DESC,
+            SortMode.BY_EXTENSION_ASC,
+            SortMode.BY_EXTENSION_DESC,
+            SortMode.BY_DATE_ASC,
+            SortMode.BY_DATE_DESC,
+            SortMode.BY_SIZE_ASC,
+            SortMode.BY_SIZE_DESC
     };
     private String currentPath;
     private AbsListView list;
     private Intent resultIntent;
     private int browseMode;
-    private int sortMode;
+    private SortMode sortMode;
     private String[] extensionFilter;
     private String defaultFileName;
     private String startPath;
@@ -252,7 +254,7 @@ public class BrowserActivity extends Activity {
             currentPath = startPath;
             if (inputIntent.getStringExtra(OPTION_EXTENSION_FILTER) != null)
                 extensionFilter = inputIntent.getStringExtra(OPTION_EXTENSION_FILTER).split(";");
-            sortMode = inputIntent.getIntExtra(OPTION_SORT_MODE, SORT_BY_NAME_ASC);
+            sortMode = (SortMode) inputIntent.getSerializableExtra(OPTION_SORT_MODE);
             defaultFileName = inputIntent.getStringExtra(OPTION_DEFAULT_FILENAME);
             startIsRoot = inputIntent.getBooleanExtra(OPTION_START_IS_ROOT, true);
             activeLayout = inputIntent.getIntExtra(OPTION_LAYOUT, LAYOUT_LIST);
@@ -348,7 +350,7 @@ public class BrowserActivity extends Activity {
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("currentPath", currentPath);
         outState.putInt(OPTION_BROWSE_MODE, browseMode);
-        outState.putInt(OPTION_SORT_MODE, sortMode);
+        outState.putSerializable(OPTION_SORT_MODE, sortMode);
         outState.putStringArray(OPTION_EXTENSION_FILTER, extensionFilter);
         outState.putString(OPTION_START_PATH, startPath);
         outState.putBoolean(OPTION_START_IS_ROOT, startIsRoot);
@@ -368,7 +370,7 @@ public class BrowserActivity extends Activity {
         startPath = savedInstanceState.getString(OPTION_START_PATH, "/");
         currentPath = savedInstanceState.getString("currentPath", startPath);
         browseMode = savedInstanceState.getInt(OPTION_BROWSE_MODE, MODE_OPEN_FILE);
-        sortMode = savedInstanceState.getInt(OPTION_SORT_MODE, SORT_BY_NAME_ASC);
+        sortMode = (SortMode) savedInstanceState.getSerializable(OPTION_SORT_MODE);
         extensionFilter = savedInstanceState.getStringArray(OPTION_EXTENSION_FILTER);
         startIsRoot = savedInstanceState.getBoolean(OPTION_START_IS_ROOT, true);
         activeLayout = savedInstanceState.getInt(OPTION_LAYOUT, LAYOUT_LIST);
