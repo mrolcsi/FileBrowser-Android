@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <Button
+        android:id="@+id/buttonOpen"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="Fájl megnyitása" />
+
+    <TextView
+        android:id="@+id/textViewPath"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text="eredmény"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/buttonSelectDir"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttonOpen"
+        android:layout_alignParentLeft="false"
+        android:layout_centerHorizontal="true"
+        android:text="Mappa megnyitása" />
+
+    <Button
+        android:id="@+id/buttonSaveFile"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttonSelectDir"
+        android:layout_centerHorizontal="true"
+        android:text="Fájl mentése" />
+
+    <Button
+        android:id="@+id/buttonOpenWithFilter"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttonSaveFile"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Open File - Filtered"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btnShowBrowserDialog"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttonSaveFile"
+        android:layout_centerHorizontal="true"
+        android:text="Dialógus teszt" />
+
+</RelativeLayout>
