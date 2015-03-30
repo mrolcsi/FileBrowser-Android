@@ -296,7 +296,7 @@ public class BrowserDialog extends DialogFragment {
     private void toListView() {
         vf.setDisplayedChild(0);
         activeLayout = Layout.LIST;
-        btnSwitchLayout.setImageResource(R.drawable.browser_view_as_grid);
+        btnSwitchLayout.setImageResource(R.drawable.browser_grid);
         list = (ListView) vf.findViewById(R.id.browser_listView);
         itemLayoutID = R.layout.browser_listitem_layout;
         setListListeners();
@@ -309,7 +309,7 @@ public class BrowserDialog extends DialogFragment {
     private void toGridView() {
         vf.setDisplayedChild(1);
         activeLayout = Layout.GRID;
-        btnSwitchLayout.setImageResource(R.drawable.browser_view_as_list);
+        btnSwitchLayout.setImageResource(R.drawable.browser_list);
         list = (GridView) vf.findViewById(R.id.browser_gridView);
         itemLayoutID = R.layout.browser_griditem_layout;
         setListListeners();
@@ -322,7 +322,7 @@ public class BrowserDialog extends DialogFragment {
     private void showSortDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.browser_menu_sortBy)
-                .setIcon(R.drawable.browser_sort_by)
+                .setIcon(R.drawable.browser_sort)
                 .setItems(R.array.browser_sortOptions, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

@@ -71,7 +71,7 @@
         android:layout_margin="@dimen/browser_margin"
         android:background="@null"
         android:scaleType="fitCenter"
-        android:src="@drawable/browser_view_as_grid" />
+        android:src="@drawable/browser_grid" />
 
     <ImageButton
         android:id="@+id/browser_btnSort"
@@ -82,7 +82,7 @@
         android:layout_toLeftOf="@+id/browser_btnLayout"
         android:background="@null"
         android:scaleType="fitCenter"
-        android:src="@drawable/browser_sort_by" />
+        android:src="@drawable/browser_sort" />
 
     <ImageButton
         android:id="@+id/browser_btnNewFolder"
