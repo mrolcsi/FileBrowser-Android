@@ -5,17 +5,16 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:clickable="true"
-    android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:padding="@dimen/browser_margin">
 
     <TextView
         android:id="@+id/browser_labelCurrentDirectory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/btnNewFolder"
         android:layout_alignParentLeft="true"
-        android:layout_margin="@dimen/browser_margin"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/browser_margin"
+        android:layout_marginTop="@dimen/browser_margin"
         android:text="@string/browser_currentDirectory"
         android:textStyle="bold" />
 
@@ -25,8 +24,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/browser_labelCurrentDirectory"
-        android:layout_marginBottom="@dimen/browser_margin"
         android:layout_marginLeft="@dimen/browser_margin"
+        android:layout_marginTop="@dimen/browser_margin"
+        android:layout_toLeftOf="@+id/browser_btnNewFolder"
         android:text="@string/browser_pathPlaceholder" />
 
 
@@ -51,52 +51,58 @@
         android:id="@+id/browser_imageButtonSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/browser_editTextFileName"
         android:layout_alignParentBottom="false"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/browser_textViewCurrentDir"
+        android:layout_alignTop="@+id/browser_editTextFileName"
         android:layout_margin="@dimen/browser_margin"
+        android:background="@null"
         android:contentDescription="@android:string/ok"
+        android:focusable="false"
         android:scaleType="fitCenter"
         android:src="@drawable/browser_save" />
 
     <ImageButton
-        android:id="@+id/btnLayout"
+        android:id="@+id/browser_btnLayout"
         android:layout_width="@dimen/browser_toolbarIconSize"
         android:layout_height="@dimen/browser_toolbarIconSize"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_margin="@dimen/browser_margin"
-        android:background="@android:color/transparent"
+        android:background="@null"
         android:scaleType="fitCenter"
         android:src="@drawable/browser_view_as_grid" />
 
     <ImageButton
-        android:id="@+id/btnNewFolder"
+        android:id="@+id/browser_btnSort"
         android:layout_width="@dimen/browser_toolbarIconSize"
         android:layout_height="@dimen/browser_toolbarIconSize"
         android:layout_alignParentTop="true"
         android:layout_margin="@dimen/browser_margin"
-        android:layout_toLeftOf="@+id/btnSort"
-        android:background="@android:color/transparent"
-        android:scaleType="fitCenter"
-        android:src="@drawable/browser_new_folder" />
-
-    <ImageButton
-        android:id="@+id/btnSort"
-        android:layout_width="@dimen/browser_toolbarIconSize"
-        android:layout_height="@dimen/browser_toolbarIconSize"
-        android:layout_alignParentTop="true"
-        android:layout_margin="@dimen/browser_margin"
-        android:layout_toLeftOf="@+id/btnLayout"
-        android:background="@android:color/transparent"
+        android:layout_toLeftOf="@+id/browser_btnLayout"
+        android:background="@null"
         android:scaleType="fitCenter"
         android:src="@drawable/browser_sort_by" />
+
+    <ImageButton
+        android:id="@+id/browser_btnNewFolder"
+        android:layout_width="@dimen/browser_toolbarIconSize"
+        android:layout_height="@dimen/browser_toolbarIconSize"
+        android:layout_alignParentTop="true"
+        android:layout_margin="@dimen/browser_margin"
+        android:layout_toLeftOf="@+id/browser_btnSort"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:src="@drawable/browser_new_folder" />
 
     <ViewFlipper
         android:id="@+id/browser_viewFlipper"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/browser_editTextFileName">
+        android:layout_below="@+id/browser_editTextFileName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/browser_margin"
+        android:layout_marginTop="@dimen/browser_margin">
 
         <ListView
             android:id="@+id/browser_listView"

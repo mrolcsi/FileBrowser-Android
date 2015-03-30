@@ -137,7 +137,6 @@ public class BrowserDialog extends DialogFragment {
     private EditText etFilename;
     private ViewFlipper vf;
 
-    private View rootView;
     private OnDialogResultListener onDialogResultListener = new OnDialogResultListener() {
         @Override
         public void onPositiveResult(String path) {
@@ -183,41 +182,15 @@ public class BrowserDialog extends DialogFragment {
             default:
             case OPEN_FILE:
             case SELECT_DIR:
-                rootView = inflater.inflate(R.layout.browser_layout_dialog, container, false);
-                break;
+                return inflater.inflate(R.layout.browser_layout_dialog, container, false);
             case SAVE_FILE:
-                rootView = inflater.inflate(R.layout.browser_layout_dialog_save, container, false);
-                imgbtnSave = (imgbtnSave == null) ? (ImageButton) rootView.findViewById(R.id.browser_imageButtonSave) : imgbtnSave;
-                etFilename = (etFilename == null) ? (EditText) rootView.findViewById(R.id.browser_editTextFileName) : etFilename;
-                if (defaultFileName != null) etFilename.setText(defaultFileName);
-                imgbtnSave.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String fileName = currentPath + "/" + etFilename.getText();
-                        if (!fileName.isEmpty() && Utils.isFilenameValid(fileName)) {
-                            File f = new File(fileName);
-                            if (f.exists()) {
-                                if (!overwrite) {
-                                    Toast.makeText(getActivity(), "Press again to overwrite file.", Toast.LENGTH_SHORT).show();
-                                    overwrite = true;
-                                    //TODO: ellenőrizni
-                                } else {
-                                    onDialogResultListener.onPositiveResult(fileName);
-                                    dismiss();
-                                }
-                            } else {
-                                onDialogResultListener.onPositiveResult(fileName);
-                                dismiss();
-                            }
-                        } else {
-                            showErrorDialog(Error.INVALID_FILENAME);
-                        }
-                    }
-                });
-                break;
+                return inflater.inflate(R.layout.browser_layout_dialog_save, container, false);
         }
+    }
 
-        btnSwitchLayout = (ImageButton) rootView.findViewById(R.id.btnLayout);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        btnSwitchLayout = (ImageButton) view.findViewById(R.id.browser_btnLayout);
         btnSwitchLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -225,7 +198,7 @@ public class BrowserDialog extends DialogFragment {
             }
         });
 
-        btnSortMode = (ImageButton) rootView.findViewById(R.id.btnSort);
+        btnSortMode = (ImageButton) view.findViewById(R.id.browser_btnSort);
         btnSortMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -233,7 +206,7 @@ public class BrowserDialog extends DialogFragment {
             }
         });
 
-        btnNewFolder = (ImageButton) rootView.findViewById(R.id.btnNewFolder);
+        btnNewFolder = (ImageButton) view.findViewById(R.id.browser_btnNewFolder);
         btnNewFolder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -241,9 +214,9 @@ public class BrowserDialog extends DialogFragment {
             }
         });
 
-        tvCurrentPath = (TextView) rootView.findViewById(R.id.browser_textViewCurrentDir);
+        tvCurrentPath = (TextView) view.findViewById(R.id.browser_textViewCurrentDir);
 
-        vf = (ViewFlipper) rootView.findViewById(R.id.browser_viewFlipper);
+        vf = (ViewFlipper) view.findViewById(R.id.browser_viewFlipper);
         switch (activeLayout) {
             default:
             case LIST:
@@ -254,7 +227,35 @@ public class BrowserDialog extends DialogFragment {
                 break;
         }
 
-        return rootView;
+        if (browseMode == BrowseMode.SAVE_FILE) {
+            imgbtnSave = (imgbtnSave == null) ? (ImageButton) view.findViewById(R.id.browser_imageButtonSave) : imgbtnSave;
+            etFilename = (etFilename == null) ? (EditText) view.findViewById(R.id.browser_editTextFileName) : etFilename;
+            if (defaultFileName != null) etFilename.setText(defaultFileName);
+            imgbtnSave.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String fileName = currentPath + "/" + etFilename.getText();
+                    if (!fileName.isEmpty() && Utils.isFilenameValid(fileName)) {
+                        File f = new File(fileName);
+                        if (f.exists()) {
+                            if (!overwrite) {
+                                Toast.makeText(getActivity(), "Press 'Save' again to overwrite file.", Toast.LENGTH_SHORT).show();
+                                overwrite = true;
+                                //TODO: ellenőrizni
+                            } else {
+                                onDialogResultListener.onPositiveResult(fileName);
+                                dismiss();
+                            }
+                        } else {
+                            onDialogResultListener.onPositiveResult(fileName);
+                            dismiss();
+                        }
+                    } else {
+                        showErrorDialog(Error.INVALID_FILENAME);
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -296,7 +297,7 @@ public class BrowserDialog extends DialogFragment {
         vf.setDisplayedChild(0);
         activeLayout = Layout.LIST;
         btnSwitchLayout.setImageResource(R.drawable.browser_view_as_grid);
-        list = (ListView) rootView.findViewById(R.id.browser_listView);
+        list = (ListView) vf.findViewById(R.id.browser_listView);
         itemLayoutID = R.layout.browser_listitem_layout;
         setListListeners();
         loadList(new File(currentPath));
@@ -309,7 +310,7 @@ public class BrowserDialog extends DialogFragment {
         vf.setDisplayedChild(1);
         activeLayout = Layout.GRID;
         btnSwitchLayout.setImageResource(R.drawable.browser_view_as_list);
-        list = (GridView) rootView.findViewById(R.id.browser_gridView);
+        list = (GridView) vf.findViewById(R.id.browser_gridView);
         itemLayoutID = R.layout.browser_griditem_layout;
         setListListeners();
         loadList(new File(currentPath));
