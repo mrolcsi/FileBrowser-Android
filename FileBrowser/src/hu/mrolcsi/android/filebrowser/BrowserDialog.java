@@ -133,7 +133,7 @@ public class BrowserDialog extends DialogFragment {
     private Layout activeLayout = Layout.LIST;
     private TextView tvCurrentPath;
     private int itemLayoutID = R.layout.browser_listitem_layout;
-    private ImageButton imgbtnSave;
+    private ImageButton btnSave;
     private EditText etFilename;
     private ViewFlipper vf;
 
@@ -178,14 +178,7 @@ public class BrowserDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        switch (browseMode) {
-            default:
-            case OPEN_FILE:
-            case SELECT_DIR:
-                return inflater.inflate(R.layout.browser_layout_dialog, container, false);
-            case SAVE_FILE:
-                return inflater.inflate(R.layout.browser_layout_dialog_save, container, false);
-        }
+        return inflater.inflate(R.layout.browser_layout_dialog, container, false);
     }
 
     @Override
@@ -228,10 +221,14 @@ public class BrowserDialog extends DialogFragment {
         }
 
         if (browseMode == BrowseMode.SAVE_FILE) {
-            imgbtnSave = (imgbtnSave == null) ? (ImageButton) view.findViewById(R.id.browser_imageButtonSave) : imgbtnSave;
+            btnSave = (btnSave == null) ? (ImageButton) view.findViewById(R.id.browser_imageButtonSave) : btnSave;
             etFilename = (etFilename == null) ? (EditText) view.findViewById(R.id.browser_editTextFileName) : etFilename;
+
+            btnSave.setVisibility(View.VISIBLE);
+            etFilename.setVisibility(View.VISIBLE);
+
             if (defaultFileName != null) etFilename.setText(defaultFileName);
-            imgbtnSave.setOnClickListener(new View.OnClickListener() {
+            btnSave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     String fileName = currentPath + "/" + etFilename.getText();
@@ -487,7 +484,7 @@ public class BrowserDialog extends DialogFragment {
                 ((ListView) list).setAdapter(fla);
                 break;
         }
-        //if (browseMode == MODE_SAVE_FILE) imgbtnSave.setEnabled(directory.canWrite());
+        //if (browseMode == MODE_SAVE_FILE) btnSave.setEnabled(directory.canWrite());
         Parcelable state = states.get(currentPath);
         if (state != null)
             list.onRestoreInstanceState(state);
@@ -682,7 +679,7 @@ public class BrowserDialog extends DialogFragment {
         this.startIsRoot = startIsRoot;
         return this;
     }
-    //</editor-fold>
+//</editor-fold>
 
     public interface OnDialogResultListener {
         /**

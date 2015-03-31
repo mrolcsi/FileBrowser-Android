@@ -29,6 +29,39 @@
         android:layout_toLeftOf="@+id/browser_btnNewFolder"
         android:text="@string/browser_pathPlaceholder" />
 
+
+    <EditText
+        android:id="@+id/browser_editTextFileName"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="@dimen/browser_margin"
+        android:layout_marginLeft="@dimen/browser_margin"
+        android:layout_marginTop="@dimen/browser_margin"
+        android:layout_toLeftOf="@+id/browser_imageButtonSave"
+        android:hint="@string/browser_filenamePlaceholder"
+        android:inputType="textNoSuggestions"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/browser_imageButtonSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/browser_editTextFileName"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/browser_editTextFileName"
+        android:layout_margin="@dimen/browser_margin"
+        android:background="@null"
+        android:contentDescription="@android:string/ok"
+        android:focusable="false"
+        android:scaleType="fitCenter"
+        android:src="@drawable/browser_save"
+        android:visibility="gone" />
+
     <ImageButton
         android:id="@+id/browser_btnLayout"
         android:layout_width="@dimen/browser_toolbarIconSize"
@@ -66,6 +99,7 @@
         android:id="@+id/browser_viewFlipper"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/browser_editTextFileName"
         android:layout_below="@+id/browser_textViewCurrentDir"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/browser_margin"
