@@ -113,7 +113,8 @@
         android:layout_below="@+id/browser_textViewCurrentDir"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/browser_margin"
-        android:layout_marginTop="@dimen/browser_margin">
+        android:layout_marginTop="@dimen/browser_margin"
+        android:measureAllChildren="false">
 
         <ListView
             android:id="@+id/browser_listView"
@@ -121,12 +122,12 @@
             android:layout_height="fill_parent"
             android:fastScrollEnabled="true" />
 
-        <GridView
+        <hu.mrolcsi.android.filebrowser.AutoGridView
             android:id="@+id/browser_gridView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:columnWidth="@dimen/browser_columnWidth"
-            android:numColumns="auto_fit"
+            android:numColumns="@integer/browser_columnCount"
             android:stretchMode="columnWidth" />
         <!--http://stackoverflow.com/questions/7545915/gridview-rows-overlapping-how-to-make-row-height-fit-the-tallest-item-->
     </ViewFlipper>
