@@ -7,10 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
@@ -183,6 +180,7 @@ public class BrowserDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         return inflater.inflate(R.layout.browser_layout_dialog, container, false);
     }
 
@@ -692,14 +690,14 @@ public class BrowserDialog extends DialogFragment {
         return extensionFilter;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    public BrowserDialog setExtensionFilter(String extensionFilter) {
-        this.extensionFilter = extensionFilter.split(";");
+    public BrowserDialog setExtensionFilter(String... extensions) {
+        this.extensionFilter = extensions;
         return this;
     }
 
-    public BrowserDialog setExtensionFilter(String... extensions) {
-        this.extensionFilter = extensions;
+    @SuppressWarnings("UnusedDeclaration")
+    public BrowserDialog setExtensionFilter(String extensionFilter) {
+        this.extensionFilter = extensionFilter.split(";");
         return this;
     }
 

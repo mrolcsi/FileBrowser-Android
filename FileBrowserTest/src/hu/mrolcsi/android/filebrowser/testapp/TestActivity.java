@@ -73,7 +73,7 @@ public class TestActivity extends Activity {
                         .setDefaultFileName("test_file.txt")
                         .setExtensionFilter("txt", "xml", "csv")
                         .setRootPath(Environment.getExternalStorageDirectory().getAbsolutePath())
-                        .setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android")
+                        .setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath())
                         .setStartIsRoot(false)
                         .setOnDialogResultListener(onDialogResultListener);
                 dialog.show(getFragmentManager(), dialog.toString());
