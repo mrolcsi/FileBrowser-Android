@@ -17,6 +17,7 @@ import hu.mrolcsi.android.filebrowser.option.SortMode;
 public class TestActivity extends Activity {
 
     private TextView tvPath;
+    private BrowserDialog.OnDialogResultListener onDialogResultListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,6 +30,18 @@ public class TestActivity extends Activity {
         Button btnOpenFileFiltered = (Button) findViewById(R.id.buttonOpenWithFilter);
         tvPath = (TextView) findViewById(R.id.textViewPath);
 
+        onDialogResultListener = new BrowserDialog.OnDialogResultListener() {
+            @Override
+            public void onPositiveResult(String path) {
+                tvPath.setText(path);
+            }
+
+            @Override
+            public void onNegativeResult() {
+                tvPath.setText(android.R.string.cancel);
+            }
+        };
+
         btnOpenFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -37,17 +50,7 @@ public class TestActivity extends Activity {
                         .setSortMode(SortMode.BY_EXTENSION_ASC)
                         .setStartIsRoot(false)
                         .setRootPath(Environment.getExternalStorageDirectory().getAbsolutePath())
-                        .setOnDialogResultListener(new BrowserDialog.OnDialogResultListener() {
-                            @Override
-                            public void onPositiveResult(String path) {
-                                tvPath.setText(path);
-                            }
-
-                            @Override
-                            public void onNegativeResult() {
-                                tvPath.setText(android.R.string.cancel);
-                            }
-                        });
+                        .setOnDialogResultListener(onDialogResultListener);
                 dialog.show(getFragmentManager(), dialog.toString());
             }
         });
@@ -56,7 +59,8 @@ public class TestActivity extends Activity {
             @Override
             public void onClick(View view) {
                 BrowserDialog dialog = new BrowserDialog()
-                        .setBrowseMode(BrowseMode.SELECT_DIR);
+                        .setBrowseMode(BrowseMode.SELECT_DIR)
+                        .setOnDialogResultListener(onDialogResultListener);
                 dialog.show(getFragmentManager(), dialog.toString());
             }
         });
@@ -71,17 +75,7 @@ public class TestActivity extends Activity {
                         .setRootPath(Environment.getExternalStorageDirectory().getAbsolutePath())
                         .setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android")
                         .setStartIsRoot(false)
-                        .setOnDialogResultListener(new BrowserDialog.OnDialogResultListener() {
-                            @Override
-                            public void onPositiveResult(String path) {
-                                tvPath.setText(path);
-                            }
-
-                            @Override
-                            public void onNegativeResult() {
-                                tvPath.setText(android.R.string.cancel);
-                            }
-                        });
+                        .setOnDialogResultListener(onDialogResultListener);
                 dialog.show(getFragmentManager(), dialog.toString());
             }
         });
@@ -95,17 +89,7 @@ public class TestActivity extends Activity {
                         .setStartIsRoot(false)
                         .setSortMode(SortMode.BY_EXTENSION_ASC)
                         .setBrowseMode(BrowseMode.SAVE_FILE)
-                        .setOnDialogResultListener(new BrowserDialog.OnDialogResultListener() {
-                            @Override
-                            public void onPositiveResult(String path) {
-                                tvPath.setText(path);
-                            }
-
-                            @Override
-                            public void onNegativeResult() {
-                                tvPath.setText(android.R.string.cancel);
-                            }
-                        });
+                        .setOnDialogResultListener(onDialogResultListener);
                 dialog.show(getFragmentManager(), dialog.toString());
                 //browserIntent.putExtra(BrowserActivity.OPTION_LAYOUT, BrowserActivity.LAYOUT_GRID);
             }
