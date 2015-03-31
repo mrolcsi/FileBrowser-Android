@@ -68,6 +68,9 @@ public class TestActivity extends Activity {
                         .setBrowseMode(BrowseMode.SAVE_FILE)
                         .setDefaultFileName("test_file.txt")
                         .setExtensionFilter("txt", "xml", "csv")
+                        .setRootPath(Environment.getExternalStorageDirectory().getAbsolutePath())
+                        .setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android")
+                        .setStartIsRoot(false)
                         .setOnDialogResultListener(new BrowserDialog.OnDialogResultListener() {
                             @Override
                             public void onPositiveResult(String path) {

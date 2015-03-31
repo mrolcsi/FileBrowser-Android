@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -151,7 +152,6 @@ public class BrowserDialog extends DialogFragment {
     };
     private Map<String, Parcelable> states = new ConcurrentHashMap<String, Parcelable>();
     private ImageButton btnSwitchLayout;
-    private ImageButton btnSortMode;
     private ImageButton btnNewFolder;
     private boolean overwrite = false;
     //</editor-fold>
@@ -174,6 +174,8 @@ public class BrowserDialog extends DialogFragment {
             activeLayout = (Layout) savedInstanceState.getSerializable(OPTION_LAYOUT);
             itemLayoutID = savedInstanceState.getInt("itemLayoutID");
             defaultFileName = savedInstanceState.getString(OPTION_DEFAULT_FILENAME);
+        } else {
+            currentPath = startPath;
         }
         super.onCreate(savedInstanceState);
     }
@@ -194,7 +196,7 @@ public class BrowserDialog extends DialogFragment {
             }
         });
 
-        btnSortMode = (ImageButton) view.findViewById(R.id.browser_btnSort);
+        ImageButton btnSortMode = (ImageButton) view.findViewById(R.id.browser_btnSort);
         btnSortMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -492,7 +494,11 @@ public class BrowserDialog extends DialogFragment {
         tvCurrentPath.setText(currentPath);
 
         FileListAdapter fla;
-        boolean isRoot = startIsRoot ? currentPath.equals(startPath) : currentPath.equals("/");
+        boolean isRoot = startIsRoot ? currentPath.equals(startPath) || currentPath.equals(rootPath) : currentPath.equals(rootPath);
+
+        Log.d(getClass().getName(), "root path = " + rootPath);
+        Log.d(getClass().getName(), "start path = " + startPath);
+        Log.d(getClass().getName(), "current path = " + currentPath);
 
         switch (browseMode) {
             default:
@@ -686,14 +692,14 @@ public class BrowserDialog extends DialogFragment {
         return extensionFilter;
     }
 
-    public BrowserDialog setExtensionFilter(String... extensions) {
-        this.extensionFilter = extensions;
-        return this;
-    }
-
     @SuppressWarnings("UnusedDeclaration")
     public BrowserDialog setExtensionFilter(String extensionFilter) {
         this.extensionFilter = extensionFilter.split(";");
+        return this;
+    }
+
+    public BrowserDialog setExtensionFilter(String... extensions) {
+        this.extensionFilter = extensions;
         return this;
     }
 
