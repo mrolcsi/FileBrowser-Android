@@ -42,4 +42,5 @@
     <string name="browser_error_invalidFolderName_message">The specified folder name is invalid.</string>
     <string name="browser_pressAgainToCancel">Press again to cancel.</string>
     <string name="browser_upFolder">..</string>
+    <string name="browser_confirmOverwrite">Press \'Save\' again to overwrite file.</string>
 </resources>

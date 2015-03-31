@@ -12,7 +12,7 @@ import java.util.*;
 
 public abstract class Utils {
 
-    private static final String[] ReservedChars = {"|", "\\", "?", "*", "<", "\"", ":", ">"};
+    private static final String[] RESERVED_CHARS = {"|", "\\", "?", "*", "<", "\"", ":", ">"};
 
     static String getExtension(String fileName) {
         String ext = null;
@@ -224,10 +224,28 @@ public abstract class Utils {
     }
 
     static boolean isFilenameValid(String filename) {
-        for (String reservedChar : ReservedChars) {
+        for (String reservedChar : RESERVED_CHARS) {
             if (filename.contains(reservedChar)) return false;
         }
         return true;
+    }
+
+    // http://stackoverflow.com/questions/1128723/in-java-how-can-i-test-if-an-array-contains-a-certain-value
+    public static <T> boolean contains(final T[] array, final T v) {
+//        if (v == null) {
+//            for (final T e : array)
+//                if (e == null)
+//                    return true;
+//        } else {
+//            for (final T e : array)
+//                if (e == v || v.equals(e))
+//                    return true;
+//        }
+//
+//        return false;
+
+        final HashSet<T> set = new HashSet<T>(Arrays.asList(array));
+        return set.contains(v);
     }
 }
 

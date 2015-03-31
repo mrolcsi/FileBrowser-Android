@@ -67,6 +67,7 @@ public class TestActivity extends Activity {
                 BrowserDialog dialog = new BrowserDialog()
                         .setBrowseMode(BrowseMode.SAVE_FILE)
                         .setDefaultFileName("test_file.txt")
+                        .setExtensionFilter("txt", "xml", "csv")
                         .setOnDialogResultListener(new BrowserDialog.OnDialogResultListener() {
                             @Override
                             public void onPositiveResult(String path) {

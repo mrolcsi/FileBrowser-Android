@@ -6,9 +6,11 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
 import hu.mrolcsi.android.filebrowser.option.Layout;
@@ -126,6 +128,7 @@ public class BrowserDialog extends DialogFragment {
     private SortMode sortMode = SortMode.BY_NAME_ASC;
     private String[] extensionFilter;
     private String defaultFileName;
+    private String currentExtension;
     private String startPath = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ? Environment.getExternalStorageDirectory().getAbsolutePath() : "/";
     private String rootPath = File.listRoots()[0].getAbsolutePath();
     private String currentPath = startPath;
@@ -224,34 +227,69 @@ public class BrowserDialog extends DialogFragment {
             btnSave = (btnSave == null) ? (ImageButton) view.findViewById(R.id.browser_imageButtonSave) : btnSave;
             etFilename = (etFilename == null) ? (EditText) view.findViewById(R.id.browser_editTextFileName) : etFilename;
 
-            btnSave.setVisibility(View.VISIBLE);
-            etFilename.setVisibility(View.VISIBLE);
+            etFilename.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                    if (i == EditorInfo.IME_ACTION_DONE) {
+                        sendResult();
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+            RelativeLayout rlSave = (RelativeLayout) view.findViewById(R.id.browser_rlSave);
+            rlSave.setVisibility(View.VISIBLE);
+
+            final Spinner spnExtension = (Spinner) view.findViewById(R.id.browser_spnExtension);
+            if (extensionFilter != null) {
+                final ArrayAdapter<String> extensionAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, extensionFilter);
+                extensionAdapter.setDropDownViewResource(R.layout.browser_dropdown_item);
+                spnExtension.setAdapter(extensionAdapter);
+                spnExtension.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                        currentExtension = (String) spnExtension.getSelectedItem();
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+                    }
+                });
+            } else spnExtension.setVisibility(View.GONE);
 
             if (defaultFileName != null) etFilename.setText(defaultFileName);
+
             btnSave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String fileName = currentPath + "/" + etFilename.getText();
-                    if (!fileName.isEmpty() && Utils.isFilenameValid(fileName)) {
-                        File f = new File(fileName);
-                        if (f.exists()) {
-                            if (!overwrite) {
-                                Toast.makeText(getActivity(), "Press 'Save' again to overwrite file.", Toast.LENGTH_SHORT).show();
-                                overwrite = true;
-                                //TODO: ellenőrizni
-                            } else {
-                                onDialogResultListener.onPositiveResult(fileName);
-                                dismiss();
-                            }
-                        } else {
-                            onDialogResultListener.onPositiveResult(fileName);
-                            dismiss();
-                        }
-                    } else {
-                        showErrorDialog(Error.INVALID_FILENAME);
-                    }
+                    sendResult();
                 }
             });
+        }
+    }
+
+    private void sendResult() {
+        final String filename = checkExtension(etFilename.getText().toString());
+        String result = currentPath + "/" + filename;
+
+        if (!result.isEmpty() && Utils.isFilenameValid(result)) {
+            File f = new File(result);
+            if (f.exists()) {
+                if (!overwrite) {
+                    Toast.makeText(getActivity(), getString(R.string.browser_confirmOverwrite), Toast.LENGTH_SHORT).show();
+                    overwrite = true;
+                    //TODO: ellenőrizni
+                } else {
+                    onDialogResultListener.onPositiveResult(result);
+                    dismiss();
+                }
+            } else {
+                onDialogResultListener.onPositiveResult(result);
+                dismiss();
+            }
+        } else {
+            showErrorDialog(Error.INVALID_FILENAME);
         }
     }
 
@@ -597,6 +635,18 @@ public class BrowserDialog extends DialogFragment {
         builder.show();
     }
 
+    private String checkExtension(String input) {
+        final int lastDot = input.lastIndexOf('.');
+        String extension;
+        if (lastDot >= 0) {
+            extension = input.substring(lastDot);
+        } else return input + "." + currentExtension;
+
+        if (Utils.contains(extensionFilter, extension)) {
+            return input + "." + currentExtension;
+        } else return input;
+    }
+
     public BrowserDialog setOnDialogResultListener(OnDialogResultListener listener) {
         this.onDialogResultListener = listener;
         return this;
@@ -634,6 +684,11 @@ public class BrowserDialog extends DialogFragment {
     @SuppressWarnings("UnusedDeclaration")
     public String[] getExtensionFilter() {
         return extensionFilter;
+    }
+
+    public BrowserDialog setExtensionFilter(String... extensions) {
+        this.extensionFilter = extensions;
+        return this;
     }
 
     @SuppressWarnings("UnusedDeclaration")
