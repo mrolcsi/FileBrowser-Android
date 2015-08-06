@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FileBrowser/FileBrowser.iml" filepath="$PROJECT_DIR$/FileBrowser/FileBrowser.iml" />
       <module fileurl="file://$PROJECT_DIR$/FileBrowserTest/FileBrowserTest.iml" filepath="$PROJECT_DIR$/FileBrowserTest/FileBrowserTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/filebrowser.android.iml" filepath="$PROJECT_DIR$/filebrowser.android.iml" />
     </modules>
   </component>
 </project>
-
