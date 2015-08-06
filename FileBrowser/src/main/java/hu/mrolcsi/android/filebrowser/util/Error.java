@@ -1,4 +1,4 @@
-package hu.mrolcsi.android.filebrowser;
+package hu.mrolcsi.android.filebrowser.util;
 
 /**
  * Created with IntelliJ IDEA.

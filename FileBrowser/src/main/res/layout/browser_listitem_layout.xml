@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
@@ -15,8 +15,8 @@
 
     <TextView
         android:id="@+id/browser_listItemText"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/browser_margin"
         android:layout_toLeftOf="@+id/browser_listItemExtra"
@@ -29,7 +29,7 @@
     <TextView
         android:id="@+id/browser_listItemExtra"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_gravity="center_vertical|right"
@@ -38,5 +38,14 @@
         android:gravity="center_vertical|right"
         android:singleLine="false"
         android:textStyle="italic" />
+
+    <ProgressBar
+        android:id="@+id/browser_listItemProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/browser_toolbarIconSize"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:indeterminate="true"
+        android:visibility="gone" />
 
 </RelativeLayout>
