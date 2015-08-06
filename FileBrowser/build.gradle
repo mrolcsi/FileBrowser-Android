@@ -12,6 +12,81 @@ repositories {
     jcenter()
 }
 
+def makeVersionCode = { ->
+    try {
+        def code = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-list', 'HEAD', '--count'
+            standardOutput = code
+        }
+        return Integer.parseInt(code.toString().trim())
+    }
+    catch (ignored) {
+        logger.error(ignored.printStackTrace())
+        return -1;
+    }
+}
+
+def makeVersionNameRelease = { ->
+    try {
+        def lastTag = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-list', '--tags', '--no-walk', '--max-count=1'
+            standardOutput = lastTag
+        }
+
+        logger.info("*** Last Tag: " + lastTag.toString().trim())
+
+        def lastCommits = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-list', lastTag.toString().trim() + '..HEAD', '--count'
+            standardOutput = lastCommits
+        }
+
+        logger.info("*** Last Commits: " + lastCommits.toString().trim())
+
+        def versionName = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--tags', '--abbrev=0'
+            standardOutput = versionName
+        }
+
+        logger.info("*** Version Name: " + versionName.toString().trim())
+
+        if (lastCommits.toString().equals(''))
+            return 'v' + versionName.toString().trim()
+        else
+            return 'v' + versionName.toString().trim() + '.' + lastCommits.toString().trim()
+    }
+    catch (ignored) {
+        logger.error(ignored.printStackTrace())
+        return null;
+    }
+}
+
+def makeVersionNameDebug = { ->
+    try {
+
+        def releaseName = makeVersionNameRelease()
+
+        logger.info("*** Release Name: " + releaseName)
+
+        def currentBranch = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+            standardOutput = currentBranch
+        }
+
+        logger.info("*** Current Branch: " + currentBranch.toString().trim())
+
+        return releaseName + '/' + currentBranch.toString().trim()
+    }
+    catch (ignored) {
+        logger.error(ignored.printStackTrace())
+        return null;
+    }
+}
+
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
@@ -20,8 +95,8 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode makeVersionCode()
+        versionName makeVersionNameDebug()
     }
 
     buildTypes {
