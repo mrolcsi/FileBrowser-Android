@@ -2,10 +2,10 @@ package hu.mrolcsi.android.filebrowser;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import hu.mrolcsi.android.filebrowser.option.SortMode;
@@ -21,7 +21,7 @@ import java.util.List;
  * Time: 16:17
  */
 
-class FileListAdapter extends BaseAdapter {
+class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
 
     private final int layoutResourceId;
     private final Context context;
@@ -73,39 +73,17 @@ class FileListAdapter extends BaseAdapter {
 //        }
     }
 
-
     @Override
-    public int getCount() {
-        return data.size();
+    public FileHolder onCreateViewHolder(ViewGroup container, int itemType) {
+        final View itemView = inflater.inflate(layoutResourceId, container, false);
+        return new FileHolder(itemView);
     }
 
     @Override
-    public Object getItem(int i) {
-        return data.get(i);
-    }
+    public void onBindViewHolder(FileHolder holder, int i) {
+        holder.file = data.get(i);
+        holder.itemView.setTag(holder);
 
-    @Override
-    public long getItemId(int i) {
-        return i;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
-        FileHolder holder;
-
-        if (row == null) {
-            row = inflater.inflate(layoutResourceId, parent, false);
-
-            holder = new FileHolder();
-            holder.icon = (ImageView) row.findViewById(R.id.browser_listItemIcon);
-            holder.text = (TextView) row.findViewById(R.id.browser_listItemText);
-            holder.extra = (TextView) row.findViewById(R.id.browser_listItemExtra);
-
-            row.setTag(holder);
-        } else holder = (FileHolder) row.getTag();
-
-        holder.file = data.get(position);
         boolean isUp = holder.file.getAbsolutePath().equals("/..");
 
         if (isUp) {
@@ -204,14 +182,25 @@ class FileListAdapter extends BaseAdapter {
                 }
                 break;
         }
-        return row;
     }
 
+    @Override
+    public int getItemCount() {
+        return data.size();
+    }
 }
 
-class FileHolder {
+class FileHolder extends RecyclerView.ViewHolder {
     ImageView icon;
     TextView text;
     TextView extra;
     File file;
+
+    public FileHolder(View itemView) {
+        super(itemView);
+
+        icon = (ImageView) itemView.findViewById(R.id.browser_listItemIcon);
+        text = (TextView) itemView.findViewById(R.id.browser_listItemText);
+        extra = (TextView) itemView.findViewById(R.id.browser_listItemExtra);
+    }
 }

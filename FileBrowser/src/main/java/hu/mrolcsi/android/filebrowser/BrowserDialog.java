@@ -9,6 +9,9 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
@@ -16,6 +19,7 @@ import android.widget.*;
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
 import hu.mrolcsi.android.filebrowser.option.Layout;
 import hu.mrolcsi.android.filebrowser.option.SortMode;
+import org.lucasr.twowayview.ItemClickSupport;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -30,7 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public class BrowserDialog extends DialogFragment {
-
 
     //region Publics
     /**
@@ -121,7 +124,7 @@ public class BrowserDialog extends DialogFragment {
         OPTION_LAYOUT = "layout";
     }
 
-    private AbsListView list;
+    private RecyclerView list;
     private BrowseMode browseMode = BrowseMode.OPEN_FILE;
     private SortMode sortMode = SortMode.BY_NAME_ASC;
     private String[] extensionFilter;
@@ -136,7 +139,6 @@ public class BrowserDialog extends DialogFragment {
     private int itemLayoutID = R.layout.browser_listitem_layout;
     private ImageButton btnSave;
     private EditText etFilename;
-    private ViewFlipper vf;
 
     private OnDialogResultListener onDialogResultListener = new OnDialogResultListener() {
         @Override
@@ -151,6 +153,10 @@ public class BrowserDialog extends DialogFragment {
     private ImageButton btnSwitchLayout;
     private ImageButton btnNewFolder;
     private boolean overwrite = false;
+    private LinearLayoutManager mLinearLayout;
+    private GridLayoutManager mGridLayout;
+    private ItemClickSupport mItemClickSupport;
+    private DividerItemDecoration mListItemDecor;
     //</editor-fold>
 
 
@@ -219,7 +225,13 @@ public class BrowserDialog extends DialogFragment {
 
         tvCurrentPath = (TextView) view.findViewById(R.id.browser_textViewCurrentDir);
 
-        vf = (ViewFlipper) view.findViewById(R.id.browser_viewFlipper);
+        list = (RecyclerView) view.findViewById(R.id.browser_recyclerView);
+        mListItemDecor = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
+        mLinearLayout = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        mGridLayout = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.browser_columnCount), LinearLayoutManager.VERTICAL, false);
+        mItemClickSupport = ItemClickSupport.addTo(list);
+        setListListeners();
+
         switch (activeLayout) {
             default:
             case LIST:
@@ -336,12 +348,13 @@ public class BrowserDialog extends DialogFragment {
      * Lista nézetbe váltás ViewFlipperen keresztül.
      */
     private void toListView() {
-        vf.setDisplayedChild(0);
+        //TODO
         activeLayout = Layout.LIST;
         btnSwitchLayout.setImageResource(R.drawable.browser_grid);
-        list = (ListView) vf.findViewById(R.id.browser_listView);
         itemLayoutID = R.layout.browser_listitem_layout;
-        setListListeners();
+        list.addItemDecoration(mListItemDecor);
+        list.setLayoutManager(mLinearLayout);
+        //setListListeners();
         loadList(new File(currentPath));
     }
 
@@ -349,12 +362,12 @@ public class BrowserDialog extends DialogFragment {
      * Grid nézetbe váltás ViewFlipperen keresztül.
      */
     private void toGridView() {
-        vf.setDisplayedChild(1);
         activeLayout = Layout.GRID;
         btnSwitchLayout.setImageResource(R.drawable.browser_list);
-        list = (GridView) vf.findViewById(R.id.browser_gridView);
+        list.setLayoutManager(mGridLayout);
+        list.removeItemDecoration(mListItemDecor);
         itemLayoutID = R.layout.browser_griditem_layout;
-        setListListeners();
+        //setListListeners();
         loadList(new File(currentPath));
     }
 
@@ -383,9 +396,9 @@ public class BrowserDialog extends DialogFragment {
         switch (browseMode) {
             default:
             case OPEN_FILE:
-                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                mItemClickSupport.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    public void onItemClick(RecyclerView recyclerView, View view, int i, long l) {
                         FileHolder holder = (FileHolder) view.getTag();
                         if (holder.file.getAbsolutePath().equals("/" + getString(R.string.browser_upFolder))) {
                             loadList(new File(currentPath).getParentFile());
@@ -398,9 +411,9 @@ public class BrowserDialog extends DialogFragment {
                         }
                     }
                 });
-                list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                mItemClickSupport.setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
                     @Override
-                    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    public boolean onItemLongClick(RecyclerView recyclerView, View view, int i, long l) {
                         FileHolder holder = (FileHolder) view.getTag();
                         if (holder.file.isFile()) {
                             onDialogResultListener.onPositiveResult(holder.file.getAbsolutePath());
@@ -411,18 +424,18 @@ public class BrowserDialog extends DialogFragment {
                 });
                 break;
             case SELECT_DIR:
-                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                mItemClickSupport.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    public void onItemClick(RecyclerView recyclerView, View view, int i, long l) {
                         FileHolder holder = (FileHolder) view.getTag();
                         if (holder.file.getAbsolutePath().equals("/" + getString(R.string.browser_upFolder))) {
                             loadList(new File(currentPath).getParentFile());
                         } else if (holder.file.isDirectory()) loadList(holder.file);
                     }
                 });
-                list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                mItemClickSupport.setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
                     @Override
-                    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    public boolean onItemLongClick(RecyclerView recyclerView, View view, int i, long l) {
                         FileHolder holder = (FileHolder) view.getTag();
                         if (holder.file.isDirectory()) {
                             onDialogResultListener.onPositiveResult(holder.file.getAbsolutePath());
@@ -433,9 +446,9 @@ public class BrowserDialog extends DialogFragment {
                 });
                 break;
             case SAVE_FILE:
-                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                mItemClickSupport.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    public void onItemClick(RecyclerView recyclerView, View view, int i, long l) {
                         FileHolder holder = (FileHolder) view.getTag();
                         if (holder.file.getAbsolutePath().equals("/" + getString(R.string.browser_upFolder))) {
                             loadList(new File(currentPath).getParentFile());
@@ -445,14 +458,14 @@ public class BrowserDialog extends DialogFragment {
                         }
                     }
                 });
-                list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                mItemClickSupport.setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
                     @Override
-                    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    public boolean onItemLongClick(RecyclerView recyclerView, View view, int i, long l) {
                         FileHolder holder = (FileHolder) view.getTag();
                         if (!holder.file.isFile()) return false;
                         else {
                             showOverwriteDialog(holder.file.getAbsolutePath());
-                            Toast.makeText(getActivity(), "Press Save button twice to overwrite file.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), R.string.browser_confirmOverwrite, Toast.LENGTH_LONG).show();
                             return true;
                         }
                     }
@@ -472,7 +485,7 @@ public class BrowserDialog extends DialogFragment {
             return;
         }
 
-        states.put(currentPath, list.onSaveInstanceState());
+        states.put(currentPath, list.getLayoutManager().onSaveInstanceState());
 
         File[] filesToLoad;
 
@@ -522,21 +535,12 @@ public class BrowserDialog extends DialogFragment {
                 break;
         }
 
-        //API Level 11 alatt castolni kell...
-        switch (activeLayout) {
-            case GRID:
-                //noinspection RedundantCast
-                ((GridView) list).setAdapter(fla);
-                break;
-            case LIST:
-                //noinspection RedundantCast
-                ((ListView) list).setAdapter(fla);
-                break;
-        }
+        list.setAdapter(fla);
+
         //if (browseMode == MODE_SAVE_FILE) btnSave.setEnabled(directory.canWrite());
         Parcelable state = states.get(currentPath);
         if (state != null)
-            list.onRestoreInstanceState(state);
+            list.getLayoutManager().onRestoreInstanceState(state);
 
         File currentFile = new File(currentPath);
         btnNewFolder.setVisibility(currentFile.canWrite() ? View.VISIBLE : View.GONE);
@@ -696,14 +700,14 @@ public class BrowserDialog extends DialogFragment {
         return extensionFilter;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    public BrowserDialog setExtensionFilter(String extensionFilter) {
-        this.extensionFilter = extensionFilter.split(";");
+    public BrowserDialog setExtensionFilter(String... extensions) {
+        this.extensionFilter = extensions;
         return this;
     }
 
-    public BrowserDialog setExtensionFilter(String... extensions) {
-        this.extensionFilter = extensions;
+    @SuppressWarnings("UnusedDeclaration")
+    public BrowserDialog setExtensionFilter(String extensionFilter) {
+        this.extensionFilter = extensionFilter.split(";");
         return this;
     }
 

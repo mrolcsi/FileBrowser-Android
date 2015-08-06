@@ -109,30 +109,30 @@
             android:src="@drawable/browser_save" />
     </RelativeLayout>
 
-    <ViewFlipper
-        android:id="@+id/browser_viewFlipper"
-        android:layout_width="fill_parent"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/browser_recyclerView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/browser_rlSave"
         android:layout_below="@+id/browser_textViewCurrentDir"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/browser_margin"
-        android:layout_marginTop="@dimen/browser_margin">
+        android:layout_marginTop="@dimen/browser_margin"
+        android:scrollbars="vertical" />
 
-        <ListView
-            android:id="@+id/browser_listView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:fastScrollEnabled="true" />
+    <!--<ListView-->
+    <!--android:id="@+id/browser_listView"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:fastScrollEnabled="true" />-->
 
-        <hu.mrolcsi.android.filebrowser.AutoGridView
-            android:id="@+id/browser_gridView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:columnWidth="@dimen/browser_columnWidth"
-            android:numColumns="@integer/browser_columnCount"
-            android:stretchMode="columnWidth" />
+    <!--<hu.mrolcsi.android.filebrowser.AutoGridView-->
+    <!--android:id="@+id/browser_gridView"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:columnWidth="@dimen/browser_columnWidth"-->
+    <!--android:numColumns="@integer/browser_columnCount"-->
+    <!--android:stretchMode="columnWidth" />-->
         <!--http://stackoverflow.com/questions/7545915/gridview-rows-overlapping-how-to-make-row-height-fit-the-tallest-item-->
-    </ViewFlipper>
 
 </RelativeLayout>
