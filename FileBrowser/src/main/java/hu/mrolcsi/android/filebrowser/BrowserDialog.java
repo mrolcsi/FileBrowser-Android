@@ -2,10 +2,12 @@ package hu.mrolcsi.android.filebrowser;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.*;
@@ -32,71 +34,70 @@ public class BrowserDialog extends DialogFragment {
 
     //region Publics
     /**
-     * Tallózás módja:
+     * Browsing mode:
      * <ul>
-     * <li>Fájl megnyitása: {@link hu.mrolcsi.android.filebrowser.option.BrowseMode#OPEN_FILE OPEN_FILE}</li>
-     * <li>Mappa kiválasztása: {@link hu.mrolcsi.android.filebrowser.option.BrowseMode#SELECT_DIR SELECT_DIR}</li>
-     * <li>Fájl mentése: {@link hu.mrolcsi.android.filebrowser.option.BrowseMode#SAVE_FILE SAVE_FILE}</li>
+     * <li>Open File: {@link hu.mrolcsi.android.filebrowser.option.BrowseMode#OPEN_FILE OPEN_FILE}</li>
+     * <li>Select Directory: {@link hu.mrolcsi.android.filebrowser.option.BrowseMode#SELECT_DIR SELECT_DIR}</li>
+     * <li>Save File: {@link hu.mrolcsi.android.filebrowser.option.BrowseMode#SAVE_FILE SAVE_FILE}</li>
      * </ul>
-     * (Alapértelmezett: fájl megnyitása)
+     * Default: open file
      *
      * @see hu.mrolcsi.android.filebrowser.option.BrowseMode
      */
     public static final String OPTION_BROWSE_MODE;
     /**
-     * String:  Kezdőmappa abszolút elérési útja (Alapértelmezett: SD-kártya gyökere, ha nincs, "/")
+     * String:  Absolute path to starting directory (Default: root of EXTERNAL_STORAGE (SD-Card) or "/")
      */
     public static final String OPTION_START_PATH;
     /**
-     * String:  Engedélyezett kiterjesztések pontosvesszővel (;) elválasztva (Alapértelmezett: üres)
+     * String:  File extensions to show separated with semicolons (;) (Default: empty (*.*))
      */
     public static final String OPTION_EXTENSION_FILTER;
     /**
-     * Visszatérési érték: a kiválasztott fájl/mappa abszolút elérési útja
-     * onActivityResult metódusban használandó, mint getStringExtra paraméter.
+     * Return value: Absolute path to selected file/directory
      */
     public static final String RESULT;
     /**
-     * Rendezés módja (mappák mindig elöl)
+     * Sort Mode: (Directories always have priority before files)
      * <ul>
-     * <li>Név szerint növekvő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_NAME_ASC BY_NAME_ASC}</li>
-     * <li>Név szerint csökkenő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_NAME_DESC BY_NAME_DESC}</li>
-     * <li>Kiterjesztés szerint növekvő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_EXTENSION_ASC BY_EXTENSION_ASC}</li>
-     * <li>Kiterjesztés szerint csökkenő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_EXTENSION_DESC BY_EXTENSION_DESC}</li>
-     * <li>Módosítás dátuma szerint növekvő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_DATE_ASC BY_DATE_ASC}</li>
-     * <li>Módosítás dátuma szerint csökkenő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_DATE_DESC BY_DATE_DESC}</li>
-     * <li>Méret szerint növekvő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_SIZE_ASC BY_SIZE_ASC}</li>
-     * <li>Méret szerint növekvő: {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_SIZE_DESC BY_SIZE_DESC}</li>
+     * <li>By filename (ascending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_NAME_ASC BY_NAME_ASC}</li>
+     * <li>By filename (descending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_NAME_DESC BY_NAME_DESC}</li>
+     * <li>By extension (ascending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_EXTENSION_ASC BY_EXTENSION_ASC}</li>
+     * <li>By extension (descending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_EXTENSION_DESC BY_EXTENSION_DESC}</li>
+     * <li>By modification date (ascending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_DATE_ASC BY_DATE_ASC}</li>
+     * <li>By modification date (descending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_DATE_DESC BY_DATE_DESC}</li>
+     * <li>By size (ascending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_SIZE_ASC BY_SIZE_ASC}</li>
+     * <li>By size (descending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_SIZE_DESC BY_SIZE_DESC}</li>
      * </ul>
-     * (Alapértelmezett: fájlnév szerint növekvő)
+     * Default: by filename (ascending)
      *
      * @see hu.mrolcsi.android.filebrowser.option.SortMode
      */
     public static final String OPTION_SORT_MODE;
     /**
-     * String:  Alapértelmezett fájlnév, csak fájlmentéskor van rá szükség.
+     * String:  Default filename; only used when saving.
      *
      * @see hu.mrolcsi.android.filebrowser.option.BrowseMode
      */
     public static final String OPTION_DEFAULT_FILENAME;
     /**
-     * Boolean: A kiindulópontként megadott mappát kezelje-e gyökérként? (boolean)
+     * Boolean: Should the specified start path be considered as Root?
      *
      * @see #OPTION_START_PATH
      */
     public static final String OPTION_START_IS_ROOT;
     /**
-     * Kezdeti elrendezés (futás közben váltogatható)
+     * Starting layout (can be change at runtime)
      * <ul>
-     * <li>Lista {@link hu.mrolcsi.android.filebrowser.option.Layout#LIST LIST}</li>
-     * <li>Négyzetrácsos(grid) {@link hu.mrolcsi.android.filebrowser.option.Layout#GRID GRID}</li>
+     * <li>List {@link hu.mrolcsi.android.filebrowser.option.Layout#LIST LIST}</li>
+     * <li>Grid {@link hu.mrolcsi.android.filebrowser.option.Layout#GRID GRID}</li>
      * </ul>
-     * Alapértelmezett: lista.
+     * Default: list
      *
      * @see hu.mrolcsi.android.filebrowser.option.Layout
      */
     public static final String OPTION_LAYOUT;
-    private static final SortMode[] SORT_HASHES = new SortMode[]{
+    public static final SortMode[] SORT_HASHES = new SortMode[]{
             SortMode.BY_NAME_ASC,
             SortMode.BY_NAME_DESC,
             SortMode.BY_EXTENSION_ASC,
@@ -106,10 +107,9 @@ public class BrowserDialog extends DialogFragment {
             SortMode.BY_SIZE_ASC,
             SortMode.BY_SIZE_DESC
     };
-
     //endregion
-    //region Privates
 
+    //region Privates
     static {
         OPTION_START_IS_ROOT = "startIsRoot";
         OPTION_DEFAULT_FILENAME = "defaultFileName";
@@ -177,10 +177,17 @@ public class BrowserDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
     }
 
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        final WindowManager.LayoutParams layoutParams = dialog.getWindow().getAttributes();
+        return dialog;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         return inflater.inflate(R.layout.browser_layout_dialog, container, false);
     }
 
@@ -662,7 +669,6 @@ public class BrowserDialog extends DialogFragment {
         onDialogResultListener.onNegativeResult();
     }
 
-    //<editor-fold desc="GETTERS & SETTERS">
     @SuppressWarnings("UnusedDeclaration")
     public BrowseMode getBrowseMode() {
         return browseMode;
@@ -690,14 +696,14 @@ public class BrowserDialog extends DialogFragment {
         return extensionFilter;
     }
 
-    public BrowserDialog setExtensionFilter(String... extensions) {
-        this.extensionFilter = extensions;
-        return this;
-    }
-
     @SuppressWarnings("UnusedDeclaration")
     public BrowserDialog setExtensionFilter(String extensionFilter) {
         this.extensionFilter = extensionFilter.split(";");
+        return this;
+    }
+
+    public BrowserDialog setExtensionFilter(String... extensions) {
+        this.extensionFilter = extensions;
         return this;
     }
 
@@ -738,7 +744,6 @@ public class BrowserDialog extends DialogFragment {
         this.startIsRoot = startIsRoot;
         return this;
     }
-//</editor-fold>
 
     public interface OnDialogResultListener {
         /**

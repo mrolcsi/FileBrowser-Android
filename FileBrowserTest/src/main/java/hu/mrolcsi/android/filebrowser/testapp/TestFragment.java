@@ -1,10 +1,13 @@
 package hu.mrolcsi.android.filebrowser.testapp;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.FragmentActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import hu.mrolcsi.android.filebrowser.BrowserDialog;
@@ -14,31 +17,50 @@ import hu.mrolcsi.android.filebrowser.option.SortMode;
 /**
  * Ez az activity nem a modul része, csupán tesztelési célokat szolgál.
  */
-public class TestActivity extends FragmentActivity {
+public class TestFragment extends Fragment {
 
     private TextView tvPath;
     private BrowserDialog.OnDialogResultListener onDialogResultListener;
+    @SuppressWarnings("unused")
+    private View mRootView;
+    private MainActivity mActivity;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
 
-        Button btnOpenFile = (Button) findViewById(R.id.buttonOpen);
-        Button btnSelectDir = (Button) findViewById(R.id.buttonSelectDir);
-        Button btnSaveFile = (Button) findViewById(R.id.buttonSaveFile);
-        Button btnOpenFileFiltered = (Button) findViewById(R.id.buttonOpenWithFilter);
-        tvPath = (TextView) findViewById(R.id.textViewPath);
+        this.mActivity = (MainActivity) activity;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (mRootView == null) mRootView = inflater.inflate(R.layout.main, container, false);
+        return mRootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Button btnOpenFile = (Button) view.findViewById(R.id.buttonOpen);
+        Button btnSelectDir = (Button) view.findViewById(R.id.buttonSelectDir);
+        Button btnSaveFile = (Button) view.findViewById(R.id.buttonSaveFile);
+        Button btnOpenFileFiltered = (Button) view.findViewById(R.id.buttonOpenWithFilter);
+        Button btnOpenFileInFragment = (Button) view.findViewById(R.id.buttonOpenAsFragment);
+        tvPath = (TextView) view.findViewById(R.id.textViewPath);
 
         onDialogResultListener = new BrowserDialog.OnDialogResultListener() {
             @Override
             public void onPositiveResult(String path) {
                 tvPath.setText(path);
+                mActivity.swapFragment(TestFragment.this);
             }
 
             @Override
             public void onNegativeResult() {
                 tvPath.setText(android.R.string.cancel);
+                mActivity.swapFragment(TestFragment.this);
             }
         };
 
@@ -51,7 +73,7 @@ public class TestActivity extends FragmentActivity {
                         .setStartIsRoot(false)
                         .setRootPath(Environment.getExternalStorageDirectory().getAbsolutePath())
                         .setOnDialogResultListener(onDialogResultListener);
-                dialog.show(getSupportFragmentManager(), dialog.toString());
+                dialog.show(getChildFragmentManager(), dialog.toString());
             }
         });
 
@@ -61,7 +83,7 @@ public class TestActivity extends FragmentActivity {
                 BrowserDialog dialog = new BrowserDialog()
                         .setBrowseMode(BrowseMode.SELECT_DIR)
                         .setOnDialogResultListener(onDialogResultListener);
-                dialog.show(getSupportFragmentManager(), dialog.toString());
+                dialog.show(getChildFragmentManager(), dialog.toString());
             }
         });
 
@@ -76,7 +98,7 @@ public class TestActivity extends FragmentActivity {
                         .setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath())
                         .setStartIsRoot(false)
                         .setOnDialogResultListener(onDialogResultListener);
-                dialog.show(getSupportFragmentManager(), dialog.toString());
+                dialog.show(getChildFragmentManager(), dialog.toString());
             }
         });
 
@@ -90,23 +112,24 @@ public class TestActivity extends FragmentActivity {
                         .setSortMode(SortMode.BY_EXTENSION_ASC)
                         .setBrowseMode(BrowseMode.SAVE_FILE)
                         .setOnDialogResultListener(onDialogResultListener);
-                dialog.show(getSupportFragmentManager(), dialog.toString());
-                //browserIntent.putExtra(BrowserActivity.OPTION_LAYOUT, BrowserActivity.LAYOUT_GRID);
+                dialog.show(getChildFragmentManager(), dialog.toString());
             }
         });
-    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case 0:
-                tvPath.setText(resultCode == RESULT_OK ? data.getStringExtra(BrowserDialog.RESULT) : "Result_Canceled");
-                break;
-            default:
-                break;
-        }
+        btnOpenFileInFragment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BrowserDialog dialog = new BrowserDialog()
+                        .setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath())
+                        .setExtensionFilter("mp3;wav")
+                        .setStartIsRoot(false)
+                        .setSortMode(SortMode.BY_EXTENSION_ASC)
+                        .setBrowseMode(BrowseMode.SAVE_FILE)
+                        .setOnDialogResultListener(onDialogResultListener);
 
+                mActivity.swapFragment(dialog);
+            }
+        });
     }
 }
 

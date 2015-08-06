@@ -67,7 +67,7 @@
         android:id="@+id/browser_rlSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/browser_viewFlipper"
+        android:layout_alignParentBottom="true"
         android:visibility="gone">
 
         <EditText
@@ -89,6 +89,9 @@
             android:id="@+id/browser_spnExtension"
             android:layout_width="@dimen/browser_columnWidth"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/browser_editTextFileName"
+            android:layout_alignTop="@+id/browser_editTextFileName"
+            android:layout_marginBottom="@dimen/browser_margin"
             android:layout_toLeftOf="@+id/browser_imageButtonSave" />
 
         <ImageButton
@@ -110,11 +113,11 @@
         android:id="@+id/browser_viewFlipper"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/browser_rlSave"
         android:layout_below="@+id/browser_textViewCurrentDir"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/browser_margin"
-        android:layout_marginTop="@dimen/browser_margin"
-        android:measureAllChildren="false">
+        android:layout_marginTop="@dimen/browser_margin">
 
         <ListView
             android:id="@+id/browser_listView"

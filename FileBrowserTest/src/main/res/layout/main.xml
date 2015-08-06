@@ -52,4 +52,14 @@
         android:text="Open File - Filtered"
         android:visibility="gone" />
 
+    <Button
+        android:id="@+id/buttonOpenAsFragment"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttonSaveFile"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Open File - Fragment" />
+
 </RelativeLayout>
