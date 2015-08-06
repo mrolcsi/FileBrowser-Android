@@ -1,9 +1,9 @@
 package hu.mrolcsi.android.filebrowser.testapp;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -14,7 +14,7 @@ import hu.mrolcsi.android.filebrowser.option.SortMode;
 /**
  * Ez az activity nem a modul része, csupán tesztelési célokat szolgál.
  */
-public class TestActivity extends Activity {
+public class TestActivity extends FragmentActivity {
 
     private TextView tvPath;
     private BrowserDialog.OnDialogResultListener onDialogResultListener;
@@ -51,7 +51,7 @@ public class TestActivity extends Activity {
                         .setStartIsRoot(false)
                         .setRootPath(Environment.getExternalStorageDirectory().getAbsolutePath())
                         .setOnDialogResultListener(onDialogResultListener);
-                dialog.show(getFragmentManager(), dialog.toString());
+                dialog.show(getSupportFragmentManager(), dialog.toString());
             }
         });
 
@@ -61,7 +61,7 @@ public class TestActivity extends Activity {
                 BrowserDialog dialog = new BrowserDialog()
                         .setBrowseMode(BrowseMode.SELECT_DIR)
                         .setOnDialogResultListener(onDialogResultListener);
-                dialog.show(getFragmentManager(), dialog.toString());
+                dialog.show(getSupportFragmentManager(), dialog.toString());
             }
         });
 
@@ -76,7 +76,7 @@ public class TestActivity extends Activity {
                         .setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath())
                         .setStartIsRoot(false)
                         .setOnDialogResultListener(onDialogResultListener);
-                dialog.show(getFragmentManager(), dialog.toString());
+                dialog.show(getSupportFragmentManager(), dialog.toString());
             }
         });
 
@@ -90,7 +90,7 @@ public class TestActivity extends Activity {
                         .setSortMode(SortMode.BY_EXTENSION_ASC)
                         .setBrowseMode(BrowseMode.SAVE_FILE)
                         .setOnDialogResultListener(onDialogResultListener);
-                dialog.show(getFragmentManager(), dialog.toString());
+                dialog.show(getSupportFragmentManager(), dialog.toString());
                 //browserIntent.putExtra(BrowserActivity.OPTION_LAYOUT, BrowserActivity.LAYOUT_GRID);
             }
         });

@@ -3,7 +3,7 @@
     <string name="browser_activityName">FileBrowser</string>
     <string name="browser_pathPlaceholder">Opened file\'s path goes here</string>
     <string name="browser_currentDirectory">Current directory:</string>
-    <string name="browser_placeholder">ads:DsaDF:FdsADS:F</string>
+    <string name="browser_placeholder" translatable="false">ads:DsaDF:FdsADS:F</string>
     <string name="browser_titleOpenFile">Open File…</string>
     <string name="browser_titleSaveFile">Save File as…</string>
     <string name="browser_titleSelectDir">Select Directory…</string>
@@ -41,6 +41,6 @@
     <string name="browser_error_invalidFolderName_title">Invalid Folder Name</string>
     <string name="browser_error_invalidFolderName_message">The specified folder name is invalid.</string>
     <string name="browser_pressAgainToCancel">Press again to cancel.</string>
-    <string name="browser_upFolder">..</string>
+    <string name="browser_upFolder" translatable="false">..</string>
     <string name="browser_confirmOverwrite">Press \'Save\' again to overwrite file.</string>
 </resources>

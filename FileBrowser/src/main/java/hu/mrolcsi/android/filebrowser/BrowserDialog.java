@@ -1,11 +1,12 @@
 package hu.mrolcsi.android.filebrowser;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
@@ -146,7 +147,7 @@ public class BrowserDialog extends DialogFragment {
         public void onNegativeResult() {
         }
     };
-    private Map<String, Parcelable> states = new ConcurrentHashMap<String, Parcelable>();
+    private Map<String, Parcelable> states = new ConcurrentHashMap<>();
     private ImageButton btnSwitchLayout;
     private ImageButton btnNewFolder;
     private boolean overwrite = false;
@@ -161,8 +162,8 @@ public class BrowserDialog extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            startPath = savedInstanceState.getString(OPTION_START_PATH, "/");
-            currentPath = savedInstanceState.getString("currentPath", startPath);
+            startPath = savedInstanceState.getString(OPTION_START_PATH);
+            currentPath = savedInstanceState.getString("currentPath");
             browseMode = (BrowseMode) savedInstanceState.getSerializable(OPTION_BROWSE_MODE);
             sortMode = (SortMode) savedInstanceState.getSerializable(OPTION_SORT_MODE);
             extensionFilter = savedInstanceState.getStringArray(OPTION_EXTENSION_FILTER);
@@ -242,7 +243,7 @@ public class BrowserDialog extends DialogFragment {
 
             final Spinner spnExtension = (Spinner) view.findViewById(R.id.browser_spnExtension);
             if (extensionFilter != null) {
-                final ArrayAdapter<String> extensionAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, extensionFilter);
+                final ArrayAdapter<String> extensionAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, extensionFilter);
                 extensionAdapter.setDropDownViewResource(R.layout.browser_dropdown_item);
                 spnExtension.setAdapter(extensionAdapter);
                 spnExtension.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -320,7 +321,7 @@ public class BrowserDialog extends DialogFragment {
                 break;
         }
         setListListeners();
-        states = new ConcurrentHashMap<String, Parcelable>();
+        states = new ConcurrentHashMap<>();
         loadList(new File(currentPath));
     }
 
@@ -567,7 +568,7 @@ public class BrowserDialog extends DialogFragment {
      * WRITE_EXTERNAL_STORAGE szükséges!
      */
     private void showNewFolderDialog() {
-        final View view = getActivity().getLayoutInflater().inflate(R.layout.browser_dialog_newfolder, null);
+        @SuppressLint("InflateParams") final View view = getActivity().getLayoutInflater().inflate(R.layout.browser_dialog_newfolder, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.browser_menu_newFolder)
                 .setIcon(R.drawable.browser_new_folder).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -689,14 +690,14 @@ public class BrowserDialog extends DialogFragment {
         return extensionFilter;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    public BrowserDialog setExtensionFilter(String extensionFilter) {
-        this.extensionFilter = extensionFilter.split(";");
+    public BrowserDialog setExtensionFilter(String... extensions) {
+        this.extensionFilter = extensions;
         return this;
     }
 
-    public BrowserDialog setExtensionFilter(String... extensions) {
-        this.extensionFilter = extensions;
+    @SuppressWarnings("UnusedDeclaration")
+    public BrowserDialog setExtensionFilter(String extensionFilter) {
+        this.extensionFilter = extensionFilter.split(";");
         return this;
     }
 
@@ -745,12 +746,12 @@ public class BrowserDialog extends DialogFragment {
          *
          * @param path A hívó Activityben felhasználható elérési út.
          */
-        public abstract void onPositiveResult(String path);
+        void onPositiveResult(String path);
 
         /**
          * Nem lett kiválasztva fájl/mappa.
          * A dialógus bezárult.
          */
-        public abstract void onNegativeResult();
+        void onNegativeResult();
     }
 }

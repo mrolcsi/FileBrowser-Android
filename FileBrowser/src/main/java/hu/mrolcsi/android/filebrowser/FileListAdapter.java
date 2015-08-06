@@ -109,13 +109,13 @@ class FileListAdapter extends BaseAdapter {
         boolean isUp = holder.file.getAbsolutePath().equals("/..");
 
         if (isUp) {
-            holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.browser_up));
+            holder.icon.setImageResource(R.drawable.browser_up);
         } else {
             if (holder.file.isDirectory()) {
-                holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.browser_folder_closed));
+                holder.icon.setImageResource(R.drawable.browser_folder_closed);
             }
             if (holder.file.isFile()) {
-                holder.icon.setImageDrawable(context.getResources().getDrawable(R.drawable.browser_file));
+                holder.icon.setImageResource(R.drawable.browser_file);
             }
         }
 
