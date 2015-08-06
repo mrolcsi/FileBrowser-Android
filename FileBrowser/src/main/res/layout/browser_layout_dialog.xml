@@ -7,61 +7,23 @@
                 android:layout_gravity="center"
                 android:padding="@dimen/browser_margin">
 
-    <TextView
-        android:id="@+id/browser_labelCurrentDirectory"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/browser_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/browser_recyclerView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="@dimen/browser_margin"
+        android:layout_above="@+id/browser_rlSave"
+        android:layout_below="@+id/browser_toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/browser_margin"
         android:layout_marginTop="@dimen/browser_margin"
-        android:text="@string/browser_currentDirectory"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/browser_textViewCurrentDir"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/browser_labelCurrentDirectory"
-        android:layout_marginLeft="@dimen/browser_margin"
-        android:layout_marginTop="@dimen/browser_margin"
-        android:layout_toLeftOf="@+id/browser_btnNewFolder"
-        android:text="@string/browser_pathPlaceholder" />
-
-
-    <ImageButton
-        android:id="@+id/browser_btnLayout"
-        android:layout_width="@dimen/browser_toolbarIconSize"
-        android:layout_height="@dimen/browser_toolbarIconSize"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="@dimen/browser_margin"
-        android:background="@null"
-        android:scaleType="fitCenter"
-        android:src="@drawable/browser_grid" />
-
-    <ImageButton
-        android:id="@+id/browser_btnSort"
-        android:layout_width="@dimen/browser_toolbarIconSize"
-        android:layout_height="@dimen/browser_toolbarIconSize"
-        android:layout_alignParentTop="true"
-        android:layout_margin="@dimen/browser_margin"
-        android:layout_toLeftOf="@+id/browser_btnLayout"
-        android:background="@null"
-        android:scaleType="fitCenter"
-        android:src="@drawable/browser_sort" />
-
-    <ImageButton
-        android:id="@+id/browser_btnNewFolder"
-        android:layout_width="@dimen/browser_toolbarIconSize"
-        android:layout_height="@dimen/browser_toolbarIconSize"
-        android:layout_alignParentTop="true"
-        android:layout_margin="@dimen/browser_margin"
-        android:layout_toLeftOf="@+id/browser_btnSort"
-        android:background="@null"
-        android:scaleType="fitCenter"
-        android:src="@drawable/browser_new_folder" />
+        android:scrollbars="vertical" />
 
     <RelativeLayout
         android:id="@+id/browser_rlSave"
@@ -106,19 +68,8 @@
             android:contentDescription="@android:string/ok"
             android:focusable="false"
             android:scaleType="fitCenter"
-            android:src="@drawable/browser_save" />
+            android:src="@drawable/browser_save_dark" />
     </RelativeLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/browser_recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/browser_rlSave"
-        android:layout_below="@+id/browser_textViewCurrentDir"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/browser_margin"
-        android:layout_marginTop="@dimen/browser_margin"
-        android:scrollbars="vertical" />
 
     <!--<ListView-->
     <!--android:id="@+id/browser_listView"-->

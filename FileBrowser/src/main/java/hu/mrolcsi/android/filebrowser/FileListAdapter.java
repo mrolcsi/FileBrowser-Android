@@ -87,13 +87,13 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
         boolean isUp = holder.file.getAbsolutePath().equals("/..");
 
         if (isUp) {
-            holder.icon.setImageResource(R.drawable.browser_up);
+            holder.icon.setImageResource(R.drawable.browser_left_up_2_dark);
         } else {
             if (holder.file.isDirectory()) {
-                holder.icon.setImageResource(R.drawable.browser_folder_closed);
+                holder.icon.setImageResource(R.drawable.browser_folder_dark);
             }
             if (holder.file.isFile()) {
-                holder.icon.setImageResource(R.drawable.browser_file);
+                holder.icon.setImageResource(R.drawable.browser_file_dark);
             }
         }
 
@@ -119,8 +119,7 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
             case BY_DATE_DESC:
                 holder.text.setText(holder.file.getName());
                 if (!isUp && holder.extra != null)
-                    holder.extra.setText(String.format("%1$tY.%1$tm.%1$td\n" +
-                            "%1$tH:%1$tM", holder.file.lastModified()));
+                    holder.extra.setText(String.format("%1$tY.%1$tm.%1$td\n%1$tH:%1$tM", holder.file.lastModified()));
                 break;
             case BY_SIZE_ASC:
             case BY_SIZE_DESC:

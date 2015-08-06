@@ -12,6 +12,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
@@ -112,7 +113,6 @@ public class BrowserDialog extends DialogFragment {
     };
     //endregion
 
-    //region Privates
     static {
         OPTION_START_IS_ROOT = "startIsRoot";
         OPTION_DEFAULT_FILENAME = "defaultFileName";
@@ -124,6 +124,7 @@ public class BrowserDialog extends DialogFragment {
         OPTION_LAYOUT = "layout";
     }
 
+    //region Privates
     private RecyclerView list;
     private BrowseMode browseMode = BrowseMode.OPEN_FILE;
     private SortMode sortMode = SortMode.BY_NAME_ASC;
@@ -135,7 +136,6 @@ public class BrowserDialog extends DialogFragment {
     private String currentPath = startPath;
     private boolean startIsRoot = true;
     private Layout activeLayout = Layout.LIST;
-    private TextView tvCurrentPath;
     private int itemLayoutID = R.layout.browser_listitem_layout;
     private ImageButton btnSave;
     private EditText etFilename;
@@ -150,13 +150,12 @@ public class BrowserDialog extends DialogFragment {
         }
     };
     private Map<String, Parcelable> states = new ConcurrentHashMap<>();
-    private ImageButton btnSwitchLayout;
-    private ImageButton btnNewFolder;
     private boolean overwrite = false;
     private LinearLayoutManager mLinearLayout;
     private GridLayoutManager mGridLayout;
     private ItemClickSupport mItemClickSupport;
     private DividerItemDecoration mListItemDecor;
+    private Toolbar mToolbar;
     //</editor-fold>
 
 
@@ -188,7 +187,6 @@ public class BrowserDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        final WindowManager.LayoutParams layoutParams = dialog.getWindow().getAttributes();
         return dialog;
     }
 
@@ -199,31 +197,36 @@ public class BrowserDialog extends DialogFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        btnSwitchLayout = (ImageButton) view.findViewById(R.id.browser_btnLayout);
-        btnSwitchLayout.setOnClickListener(new View.OnClickListener() {
+
+        mToolbar = (Toolbar) view.findViewById(R.id.browser_toolbar);
+        mToolbar.inflateMenu(R.menu.browser_menu);
+        mToolbar.setTitle(R.string.browser_currentDirectory);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
-            public void onClick(View view) {
-                setLayout();
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                final int id = menuItem.getItemId();
+
+                if (id == R.id.browser_menuNewFolder) {
+                    showNewFolderDialog();
+                    return true;
+                } else if (id == R.id.browser_menuSort) {
+                    showSortDialog();
+                    return true;
+                } else if (id == R.id.browser_menuSwitchLayout) {
+                    if (activeLayout == Layout.LIST) {
+                        menuItem.setTitle(R.string.browser_menu_viewAsList);
+                        menuItem.setIcon(R.drawable.browser_list_dark);
+                        toGridView();
+                    } else if (activeLayout == Layout.GRID) {
+                        menuItem.setTitle(R.string.browser_menu_viewAsGrid);
+                        menuItem.setIcon(R.drawable.browser_grid_dark);
+                        toListView();
+                    }
+                    return true;
+                }
+                return false;
             }
         });
-
-        ImageButton btnSortMode = (ImageButton) view.findViewById(R.id.browser_btnSort);
-        btnSortMode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showSortDialog();
-            }
-        });
-
-        btnNewFolder = (ImageButton) view.findViewById(R.id.browser_btnNewFolder);
-        btnNewFolder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showNewFolderDialog();
-            }
-        });
-
-        tvCurrentPath = (TextView) view.findViewById(R.id.browser_textViewCurrentDir);
 
         list = (RecyclerView) view.findViewById(R.id.browser_recyclerView);
         mListItemDecor = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
@@ -348,13 +351,10 @@ public class BrowserDialog extends DialogFragment {
      * Lista nézetbe váltás ViewFlipperen keresztül.
      */
     private void toListView() {
-        //TODO
         activeLayout = Layout.LIST;
-        btnSwitchLayout.setImageResource(R.drawable.browser_grid);
         itemLayoutID = R.layout.browser_listitem_layout;
         list.addItemDecoration(mListItemDecor);
         list.setLayoutManager(mLinearLayout);
-        //setListListeners();
         loadList(new File(currentPath));
     }
 
@@ -363,11 +363,9 @@ public class BrowserDialog extends DialogFragment {
      */
     private void toGridView() {
         activeLayout = Layout.GRID;
-        btnSwitchLayout.setImageResource(R.drawable.browser_list);
         list.setLayoutManager(mGridLayout);
         list.removeItemDecoration(mListItemDecor);
         itemLayoutID = R.layout.browser_griditem_layout;
-        //setListListeners();
         loadList(new File(currentPath));
     }
 
@@ -377,7 +375,7 @@ public class BrowserDialog extends DialogFragment {
     private void showSortDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.browser_menu_sortBy)
-                .setIcon(R.drawable.browser_sort)
+                .setIcon(R.drawable.browser_alphabetical_sorting_dark)
                 .setItems(R.array.browser_sortOptions, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -509,7 +507,7 @@ public class BrowserDialog extends DialogFragment {
         });
 
         currentPath = directory.getAbsolutePath();
-        tvCurrentPath.setText(currentPath);
+        mToolbar.setSubtitle(currentPath);
 
         FileListAdapter fla;
         boolean isRoot = startIsRoot ? currentPath.equals(startPath) || currentPath.equals(rootPath) : currentPath.equals(rootPath);
@@ -543,7 +541,7 @@ public class BrowserDialog extends DialogFragment {
             list.getLayoutManager().onRestoreInstanceState(state);
 
         File currentFile = new File(currentPath);
-        btnNewFolder.setVisibility(currentFile.canWrite() ? View.VISIBLE : View.GONE);
+        mToolbar.getMenu().findItem(R.id.browser_menuNewFolder).setVisible(currentFile.canWrite());
     }
 
     /**
@@ -582,7 +580,7 @@ public class BrowserDialog extends DialogFragment {
         @SuppressLint("InflateParams") final View view = getActivity().getLayoutInflater().inflate(R.layout.browser_dialog_newfolder, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.browser_menu_newFolder)
-                .setIcon(R.drawable.browser_new_folder).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                .setIcon(R.drawable.browser_open_folder_dark).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         EditText etFolderName = (EditText) view.findViewById(R.id.browser_etNewFolder);
@@ -700,14 +698,14 @@ public class BrowserDialog extends DialogFragment {
         return extensionFilter;
     }
 
-    public BrowserDialog setExtensionFilter(String... extensions) {
-        this.extensionFilter = extensions;
-        return this;
-    }
-
     @SuppressWarnings("UnusedDeclaration")
     public BrowserDialog setExtensionFilter(String extensionFilter) {
         this.extensionFilter = extensionFilter.split(";");
+        return this;
+    }
+
+    public BrowserDialog setExtensionFilter(String... extensions) {
+        this.extensionFilter = extensions;
         return this;
     }
 
