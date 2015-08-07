@@ -23,7 +23,7 @@ import hu.mrolcsi.android.filebrowser.util.DividerItemDecoration;
 import hu.mrolcsi.android.filebrowser.util.Error;
 import hu.mrolcsi.android.filebrowser.util.FileSorterTask;
 import hu.mrolcsi.android.filebrowser.util.Utils;
-import org.lucasr.twowayview.ItemClickSupport;
+import hu.mrolcsi.android.filebrowser.util.itemclicksupport.ItemClickSupport;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -681,13 +681,13 @@ public class BrowserDialog extends DialogFragment {
         return mExtensionFilter;
     }
 
-    public BrowserDialog setExtensionFilter(String extensionFilter) {
-        this.mExtensionFilter = extensionFilter.split(";");
+    public BrowserDialog setExtensionFilter(String... extensions) {
+        this.mExtensionFilter = extensions;
         return this;
     }
 
-    public BrowserDialog setExtensionFilter(String... extensions) {
-        this.mExtensionFilter = extensions;
+    public BrowserDialog setExtensionFilter(String extensionFilter) {
+        this.mExtensionFilter = extensionFilter.split(";");
         return this;
     }
 
