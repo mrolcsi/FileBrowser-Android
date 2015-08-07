@@ -2,7 +2,9 @@ package hu.mrolcsi.android.filebrowser;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -11,7 +13,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
@@ -20,11 +21,13 @@ import hu.mrolcsi.android.filebrowser.option.Layout;
 import hu.mrolcsi.android.filebrowser.option.SortMode;
 import hu.mrolcsi.android.filebrowser.util.DividerItemDecoration;
 import hu.mrolcsi.android.filebrowser.util.Error;
+import hu.mrolcsi.android.filebrowser.util.FileSorterTask;
 import hu.mrolcsi.android.filebrowser.util.Utils;
 import org.lucasr.twowayview.ItemClickSupport;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -140,6 +143,7 @@ public class BrowserDialog extends DialogFragment {
     private int mItemLayoutID = R.layout.browser_listitem_layout;
     private boolean mOverwrite = false;
     private Map<String, Parcelable> mStates = new ConcurrentHashMap<>();
+    private AsyncTask<File, Integer, List<File>> mFileSorter;
 
     private RecyclerView rvFileList;
     private ImageButton btnSave;
@@ -158,7 +162,7 @@ public class BrowserDialog extends DialogFragment {
         public void onNegativeResult() {
         }
     };
-    //region
+    //endregion
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -444,63 +448,98 @@ public class BrowserDialog extends DialogFragment {
 
         mStates.put(mCurrentPath, rvFileList.getLayoutManager().onSaveInstanceState());
 
+        if (mFileSorter != null) {
+            mFileSorter.cancel(true);
+            mFileSorter = null;
+        }
+
         File[] filesToLoad;
 
-        if (mExtensionFilter != null) filesToLoad = directory.listFiles(new FileFilter() {
+        if (mBrowseMode == BrowseMode.OPEN_FILE || mBrowseMode == BrowseMode.SAVE_FILE) {
+            if (mExtensionFilter != null) filesToLoad = directory.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(File file) {
+                    if (file.isFile()) {
+                        String ext = Utils.getExtension(file.getName());
+                        int i = 0;
+                        int n = mExtensionFilter.length;
+                        while (i < n && !mExtensionFilter[i].toLowerCase().equals(ext)) i++;
+                        return i < n;
+                    } else return file.canRead();
+                }
+            });
+            else filesToLoad = directory.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(File file) {
+                    return file.canRead();
+                }
+            });
+        } else filesToLoad = directory.listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
-                if (file.isFile()) {
-                    String ext = Utils.getExtension(file.getName());
-                    int i = 0;
-                    int n = mExtensionFilter.length;
-                    while (i < n && !mExtensionFilter[i].toLowerCase().equals(ext)) i++;
-                    return i < n;
-                } else return file.canRead();
-            }
-        });
-        else filesToLoad = directory.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return file.canRead();
+                return file.isDirectory() && file.canRead();
             }
         });
 
         mCurrentPath = directory.getAbsolutePath();
-        mToolbar.setSubtitle(mCurrentPath);
 
-        FileListAdapter fla;
-        boolean isRoot = mStartIsRoot ? mCurrentPath.equals(mStartPath) || mCurrentPath.equals(mRootPath) : mCurrentPath.equals(mRootPath);
+        mFileSorter = new FileSorterTask(mSortMode) {
 
-        Log.d(getClass().getSimpleName(), "root path = " + mRootPath);
-        Log.d(getClass().getSimpleName(), "start path = " + mStartPath);
-        Log.d(getClass().getSimpleName(), "current path = " + mCurrentPath);
+            long startTime;
+            private ProgressDialog pd;
 
-        switch (mBrowseMode) {
-            default:
-            case SAVE_FILE:
-            case OPEN_FILE:
-                fla = new FileListAdapter(getActivity(), mItemLayoutID, filesToLoad, mBrowseMode, mSortMode, isRoot);
-                break;
-            case SELECT_DIR:
-                FileFilter filter = new FileFilter() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                pd = new ProgressDialog(getActivity());
+                pd.setMessage(getString(R.string.browser_loadingFileList));
+                //pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                //pd.setIndeterminate(false);
+                pd.setCanceledOnTouchOutside(false);
+                pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
-                    public boolean accept(File file) {
-                        return file.isDirectory();
+                    public void onCancel(DialogInterface dialogInterface) {
+                        mFileSorter.cancel(true);
+                        mFileSorter = null;
                     }
-                };
-                fla = new FileListAdapter(getActivity(), mItemLayoutID, directory.listFiles(filter), mBrowseMode, mSortMode, isRoot);
-                break;
-        }
+                });
 
-        rvFileList.setAdapter(fla);
+                startTime = System.currentTimeMillis();
+            }
 
-        //if (browseMode == MODE_SAVE_FILE) btnSave.setEnabled(directory.canWrite());
-        Parcelable state = mStates.get(mCurrentPath);
-        if (state != null)
-            rvFileList.getLayoutManager().onRestoreInstanceState(state);
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                super.onProgressUpdate(values);
+                pd.setProgress(values[0]);
+                pd.setMax(values[1]);
 
-        File currentFile = new File(mCurrentPath);
-        mToolbar.getMenu().findItem(R.id.browser_menuNewFolder).setVisible(currentFile.canWrite());
+                //if (System.currentTimeMillis() - startTime > 3000)
+                pd.show();
+            }
+
+            @Override
+            protected void onPostExecute(List<File> files) {
+                super.onPostExecute(files);
+
+                pd.dismiss();
+
+                mToolbar.setSubtitle(mCurrentPath);
+
+                boolean isRoot = mStartIsRoot ? mCurrentPath.equals(mStartPath) || mCurrentPath.equals(mRootPath) : mCurrentPath.equals(mRootPath);
+
+                rvFileList.setAdapter(new FileListAdapter(getActivity(), mItemLayoutID, files, mBrowseMode, mSortMode, isRoot));
+
+                Parcelable state = mStates.get(mCurrentPath);
+                if (state != null)
+                    rvFileList.getLayoutManager().onRestoreInstanceState(state);
+
+                File currentFile = new File(mCurrentPath);
+                mToolbar.getMenu().findItem(R.id.browser_menuNewFolder).setVisible(currentFile.canWrite());
+
+            }
+        }.execute(filesToLoad);
+
     }
 
     private void showOverwriteDialog(final String fileName) {
@@ -642,13 +681,13 @@ public class BrowserDialog extends DialogFragment {
         return mExtensionFilter;
     }
 
-    public BrowserDialog setExtensionFilter(String... extensions) {
-        this.mExtensionFilter = extensions;
+    public BrowserDialog setExtensionFilter(String extensionFilter) {
+        this.mExtensionFilter = extensionFilter.split(";");
         return this;
     }
 
-    public BrowserDialog setExtensionFilter(String extensionFilter) {
-        this.mExtensionFilter = extensionFilter.split(";");
+    public BrowserDialog setExtensionFilter(String... extensions) {
+        this.mExtensionFilter = extensions;
         return this;
     }
 

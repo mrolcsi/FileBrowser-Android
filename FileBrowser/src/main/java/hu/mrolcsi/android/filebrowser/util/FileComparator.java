@@ -11,26 +11,32 @@ import java.util.Comparator;
  */
 
 public abstract class FileComparator {
-    static class byFileName implements Comparator<File> {
+    static class ByFileName implements Comparator<File> {
         @Override
         public int compare(File f1, File f2) {
+            if (f1.isDirectory() && f2.isFile()) return 1;
+            if (f1.isFile() && f2.isDirectory()) return -1;
             return f1.getName().compareToIgnoreCase(f2.getName());
         }
     }
 
-    static class byExtension implements Comparator<File> {
+    static class ByExtension implements Comparator<File> {
 
         @Override
-        public int compare(File file, File file2) {
-            String ext1 = Utils.getExtension(file.getName());
-            String ext2 = Utils.getExtension(file2.getName());
+        public int compare(File f1, File f2) {
+            if (f1.isDirectory() && f2.isDirectory()) return f1.getName().compareToIgnoreCase(f2.getName());
+            if (f1.isDirectory() && f2.isFile()) return -1;
+            if (f1.isFile() && f2.isDirectory()) return 1;
+
+            String ext1 = Utils.getExtension(f1.getName());
+            String ext2 = Utils.getExtension(f2.getName());
             if (ext1 == null) return -1;
             if (ext2 == null) return 1;
             return ext1.compareToIgnoreCase(ext2);
         }
     }
 
-    static class byDate implements Comparator<File> {
+    static class ByDate implements Comparator<File> {
 
         @Override
         public int compare(File f1, File f2) {
@@ -42,12 +48,13 @@ public abstract class FileComparator {
         }
     }
 
-    static class bySize implements Comparator<File> {
+    static class BySize implements Comparator<File> {
 
         @Override
         public int compare(File f1, File f2) {
             if (f1 == null) return 1;
             if (f2 == null) return -1;
+
             long f1size = 0, f2size = 0;
             if (f1.isFile() && f2.isFile()) {
                 f1size = f1.length();

@@ -1,6 +1,5 @@
 package hu.mrolcsi.android.filebrowser;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +15,6 @@ import hu.mrolcsi.android.filebrowser.util.SizeCalculatorTask;
 import hu.mrolcsi.android.filebrowser.util.Utils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,45 +32,18 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
     private final LayoutInflater inflater;
     private List<File> data = null;
 
-    public FileListAdapter(Context context, int layoutResourceId, File[] inputData, BrowseMode browseMode, SortMode sortMode, boolean isRoot) {
+    public FileListAdapter(Context context, int layoutResourceId, List<File> inputData, BrowseMode browseMode, SortMode sortMode, boolean isRoot) {
         super();
         this.context = context;
         this.layoutResourceId = layoutResourceId;
         this.sortMode = sortMode;
-        this.inflater = ((Activity) context).getLayoutInflater();
+        this.inflater = LayoutInflater.from(context);
 
-        data = new ArrayList<>();
-        if (!isRoot) data.add(new File(context.getString(R.string.browser_upFolder)));
+        data = inputData;
 
-        if (inputData.length > 0) {
-            switch (this.sortMode) {
-                default:
-                case BY_NAME_ASC:
-                    this.data.addAll(Utils.sortByNameAsc(inputData));
-                    break;
-                case BY_NAME_DESC:
-                    this.data.addAll(Utils.sortByNameDesc(inputData));
-                    break;
-                case BY_EXTENSION_ASC:
-                    this.data.addAll(Utils.sortByExtensionAsc(inputData));
-                    break;
-                case BY_EXTENSION_DESC:
-                    this.data.addAll(Utils.sortByExtensionDesc(inputData));
-                    break;
-                case BY_DATE_ASC:
-                    this.data.addAll(Utils.sortByDateAsc(inputData));
-                    break;
-                case BY_DATE_DESC:
-                    this.data.addAll(Utils.sortByDateDesc(inputData));
-                    break;
-                case BY_SIZE_ASC:
-                    this.data.addAll(Utils.sortBySizeAsc(inputData));
-                    break;
-                case BY_SIZE_DESC:
-                    this.data.addAll(Utils.sortBySizeDesc(inputData));
-                    break;
-            }
-        } else {
+        if (!isRoot) data.add(0, new File(context.getString(R.string.browser_upFolder)));
+
+        if (inputData.size() <= 0) {
             if (browseMode != BrowseMode.SELECT_DIR)
                 data.add(new File(context.getString(R.string.browser_emptyFolder)));
         }

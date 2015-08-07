@@ -1,7 +1,9 @@
 package hu.mrolcsi.android.filebrowser.util;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Stack;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,144 +31,6 @@ public abstract class Utils {
         } catch (IndexOutOfBoundsException e) {
             return fileName;
         }
-    }
-
-    public static List<File> sortByNameAsc(File[] input) {
-        if (input != null) {
-            List<File> files = new ArrayList<>();
-            List<File> dirs = new ArrayList<>();
-            for (File f : input) {
-                if (f.isFile()) files.add(f);
-                if (f.isDirectory()) dirs.add(f);
-            }
-            Collections.sort(dirs, new FileComparator.byFileName());
-            Collections.sort(files, new FileComparator.byFileName());
-            List<File> list = new ArrayList<>();
-            list.addAll(dirs);
-            list.addAll(files);
-            return list;
-        } else return null;
-    }
-
-    public static List<File> sortByNameDesc(File[] input) {
-        if (input != null) {
-            List<File> files = new ArrayList<>();
-            List<File> dirs = new ArrayList<>();
-            for (File f : input) {
-                if (f.isFile()) files.add(f);
-                if (f.isDirectory()) dirs.add(f);
-            }
-            Collections.sort(dirs, Collections.reverseOrder(new FileComparator.byFileName()));
-            Collections.sort(files, Collections.reverseOrder(new FileComparator.byFileName()));
-            List<File> list = new ArrayList<>();
-            list.addAll(dirs);
-            list.addAll(files);
-            return list;
-        } else return null;
-    }
-
-    public static List<File> sortByExtensionAsc(File[] input) {
-        if (input != null) {
-            List<File> files = new ArrayList<>();
-            List<File> dirs = new ArrayList<>();
-            for (File f : input) {
-                if (f.isFile()) files.add(f);
-                if (f.isDirectory()) dirs.add(f);
-            }
-            Collections.sort(dirs, new FileComparator.byFileName());
-            Collections.sort(files, new FileComparator.byFileName());
-            Collections.sort(files, new FileComparator.byExtension());
-            List<File> list = new ArrayList<>();
-            list.addAll(dirs);
-            list.addAll(files);
-            return list;
-        } else return null;
-    }
-
-    public static List<File> sortByExtensionDesc(File[] input) {
-        if (input != null) {
-            List<File> files = new ArrayList<>();
-            List<File> dirs = new ArrayList<>();
-            for (File f : input) {
-                if (f.isFile()) files.add(f);
-                if (f.isDirectory()) dirs.add(f);
-            }
-            Collections.sort(dirs, new FileComparator.byFileName());
-            Collections.sort(files, new FileComparator.byFileName());
-            Collections.sort(files, Collections.reverseOrder(new FileComparator.byExtension()));
-            List<File> list = new ArrayList<>();
-            list.addAll(dirs);
-            list.addAll(files);
-            return list;
-        } else return null;
-    }
-
-    public static List<File> sortByDateAsc(File[] input) {
-        if (input != null) {
-            List<File> files = new ArrayList<>();
-            List<File> dirs = new ArrayList<>();
-            for (File f : input) {
-                if (f.isFile()) files.add(f);
-                if (f.isDirectory()) dirs.add(f);
-            }
-            Collections.sort(dirs, new FileComparator.byDate());
-            Collections.sort(files, new FileComparator.byDate());
-            List<File> list = new ArrayList<>();
-            list.addAll(dirs);
-            list.addAll(files);
-            return list;
-        } else return null;
-    }
-
-    public static List<File> sortByDateDesc(File[] input) {
-        if (input != null) {
-            List<File> files = new ArrayList<>();
-            List<File> dirs = new ArrayList<>();
-            for (File f : input) {
-                if (f.isFile()) files.add(f);
-                if (f.isDirectory()) dirs.add(f);
-            }
-            Collections.sort(dirs, Collections.reverseOrder(new FileComparator.byDate()));
-            Collections.sort(files, Collections.reverseOrder(new FileComparator.byDate()));
-            List<File> list = new ArrayList<>();
-            list.addAll(dirs);
-            list.addAll(files);
-            return list;
-        } else return null;
-    }
-
-    public static List<File> sortBySizeAsc(File[] input) {
-        if (input != null) {
-            List<File> files = new ArrayList<>();
-            List<File> dirs = new ArrayList<>();
-            for (File f : input) {
-                if (f.isFile()) files.add(f);
-                if (f.isDirectory()) dirs.add(f);
-            }
-            Collections.sort(dirs, new FileComparator.bySize());
-            Collections.sort(files, new FileComparator.bySize());
-            List<File> list = new ArrayList<>();
-            list.addAll(dirs);
-            list.addAll(files);
-            return list;
-        } else return null;
-    }
-
-    public static List<File> sortBySizeDesc(File[] input) {
-        if (input != null) {
-            List<File> files = new ArrayList<>();
-            List<File> dirs = new ArrayList<>();
-            for (File f : input) {
-                if (f.isFile()) files.add(f);
-                if (f.isDirectory()) dirs.add(f);
-            }
-            Collections.sort(dirs, Collections.reverseOrder(new FileComparator.bySize()));
-            Collections.sort(files, Collections.reverseOrder(new FileComparator.bySize()));
-            List<File> list = new ArrayList<>();
-            list.addAll(dirs);
-            list.addAll(files);
-            return list;
-        } else return null;
     }
 
     public static String getFriendlySize(File inputFile) {
@@ -197,6 +61,10 @@ public abstract class Utils {
      * @see <a href="http://stackoverflow.com/questions/4040912/how-can-i-get-the-size-of-a-folder-on-sd-card-in-android">forrás</a>
      */
     static long dirSize(File dir) {
+
+        if (Cache.getInstance().sizeCache.containsKey(dir.getAbsolutePath()))
+            return Cache.getInstance().sizeCache.get(dir.getAbsolutePath());
+
         long result = 0;
 
         Stack<File> dirlist = new Stack<>();
@@ -219,6 +87,8 @@ public abstract class Utils {
                 }
             } else result = 0;
         }
+
+        Cache.getInstance().sizeCache.put(dir.getAbsolutePath(), result);
 
         return result;
     }

@@ -5,7 +5,7 @@
     <string name="browser_currentDirectory">Aktuális mappa:</string>
     <string name="browser_titleOpenFile">Fájl megnyitása…</string>
     <string name="browser_titleSaveFile">Mentés másként…</string>
-    <string name="browser_titleSelectDir">Mappa kiválasztása…</string>
+    <string name="browser_titleSelectDir">Mappa kiválasztása</string>
     <string name="browser_emptyFolder">Ez a mappa üres.</string>
     <string name="browser_filenamePlaceholder">Fájlnév…</string>
     <string name="browser_fileExists_title">A fájl létezik</string>
@@ -41,4 +41,5 @@
     <string name="browser_error_invalidFolderName_message">A megadott mappanév nem használható.</string>
     <string name="browser_pressAgainToCancel">Nyomja meg mégegyszer a kilépéshez.</string>
     <string name="browser_confirmOverwrite">Felülíráshoz nyomja meg mégyegyszer a \'Mentés\'-t</string>
+    <string name="browser_loadingFileList">Fájlok listázása…</string>
 </resources>
