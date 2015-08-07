@@ -29,6 +29,9 @@ public class SizeCalculatorTask extends AsyncTask<File, Long, Long> {
         File[] fileList;
 
         while (!dirStack.isEmpty()) {
+
+            if (isCancelled()) return 0l;
+
             dirCurrent = dirStack.pop();
 
             fileList = dirCurrent.listFiles();

@@ -159,8 +159,6 @@ public class BrowserDialog extends DialogFragment {
         public void onNegativeResult() {
         }
     };
-    //</editor-fold>
-
 
     public BrowserDialog() {
         super();
@@ -688,14 +686,14 @@ public class BrowserDialog extends DialogFragment {
         return mExtensionFilter;
     }
 
-    public BrowserDialog setExtensionFilter(String... extensions) {
-        this.mExtensionFilter = extensions;
-        return this;
-    }
-
     @SuppressWarnings("UnusedDeclaration")
     public BrowserDialog setExtensionFilter(String extensionFilter) {
         this.mExtensionFilter = extensionFilter.split(";");
+        return this;
+    }
+
+    public BrowserDialog setExtensionFilter(String... extensions) {
+        this.mExtensionFilter = extensions;
         return this;
     }
 

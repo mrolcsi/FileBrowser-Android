@@ -2,6 +2,7 @@ package hu.mrolcsi.android.filebrowser;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,14 +89,27 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
     }
 
     @Override
+    public void onViewRecycled(FileHolder holder) {
+        super.onViewRecycled(holder);
+
+        if (holder.sizeCalculator != null) {
+            holder.sizeCalculator.cancel(true);
+            holder.sizeCalculator = null;
+        }
+    }
+
+    @Override
     public void onBindViewHolder(final FileHolder holder, int i) {
         holder.file = data.get(i);
         holder.itemView.setTag(holder);
 
-        final boolean isUp = holder.file.getAbsolutePath().equals("/..");
+        final boolean isUp = holder.file.getAbsolutePath().equals(File.separator + context.getString(R.string.browser_upFolder));
+        final boolean isDirSelector = holder.file.getAbsolutePath().equals(File.separator + context.getString(R.string.browser_titleSelectDir));
 
         if (isUp) {
             holder.icon.setImageResource(R.drawable.browser_left_up_2_dark);
+        } else if (isDirSelector) {
+            holder.icon.setImageResource(R.drawable.browser_checkmark_dark);
         } else {
             if (holder.file.isDirectory()) {
                 holder.icon.setImageResource(R.drawable.browser_folder_dark);
@@ -103,9 +117,6 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
             if (holder.file.isFile()) {
                 //TODO: switch (extension) -> document, image, music,video,text,other
                 holder.icon.setImageResource(R.drawable.browser_file_dark);
-            }
-            if (holder.file.getAbsolutePath().equals(File.separator + context.getString(R.string.browser_titleSelectDir))) {
-                holder.icon.setImageResource(R.drawable.browser_checkmark_dark);
             }
         }
 
@@ -140,36 +151,38 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
             case BY_SIZE_ASC:
             case BY_SIZE_DESC:
                 holder.text.setText(holder.file.getName());
-                new SizeCalculatorTask() {
-                    @Override
-                    protected void onPreExecute() {
-                        super.onPreExecute();
-                        holder.extra.setVisibility(View.GONE);
-                        holder.progress.setVisibility(View.VISIBLE);
-                    }
 
-                    @Override
-                    protected void onProgressUpdate(Long... values) {
-                        super.onProgressUpdate(values);
-                        holder.extra.setText(Utils.getFriendlySize(values[0]));
-                    }
+                if (!isUp && !isDirSelector)
+                    holder.sizeCalculator = new SizeCalculatorTask() {
+                        @Override
+                        protected void onPreExecute() {
+                            super.onPreExecute();
+                            holder.extra.setVisibility(View.GONE);
+                            holder.progress.setVisibility(View.VISIBLE);
+                        }
 
-                    @Override
-                    protected void onPostExecute(Long size) {
-                        super.onPostExecute(size);
-                        if (!isUp && holder.file.isDirectory()) {
-                            int count;
-                            try {
-                                count = holder.file.listFiles().length;
-                                holder.extra.setText(context.getResources().getQuantityString(R.plurals.browser_numberOfFiles, count, count) + "\n" + Utils.getFriendlySize(size));
-                            } catch (NullPointerException e) {
-                                holder.extra.setText(R.string.browser_unknown);
-                            }
-                        } else if (holder.file.isFile()) holder.extra.setText(Utils.getFriendlySize(size));
-                        holder.extra.setVisibility(View.VISIBLE);
-                        holder.progress.setVisibility(View.GONE);
-                    }
-                }.execute(holder.file);
+                        @Override
+                        protected void onProgressUpdate(Long... values) {
+                            super.onProgressUpdate(values);
+                            holder.extra.setText(Utils.getFriendlySize(values[0]));
+                        }
+
+                        @Override
+                        protected void onPostExecute(Long size) {
+                            super.onPostExecute(size);
+                            if (holder.file.isDirectory()) {
+                                int count;
+                                try {
+                                    count = holder.file.listFiles().length;
+                                    holder.extra.setText(context.getResources().getQuantityString(R.plurals.browser_numberOfFiles, count, count) + "\n" + Utils.getFriendlySize(size));
+                                } catch (NullPointerException e) {
+                                    holder.extra.setText(R.string.browser_unknown);
+                                }
+                            } else if (holder.file.isFile()) holder.extra.setText(Utils.getFriendlySize(size));
+                            holder.extra.setVisibility(View.VISIBLE);
+                            holder.progress.setVisibility(View.GONE);
+                        }
+                    }.execute(holder.file);
                 break;
         }
     }
@@ -186,6 +199,7 @@ class FileHolder extends RecyclerView.ViewHolder {
     TextView extra;
     ProgressBar progress;
     File file;
+    AsyncTask<File, Long, Long> sizeCalculator;
 
     public FileHolder(View itemView) {
         super(itemView);
