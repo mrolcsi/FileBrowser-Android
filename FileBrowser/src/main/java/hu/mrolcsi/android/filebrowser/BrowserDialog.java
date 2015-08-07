@@ -2,12 +2,10 @@ package hu.mrolcsi.android.filebrowser;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,9 +35,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * Time: 11:34
  */
 
+@SuppressWarnings("unused")
 public class BrowserDialog extends DialogFragment {
 
-    //region Publics
+    //region Public stuff
     /**
      * Browsing mode:
      * <ul>
@@ -159,14 +158,11 @@ public class BrowserDialog extends DialogFragment {
         public void onNegativeResult() {
         }
     };
-
-    public BrowserDialog() {
-        super();
-        setStyle(STYLE_NO_TITLE, 0);
-    }
+    //region
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setStyle(STYLE_NO_TITLE, this.getTheme());
         if (savedInstanceState != null) {
             mStartPath = savedInstanceState.getString(OPTION_START_PATH);
             mCurrentPath = savedInstanceState.getString("currentPath");
@@ -183,21 +179,13 @@ public class BrowserDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
     }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        return dialog;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.browser_layout_dialog, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
 
         mToolbar = (Toolbar) view.findViewById(R.id.browser_toolbar);
         mToolbar.inflateMenu(R.menu.browser_menu);
@@ -302,7 +290,7 @@ public class BrowserDialog extends DialogFragment {
                 if (!mOverwrite) {
                     Toast.makeText(getActivity(), getString(R.string.browser_confirmOverwrite), Toast.LENGTH_SHORT).show();
                     mOverwrite = true;
-                    //TODO: ellenőrizni
+                    //TODO: check
                 } else {
                     onDialogResultListener.onPositiveResult(result);
                     dismiss();
@@ -312,7 +300,7 @@ public class BrowserDialog extends DialogFragment {
                 dismiss();
             }
         } else {
-            showErrorDialog(hu.mrolcsi.android.filebrowser.util.Error.INVALID_FILENAME);
+            showErrorDialog(Error.INVALID_FILENAME);
         }
     }
 
@@ -330,9 +318,6 @@ public class BrowserDialog extends DialogFragment {
         super.onSaveInstanceState(outState);
     }
 
-    /**
-     * Lista nézetbe váltás ViewFlipperen keresztül.
-     */
     private void toListView() {
         mActiveLayout = Layout.LIST;
         mItemLayoutID = R.layout.browser_listitem_layout;
@@ -341,9 +326,6 @@ public class BrowserDialog extends DialogFragment {
         loadList(new File(mCurrentPath));
     }
 
-    /**
-     * Grid nézetbe váltás ViewFlipperen keresztül.
-     */
     private void toGridView() {
         mActiveLayout = Layout.GRID;
         rvFileList.setLayoutManager(mGridLayout);
@@ -352,9 +334,6 @@ public class BrowserDialog extends DialogFragment {
         loadList(new File(mCurrentPath));
     }
 
-    /**
-     * Dialógus megjelenítése a rendezési mód kiválasztásához.
-     */
     private void showSortDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.browser_menu_sortBy)
@@ -370,9 +349,6 @@ public class BrowserDialog extends DialogFragment {
         ad.show();
     }
 
-    /**
-     * View váltás után listenerek újraregisztrálása.
-     */
     private void setListListeners() {
         switch (mBrowseMode) {
             default:
@@ -460,11 +436,6 @@ public class BrowserDialog extends DialogFragment {
         }
     }
 
-    /**
-     * Fájlok listájának betöltése a ListView/GridView-ba.
-     *
-     * @param directory A betöltendő mappa.
-     */
     private void loadList(final File directory) {
         if (!directory.canRead()) {
             showErrorDialog(Error.FOLDER_NOT_READABLE);
@@ -500,9 +471,9 @@ public class BrowserDialog extends DialogFragment {
         FileListAdapter fla;
         boolean isRoot = mStartIsRoot ? mCurrentPath.equals(mStartPath) || mCurrentPath.equals(mRootPath) : mCurrentPath.equals(mRootPath);
 
-        Log.d(getClass().getName(), "root path = " + mRootPath);
-        Log.d(getClass().getName(), "start path = " + mStartPath);
-        Log.d(getClass().getName(), "current path = " + mCurrentPath);
+        Log.d(getClass().getSimpleName(), "root path = " + mRootPath);
+        Log.d(getClass().getSimpleName(), "start path = " + mStartPath);
+        Log.d(getClass().getSimpleName(), "current path = " + mCurrentPath);
 
         switch (mBrowseMode) {
             default:
@@ -532,12 +503,6 @@ public class BrowserDialog extends DialogFragment {
         mToolbar.getMenu().findItem(R.id.browser_menuNewFolder).setVisible(currentFile.canWrite());
     }
 
-    /**
-     * Ha a mentéskor megadott névvel már létezik fájl, megerősítést kér a felülírásról.
-     * Tényleges írás NEM történik.
-     *
-     * @param fileName fájlnév
-     */
     private void showOverwriteDialog(final String fileName) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -560,10 +525,6 @@ public class BrowserDialog extends DialogFragment {
         ad.show();
     }
 
-    /**
-     * Új mappa létrehozása az aktuális mappában.
-     * WRITE_EXTERNAL_STORAGE szükséges!
-     */
     private void showNewFolderDialog() {
         @SuppressLint("InflateParams") final View view = getActivity().getLayoutInflater().inflate(R.layout.browser_dialog_newfolder, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
@@ -591,11 +552,6 @@ public class BrowserDialog extends DialogFragment {
         ad.show();
     }
 
-    /**
-     * Hibaüzenet megjelenítése a felhasználónak.
-     *
-     * @param error a hiba oka
-     */
     private void showErrorDialog(Error error) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setIcon(android.R.drawable.ic_dialog_alert);
@@ -659,37 +615,31 @@ public class BrowserDialog extends DialogFragment {
         onDialogResultListener.onNegativeResult();
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+
     public BrowseMode getBrowseMode() {
         return mBrowseMode;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+
     public BrowserDialog setBrowseMode(BrowseMode browseMode) {
         this.mBrowseMode = browseMode;
         return this;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+
     public SortMode getSortMode() {
         return mSortMode;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+
     public BrowserDialog setSortMode(SortMode sortMode) {
         this.mSortMode = sortMode;
         return this;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+
     public String[] getExtensionFilter() {
         return mExtensionFilter;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public BrowserDialog setExtensionFilter(String extensionFilter) {
-        this.mExtensionFilter = extensionFilter.split(";");
-        return this;
     }
 
     public BrowserDialog setExtensionFilter(String... extensions) {
@@ -697,23 +647,27 @@ public class BrowserDialog extends DialogFragment {
         return this;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+    public BrowserDialog setExtensionFilter(String extensionFilter) {
+        this.mExtensionFilter = extensionFilter.split(";");
+        return this;
+    }
+
     public String getDefaultFileName() {
         return mDefaultFileName;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+
     public BrowserDialog setDefaultFileName(String defaultFileName) {
         this.mDefaultFileName = defaultFileName;
         return this;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+
     public String getStartPath() {
         return mStartPath;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+
     public BrowserDialog setStartPath(String startPath) {
         this.mStartPath = startPath;
         return this;
@@ -724,29 +678,21 @@ public class BrowserDialog extends DialogFragment {
         return this;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+
     public boolean isStartRoot() {
         return mStartIsRoot;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+
     public BrowserDialog setStartIsRoot(boolean startIsRoot) {
         this.mStartIsRoot = startIsRoot;
         return this;
     }
 
     public interface OnDialogResultListener {
-        /**
-         * Visszatérés a kiválasztott fájl/mappa teljes elérési útjával.
-         *
-         * @param path A hívó Activityben felhasználható elérési út.
-         */
+
         void onPositiveResult(String path);
 
-        /**
-         * Nem lett kiválasztva fájl/mappa.
-         * A dialógus bezárult.
-         */
         void onNegativeResult();
     }
 }
