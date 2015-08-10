@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="browser_DarkIcons">
+        <item name="browser_alphabetical_sorting_2">@drawable/browser_alphabetical_sorting_2_dark</item>
+        <item name="browser_alphabetical_sorting">@drawable/browser_alphabetical_sorting_dark</item>
+        <item name="browser_audio_file">@drawable/browser_audio_file_dark</item>
+        <item name="browser_checkmark">@drawable/browser_checkmark_dark</item>
+        <item name="browser_document">@drawable/browser_document_dark</item>
+        <item name="browser_file">@drawable/browser_file_dark</item>
+        <item name="browser_folder">@drawable/browser_folder_dark</item>
+        <item name="browser_grid">@drawable/browser_grid_dark</item>
+        <item name="browser_home">@drawable/browser_home_dark</item>
+        <item name="browser_image_file">@drawable/browser_image_file_dark</item>
+        <item name="browser_left_up_2">@drawable/browser_left_up_2_dark</item>
+        <item name="browser_list">@drawable/browser_list_dark</item>
+        <item name="browser_numerical_sorting">@drawable/browser_numerical_sorting_dark</item>
+        <item name="browser_open_folder">@drawable/browser_open_folder_dark</item>
+        <item name="browser_reversed_numerical_sorting">@drawable/browser_reversed_numerical_sorting_dark</item>
+        <item name="browser_save">@drawable/browser_save_dark</item>
+        <item name="browser_video_file">@drawable/browser_video_file_dark</item>
+    </style>
+
+    <style name="browser_LightIcons">
+        <item name="browser_alphabetical_sorting_2">@drawable/browser_alphabetical_sorting_2_light</item>
+        <item name="browser_alphabetical_sorting">@drawable/browser_alphabetical_sorting_light</item>
+        <item name="browser_audio_file">@drawable/browser_audio_file_light</item>
+        <item name="browser_checkmark">@drawable/browser_checkmark_light</item>
+        <item name="browser_document">@drawable/browser_document_light</item>
+        <item name="browser_file">@drawable/browser_file_light</item>
+        <item name="browser_folder">@drawable/browser_folder_light</item>
+        <item name="browser_grid">@drawable/browser_grid_light</item>
+        <item name="browser_home">@drawable/browser_home_light</item>
+        <item name="browser_image_file">@drawable/browser_image_file_light</item>
+        <item name="browser_left_up_2">@drawable/browser_left_up_2_light</item>
+        <item name="browser_list">@drawable/browser_list_light</item>
+        <item name="browser_numerical_sorting">@drawable/browser_numerical_sorting_light</item>
+        <item name="browser_open_folder">@drawable/browser_open_folder_light</item>
+        <item name="browser_reversed_numerical_sorting">@drawable/browser_reversed_numerical_sorting_light</item>
+        <item name="browser_save">@drawable/browser_save_light</item>
+        <item name="browser_video_file">@drawable/browser_video_file_light</item>
+    </style>
+</resources>

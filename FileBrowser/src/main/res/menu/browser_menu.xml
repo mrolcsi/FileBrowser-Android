@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools">
     <item
         android:id="@+id/browser_menuNewFolder"
-        android:icon="@drawable/browser_open_folder_dark"
         android:title="@string/browser_menu_newFolder"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction" />
     <item
         android:id="@+id/browser_menuSort"
-        android:icon="@drawable/browser_alphabetical_sorting_dark"
         android:title="@string/browser_menu_sortBy"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <item
         android:id="@+id/browser_menuSwitchLayout"
-        android:icon="@drawable/browser_grid_dark"
         android:title="@string/browser_menu_viewAsGrid"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>

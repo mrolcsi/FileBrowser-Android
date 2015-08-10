@@ -1,6 +1,10 @@
 package hu.mrolcsi.android.filebrowser.util;
 
+import android.content.Context;
+import android.util.TypedValue;
+
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Stack;
@@ -116,5 +120,21 @@ public abstract class Utils {
 
         final HashSet<T> set = new HashSet<>(Arrays.asList(array));
         return set.contains(v);
+    }
+
+    public static int getStyledResource(final Context context, final int attribResId, final int defaultValue) {
+        final TypedValue tv = new TypedValue();
+        final boolean found = context.getTheme().resolveAttribute(attribResId, tv, true);
+        return found ? tv.resourceId : defaultValue;
+    }
+
+    public static int getResId(int theme, String resName, Class<?> resourceClass) {
+        try {
+            Field idField = resourceClass.getDeclaredField(resName);
+            return idField.getInt(idField);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 }

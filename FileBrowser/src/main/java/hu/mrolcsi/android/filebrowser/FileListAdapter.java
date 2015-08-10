@@ -78,52 +78,49 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
         final boolean isDirSelector = holder.file.getAbsolutePath().equals(File.separator + context.getString(R.string.browser_titleSelectDir));
 
         if (isUp) {
-            holder.icon.setImageResource(R.drawable.browser_left_up_2_dark);
+            holder.icon.setImageResource(Utils.getStyledResource(context, R.attr.browser_left_up_2, R.drawable.browser_left_up_2_dark));
+            holder.extra.setText(null);
         } else if (isDirSelector) {
-            holder.icon.setImageResource(R.drawable.browser_checkmark_dark);
+            holder.icon.setImageResource(Utils.getStyledResource(context, R.attr.browser_checkmark, R.drawable.browser_checkmark_dark));
+            holder.extra.setText(null);
         } else {
             if (holder.file.isDirectory()) {
-                holder.icon.setImageResource(R.drawable.browser_folder_dark);
+                holder.icon.setImageResource(Utils.getStyledResource(context, R.attr.browser_folder, R.drawable.browser_folder_dark));
             }
             if (holder.file.isFile()) {
                 //TODO: switch (extension) -> document, image, music,video,text,other
-                holder.icon.setImageResource(R.drawable.browser_file_dark);
+                holder.icon.setImageResource(Utils.getStyledResource(context, R.attr.browser_file, R.drawable.browser_file_dark));
             }
         }
 
-        switch (sortMode) {
-            default:
-            case BY_NAME_ASC:
-            case BY_NAME_DESC:
-                holder.text.setText(holder.file.getName());
-                if (holder.extra != null) holder.extra.setVisibility(View.GONE);
-                break;
-            case BY_EXTENSION_ASC:
-            case BY_EXTENSION_DESC:
-                if (holder.file.isFile() && Utils.getExtension(holder.file.getName()) != null) {
-                    holder.text.setText(Utils.getNameWithoutExtension(holder.file.getName()));
-                    if (holder.extra != null) {
-                        holder.extra.setVisibility(View.VISIBLE);
-                        holder.extra.setText(new StringBuilder().append(".").append(Utils.getExtension(holder.file.getName())));
-                    }
-                } else {
-                    holder.text.setText(holder.file.getName());
+        holder.text.setText(holder.file.getName());
+
+        if (!isUp && !isDirSelector) {
+            switch (sortMode) {
+                default:
+                case BY_NAME_ASC:
+                case BY_NAME_DESC:
                     if (holder.extra != null) holder.extra.setVisibility(View.GONE);
-                }
-                break;
-            case BY_DATE_ASC:
-            case BY_DATE_DESC:
-                holder.text.setText(holder.file.getName());
-                if (!isUp && holder.extra != null) {
+                    break;
+                case BY_EXTENSION_ASC:
+                case BY_EXTENSION_DESC:
+                    if (holder.file.isFile() && Utils.getExtension(holder.file.getName()) != null) {
+                        holder.text.setText(Utils.getNameWithoutExtension(holder.file.getName()));
+                        if (holder.extra != null) {
+                            holder.extra.setVisibility(View.VISIBLE);
+                            holder.extra.setText(new StringBuilder().append(".").append(Utils.getExtension(holder.file.getName())));
+                        }
+                    } else {
+                        if (holder.extra != null) holder.extra.setVisibility(View.GONE);
+                    }
+                    break;
+                case BY_DATE_ASC:
+                case BY_DATE_DESC:
                     holder.extra.setVisibility(View.VISIBLE);
                     holder.extra.setText(String.format("%1$tY.%1$tm.%1$td\n%1$tH:%1$tM", holder.file.lastModified()));
-                }
-                break;
-            case BY_SIZE_ASC:
-            case BY_SIZE_DESC:
-                holder.text.setText(holder.file.getName());
-
-                if (!isUp && !isDirSelector)
+                    break;
+                case BY_SIZE_ASC:
+                case BY_SIZE_DESC:
                     holder.sizeCalculator = new SizeCalculatorTask() {
                         @Override
                         protected void onPreExecute() {
@@ -154,7 +151,8 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
                             holder.progress.setVisibility(View.GONE);
                         }
                     }.execute(holder.file);
-                break;
+                    break;
+            }
         }
     }
 

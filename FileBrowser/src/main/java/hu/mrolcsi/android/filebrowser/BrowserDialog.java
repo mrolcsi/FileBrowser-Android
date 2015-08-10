@@ -1,6 +1,7 @@
 package hu.mrolcsi.android.filebrowser;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -139,6 +140,7 @@ public class BrowserDialog extends DialogFragment {
     private String mRootPath = File.listRoots()[0].getAbsolutePath();
     private String mCurrentPath = mStartPath;
     private boolean mStartIsRoot = true;
+    private int mIconStyle = R.style.browser_DarkIcons;
     private Layout mActiveLayout = Layout.LIST;
     private int mItemLayoutID = R.layout.browser_listitem_layout;
     private boolean mOverwrite = false;
@@ -162,6 +164,9 @@ public class BrowserDialog extends DialogFragment {
         public void onNegativeResult() {
         }
     };
+
+    private MenuItem menuSortMode;
+    private MenuItem menuSwitchLayout;
     //endregion
 
     @Override
@@ -183,6 +188,14 @@ public class BrowserDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
     }
 
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        getActivity().getTheme().applyStyle(mIconStyle, true);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.browser_layout_dialog, container, false);
@@ -192,34 +205,7 @@ public class BrowserDialog extends DialogFragment {
     public void onViewCreated(final View view, Bundle savedInstanceState) {
 
         mToolbar = (Toolbar) view.findViewById(R.id.browser_toolbar);
-        mToolbar.inflateMenu(R.menu.browser_menu);
-        mToolbar.setTitle(R.string.browser_currentDirectory);
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                final int id = menuItem.getItemId();
-
-                if (id == R.id.browser_menuNewFolder) {
-                    showNewFolderDialog();
-                    return true;
-                } else if (id == R.id.browser_menuSort) {
-                    showSortDialog();
-                    return true;
-                } else if (id == R.id.browser_menuSwitchLayout) {
-                    if (mActiveLayout == Layout.LIST) {
-                        menuItem.setTitle(R.string.browser_menu_viewAsList);
-                        menuItem.setIcon(R.drawable.browser_list_dark);
-                        toGridView();
-                    } else if (mActiveLayout == Layout.GRID) {
-                        menuItem.setTitle(R.string.browser_menu_viewAsGrid);
-                        menuItem.setIcon(R.drawable.browser_grid_dark);
-                        toListView();
-                    }
-                    return true;
-                }
-                return false;
-            }
-        });
+        setupToolbar();
 
         rvFileList = (RecyclerView) view.findViewById(R.id.browser_recyclerView);
         mListItemDecor = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
@@ -240,6 +226,7 @@ public class BrowserDialog extends DialogFragment {
 
         if (mBrowseMode == BrowseMode.SAVE_FILE) {
             btnSave = (btnSave == null) ? (ImageButton) view.findViewById(R.id.browser_imageButtonSave) : btnSave;
+            btnSave.setImageResource(Utils.getStyledResource(getActivity(), R.attr.browser_save, R.drawable.browser_save_dark));
             etFilename = (etFilename == null) ? (EditText) view.findViewById(R.id.browser_editTextFileName) : etFilename;
 
             etFilename.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -282,6 +269,47 @@ public class BrowserDialog extends DialogFragment {
                 }
             });
         }
+    }
+
+    private void setupToolbar() {
+        mToolbar.inflateMenu(R.menu.browser_menu);
+        mToolbar.setTitle(R.string.browser_currentDirectory);
+
+        mToolbar.getMenu().findItem(R.id.browser_menuNewFolder).setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_open_folder, R.drawable.browser_open_folder_dark));
+
+        menuSortMode = mToolbar.getMenu().findItem(R.id.browser_menuSort);
+
+        setupSortMode();
+
+        menuSwitchLayout = mToolbar.getMenu().findItem(R.id.browser_menuSwitchLayout);
+        menuSwitchLayout.setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_grid, R.drawable.browser_grid_dark));
+
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                final int id = menuItem.getItemId();
+
+                if (id == R.id.browser_menuNewFolder) {
+                    showNewFolderDialog();
+                    return true;
+                } else if (id == R.id.browser_menuSort) {
+                    showSortDialog();
+                    return true;
+                } else if (id == R.id.browser_menuSwitchLayout) {
+                    if (mActiveLayout == Layout.LIST) {
+                        menuItem.setTitle(R.string.browser_menu_viewAsList);
+                        menuItem.setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_list, R.drawable.browser_list_dark));
+                        toGridView();
+                    } else if (mActiveLayout == Layout.GRID) {
+                        menuItem.setTitle(R.string.browser_menu_viewAsGrid);
+                        menuItem.setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_grid, R.drawable.browser_grid_dark));
+                        toListView();
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void sendResult() {
@@ -328,6 +356,9 @@ public class BrowserDialog extends DialogFragment {
         rvFileList.addItemDecoration(mListItemDecor);
         rvFileList.setLayoutManager(mLinearLayout);
         loadList(new File(mCurrentPath));
+
+        menuSwitchLayout.setTitle(R.string.browser_menu_viewAsGrid);
+        menuSwitchLayout.setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_grid, R.drawable.browser_grid_dark));
     }
 
     private void toGridView() {
@@ -336,16 +367,22 @@ public class BrowserDialog extends DialogFragment {
         rvFileList.removeItemDecoration(mListItemDecor);
         mItemLayoutID = R.layout.browser_griditem_layout;
         loadList(new File(mCurrentPath));
+
+        menuSwitchLayout.setTitle(R.string.browser_menu_viewAsList);
+        menuSwitchLayout.setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_list, R.drawable.browser_list_dark));
     }
 
     private void showSortDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.browser_menu_sortBy)
-                .setIcon(R.drawable.browser_alphabetical_sorting_dark)
+                .setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_alphabetical_sorting, R.drawable.browser_alphabetical_sorting_dark))
                 .setItems(R.array.browser_sortOptions, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         mSortMode = SORT_HASHES[i];
+
+                        setupSortMode();
+
                         loadList(new File(mCurrentPath));
                     }
                 });
@@ -353,91 +390,86 @@ public class BrowserDialog extends DialogFragment {
         ad.show();
     }
 
-    private void setListListeners() {
-        switch (mBrowseMode) {
-            default:
-            case OPEN_FILE:
-                mItemClickSupport.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(RecyclerView recyclerView, View view, int i, long l) {
-                        FileHolder holder = (FileHolder) view.getTag();
-                        if (holder.file.getAbsolutePath().equals(File.separator + getString(R.string.browser_upFolder))) {
-                            loadList(new File(mCurrentPath).getParentFile());
-                        } else {
-                            if (holder.file.isDirectory()) loadList(holder.file);
-                            if (holder.file.isFile()) {
-                                onDialogResultListener.onPositiveResult(holder.file.getAbsolutePath());
-                                dismiss();
-                            }
-                        }
-                    }
-                });
-                mItemClickSupport.setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClick(RecyclerView recyclerView, View view, int i, long l) {
-                        FileHolder holder = (FileHolder) view.getTag();
-                        if (holder.file.isFile()) {
-                            onDialogResultListener.onPositiveResult(holder.file.getAbsolutePath());
-                            dismiss();
-                        }
-                        return holder.file.isFile();
-                    }
-                });
-                break;
-            case SELECT_DIR:
-                mItemClickSupport.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(RecyclerView recyclerView, View view, int i, long l) {
-                        FileHolder holder = (FileHolder) view.getTag();
-                        if (holder.file.getAbsolutePath().equals(File.separator + getString(R.string.browser_upFolder))) {
-                            loadList(new File(mCurrentPath).getParentFile());
-                        } else if (holder.file.isDirectory()) {
-                            loadList(holder.file);
-                        } else if (holder.file.getAbsolutePath().equals(File.separator + getString(R.string.browser_titleSelectDir))) {
-                            onDialogResultListener.onPositiveResult(mCurrentPath);
-                            dismiss();
-                        }
-                    }
-                });
-                mItemClickSupport.setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClick(RecyclerView recyclerView, View view, int i, long l) {
-                        FileHolder holder = (FileHolder) view.getTag();
-                        if (holder.file.isDirectory()) {
-                            onDialogResultListener.onPositiveResult(holder.file.getAbsolutePath());
-                            dismiss();
-                        }
-                        return true;
-                    }
-                });
-                break;
-            case SAVE_FILE:
-                mItemClickSupport.setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(RecyclerView recyclerView, View view, int i, long l) {
-                        FileHolder holder = (FileHolder) view.getTag();
-                        if (holder.file.getAbsolutePath().equals(File.separator + getString(R.string.browser_upFolder))) {
-                            loadList(new File(mCurrentPath).getParentFile());
-                        } else {
-                            if (holder.file.isFile()) etFilename.setText(holder.file.getName());
-                            if (holder.file.isDirectory()) loadList(holder.file);
-                        }
-                    }
-                });
-                mItemClickSupport.setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClick(RecyclerView recyclerView, View view, int i, long l) {
-                        FileHolder holder = (FileHolder) view.getTag();
-                        if (!holder.file.isFile()) return false;
-                        else {
-                            showOverwriteDialog(holder.file.getAbsolutePath());
-                            Toast.makeText(getActivity(), R.string.browser_confirmOverwrite, Toast.LENGTH_LONG).show();
-                            return true;
-                        }
-                    }
-                });
+    private void setupSortMode() {
+        final String[] sortOptions = getResources().getStringArray(R.array.browser_sortOptions);
 
+        switch (mSortMode) {
+            case BY_NAME_ASC:
+                menuSortMode.setTitle(sortOptions[0]);
+                menuSortMode.setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_alphabetical_sorting, R.drawable.browser_alphabetical_sorting_dark));
+                break;
+            case BY_NAME_DESC:
+                menuSortMode.setTitle(sortOptions[1]);
+                menuSortMode.setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_alphabetical_sorting_2, R.drawable.browser_alphabetical_sorting_2_dark));
+                break;
+            case BY_EXTENSION_ASC:
+                menuSortMode.setTitle(sortOptions[2]);
+                menuSortMode.setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_alphabetical_sorting, R.drawable.browser_alphabetical_sorting_dark));
+                break;
+            case BY_EXTENSION_DESC:
+                menuSortMode.setTitle(sortOptions[3]);
+                menuSortMode.setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_alphabetical_sorting_2, R.drawable.browser_alphabetical_sorting_2_dark));
+                break;
+            case BY_DATE_ASC:
+                menuSortMode.setTitle(sortOptions[4]);
+                menuSortMode.setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_numerical_sorting, R.drawable.browser_numerical_sorting_dark));
+                break;
+            case BY_DATE_DESC:
+                menuSortMode.setTitle(sortOptions[5]);
+                menuSortMode.setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_reversed_numerical_sorting, R.drawable.browser_reversed_numerical_sorting_dark));
+                break;
+            case BY_SIZE_ASC:
+                menuSortMode.setTitle(sortOptions[6]);
+                menuSortMode.setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_numerical_sorting, R.drawable.browser_numerical_sorting_dark));
+                break;
+            case BY_SIZE_DESC:
+                menuSortMode.setTitle(sortOptions[7]);
+                menuSortMode.setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_reversed_numerical_sorting, R.drawable.browser_reversed_numerical_sorting_dark));
+                break;
         }
+    }
+
+    private void setListListeners() {
+
+        ItemClickSupport.OnItemClickListener onItemClickListener = new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClick(RecyclerView parent, View view, int position, long id) {
+                FileHolder holder = (FileHolder) view.getTag();
+                if (holder.file.getAbsolutePath().equals(File.separator + getString(R.string.browser_upFolder))) {
+                    loadList(new File(mCurrentPath).getParentFile());
+                } else {
+                    if (holder.file.isDirectory()) loadList(holder.file);
+                    if (holder.file.isFile()) {
+                        if (mBrowseMode == BrowseMode.SAVE_FILE) {
+                            etFilename.setText(holder.file.getName());
+                        } else {
+                            onDialogResultListener.onPositiveResult(holder.file.getAbsolutePath());
+                            dismiss();
+                        }
+                    }
+                }
+            }
+        };
+
+        ItemClickSupport.OnItemLongClickListener onItemLongClickListener = new ItemClickSupport.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(RecyclerView parent, View view, int position, long id) {
+                FileHolder holder = (FileHolder) view.getTag();
+                if (mBrowseMode == BrowseMode.OPEN_FILE && holder.file.isFile() || mBrowseMode == BrowseMode.SELECT_DIR && holder.file.isDirectory()) {
+                    onDialogResultListener.onPositiveResult(holder.file.getAbsolutePath());
+                    dismiss();
+                    return true;
+                }
+                if (mBrowseMode == BrowseMode.SAVE_FILE && holder.file.isFile()) {
+                    showOverwriteDialog(holder.file.getAbsolutePath());
+                    return true;
+                }
+                return false;
+            }
+        };
+
+        mItemClickSupport.setOnItemClickListener(onItemClickListener);
+        mItemClickSupport.setOnItemLongClickListener(onItemLongClickListener);
     }
 
     private void loadList(final File directory) {
@@ -568,7 +600,8 @@ public class BrowserDialog extends DialogFragment {
         @SuppressLint("InflateParams") final View view = getActivity().getLayoutInflater().inflate(R.layout.browser_dialog_newfolder, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.browser_menu_newFolder)
-                .setIcon(R.drawable.browser_open_folder_dark).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                .setIcon(Utils.getStyledResource(getActivity(), R.attr.browser_open_folder, R.drawable.browser_open_folder_dark))
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         EditText etFolderName = (EditText) view.findViewById(R.id.browser_etNewFolder);
@@ -725,6 +758,16 @@ public class BrowserDialog extends DialogFragment {
 
     public BrowserDialog setStartIsRoot(boolean startIsRoot) {
         this.mStartIsRoot = startIsRoot;
+        return this;
+    }
+
+    public BrowserDialog setTheme(int styleResourceId) {
+        this.mIconStyle = styleResourceId;
+        return this;
+    }
+
+    public BrowserDialog setLayout(Layout layout) {
+        this.mActiveLayout = layout;
         return this;
     }
 
