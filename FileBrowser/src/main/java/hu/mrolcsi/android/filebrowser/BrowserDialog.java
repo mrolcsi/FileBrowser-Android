@@ -438,7 +438,7 @@ public class BrowserDialog extends DialogFragment {
                 if (holder.file.getAbsolutePath().equals(File.separator + getString(R.string.browser_upFolder))) {
                     loadList(new File(mCurrentPath).getParentFile());
                 } else if (mBrowseMode == BrowseMode.SELECT_DIR && holder.file.getAbsolutePath().equals(File.separator + getString(R.string.browser_titleSelectDir))) {
-                    onDialogResultListener.onPositiveResult(holder.file.getParent());
+                    onDialogResultListener.onPositiveResult(mCurrentPath);
                     dismiss();
                 } else {
                     if (holder.file.isDirectory()) loadList(holder.file);
@@ -717,13 +717,13 @@ public class BrowserDialog extends DialogFragment {
         return mExtensionFilter;
     }
 
-    public BrowserDialog setExtensionFilter(String... extensions) {
-        this.mExtensionFilter = extensions;
+    public BrowserDialog setExtensionFilter(String extensionFilter) {
+        this.mExtensionFilter = extensionFilter.split(";");
         return this;
     }
 
-    public BrowserDialog setExtensionFilter(String extensionFilter) {
-        this.mExtensionFilter = extensionFilter.split(";");
+    public BrowserDialog setExtensionFilter(String... extensions) {
+        this.mExtensionFilter = extensions;
         return this;
     }
 
