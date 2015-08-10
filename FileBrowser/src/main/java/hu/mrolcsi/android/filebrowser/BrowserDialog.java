@@ -437,6 +437,9 @@ public class BrowserDialog extends DialogFragment {
                 FileHolder holder = (FileHolder) view.getTag();
                 if (holder.file.getAbsolutePath().equals(File.separator + getString(R.string.browser_upFolder))) {
                     loadList(new File(mCurrentPath).getParentFile());
+                } else if (mBrowseMode == BrowseMode.SELECT_DIR && holder.file.getAbsolutePath().equals(File.separator + getString(R.string.browser_titleSelectDir))) {
+                    onDialogResultListener.onPositiveResult(holder.file.getParent());
+                    dismiss();
                 } else {
                     if (holder.file.isDirectory()) loadList(holder.file);
                     if (holder.file.isFile()) {
