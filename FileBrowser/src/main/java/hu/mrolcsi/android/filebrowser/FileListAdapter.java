@@ -41,15 +41,16 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
 
         data = inputData;
 
+        if (browseMode == BrowseMode.SELECT_DIR) {
+            data.add(0, new File(context.getString(R.string.browser_titleSelectDir)));
+        }
+
         if (!isRoot) data.add(0, new File(context.getString(R.string.browser_upFolder)));
 
         if (inputData.size() <= 0) {
-            if (browseMode != BrowseMode.SELECT_DIR)
+            if (browseMode != BrowseMode.SELECT_DIR) {
                 data.add(new File(context.getString(R.string.browser_emptyFolder)));
-        }
-
-        if (browseMode == BrowseMode.SELECT_DIR) {
-            data.add(new File(context.getString(R.string.browser_titleSelectDir)));
+            }
         }
     }
 
