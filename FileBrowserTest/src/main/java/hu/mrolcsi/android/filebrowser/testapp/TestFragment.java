@@ -10,11 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import hu.mrolcsi.android.filebrowser.BrowserDialog;
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
 import hu.mrolcsi.android.filebrowser.option.Layout;
 import hu.mrolcsi.android.filebrowser.option.SortMode;
-import hu.mrolcsi.android.filebrowser.option.Style;
 
 /**
  * Ez az activity nem a modul része, csupán tesztelési célokat szolgál.
@@ -127,7 +127,6 @@ public class TestFragment extends Fragment {
                         .setStartIsRoot(false)
                         .setSortMode(SortMode.BY_DATE_DESC)
                         .setBrowseMode(BrowseMode.SAVE_FILE)
-                        .setTheme(Style.LIGHT_ICONS)
                         .setLayout(Layout.GRID)
                         .setOnDialogResultListener(onDialogResultListener);
                 mActivity.swapFragment(dialog);

@@ -1,7 +1,6 @@
 package hu.mrolcsi.android.filebrowser.util.itemclicksupport;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.os.Build;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
@@ -15,10 +14,11 @@ abstract class ClickItemTouchListener implements OnItemTouchListener {
     private static final String LOGTAG = "ClickItemTouchListener";
 
     private final GestureDetectorCompat mGestureDetector;
+    private final ClickGestureListener mClickGestureListener;
 
     ClickItemTouchListener(RecyclerView hostView) {
-        mGestureDetector = new ClickGestureDetector(hostView.getContext(),
-                new ClickGestureListener(hostView));
+        mClickGestureListener = new ClickGestureListener(hostView);
+        mGestureDetector = new GestureDetectorCompat(hostView.getContext(), mClickGestureListener);
     }
 
     @TargetApi(19)
@@ -41,6 +41,12 @@ abstract class ClickItemTouchListener implements OnItemTouchListener {
         }
 
         mGestureDetector.onTouchEvent(event);
+
+        final int action = event.getAction() & MotionEventCompat.ACTION_MASK;
+        if (action == MotionEvent.ACTION_UP) {
+            mClickGestureListener.dispatchSingleTapUpIfNeeded(event);
+        }
+
         return false;
     }
 
@@ -53,27 +59,6 @@ abstract class ClickItemTouchListener implements OnItemTouchListener {
     abstract boolean performItemClick(RecyclerView parent, View view, int position, long id);
 
     abstract boolean performItemLongClick(RecyclerView parent, View view, int position, long id);
-
-    private class ClickGestureDetector extends GestureDetectorCompat {
-        private final ClickGestureListener mGestureListener;
-
-        public ClickGestureDetector(Context context, ClickGestureListener listener) {
-            super(context, listener);
-            mGestureListener = listener;
-        }
-
-        @Override
-        public boolean onTouchEvent(MotionEvent event) {
-            final boolean handled = super.onTouchEvent(event);
-
-            final int action = event.getAction() & MotionEventCompat.ACTION_MASK;
-            if (action == MotionEvent.ACTION_UP) {
-                mGestureListener.dispatchSingleTapUpIfNeeded(event);
-            }
-
-            return handled;
-        }
-    }
 
     private class ClickGestureListener extends SimpleOnGestureListener {
         private final RecyclerView mHostView;
@@ -116,7 +101,7 @@ abstract class ClickItemTouchListener implements OnItemTouchListener {
             if (mTargetChild != null) {
                 mTargetChild.setPressed(false);
 
-                final int position = mHostView.getChildPosition(mTargetChild);
+                final int position = mHostView.getChildAdapterPosition(mTargetChild);
                 final long id = mHostView.getAdapter().getItemId(position);
                 handled = performItemClick(mHostView, mTargetChild, position, id);
 
@@ -144,7 +129,7 @@ abstract class ClickItemTouchListener implements OnItemTouchListener {
                 return;
             }
 
-            final int position = mHostView.getChildPosition(mTargetChild);
+            final int position = mHostView.getChildAdapterPosition(mTargetChild);
             final long id = mHostView.getAdapter().getItemId(position);
             final boolean handled = performItemLongClick(mHostView, mTargetChild, position, id);
 

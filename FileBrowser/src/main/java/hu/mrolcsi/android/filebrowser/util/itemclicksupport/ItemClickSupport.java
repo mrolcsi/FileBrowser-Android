@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.HapticFeedbackConstants;
 import android.view.SoundEffectConstants;
 import android.view.View;
+
 import hu.mrolcsi.android.filebrowser.R;
 
 public class ItemClickSupport {
@@ -133,6 +134,10 @@ public class ItemClickSupport {
             }
 
             return false;
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
         }
     }
 }

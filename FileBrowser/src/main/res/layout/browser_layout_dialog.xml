@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -12,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentTop="true" />
-
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/browser_recyclerView"
@@ -68,7 +66,7 @@
             android:contentDescription="@android:string/ok"
             android:focusable="false"
             android:scaleType="fitCenter"
-            android:src="@drawable/browser_save_dark" />
+            android:src="@drawable/browser_save_light" />
     </RelativeLayout>
 
     <!--<ListView-->
@@ -84,6 +82,6 @@
     <!--android:columnWidth="@dimen/browser_columnWidth"-->
     <!--android:numColumns="@integer/browser_columnCount"-->
     <!--android:stretchMode="columnWidth" />-->
-        <!--http://stackoverflow.com/questions/7545915/gridview-rows-overlapping-how-to-make-row-height-fit-the-tallest-item-->
+    <!--http://stackoverflow.com/questions/7545915/gridview-rows-overlapping-how-to-make-row-height-fit-the-tallest-item-->
 
 </RelativeLayout>

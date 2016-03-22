@@ -1,13 +1,18 @@
 package hu.mrolcsi.android.filebrowser.util;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.TypedValue;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Stack;
+
+import hu.mrolcsi.android.filebrowser.R;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,7 +28,8 @@ public abstract class Utils {
     public static String getExtension(String fileName) {
         String ext = null;
         int i = fileName.lastIndexOf('.');
-        if (i > 0 && i < fileName.length() - 1) ext = fileName.substring(i + 1).toLowerCase();
+        if (i > 0 && i < fileName.length() - 1)
+            ext = fileName.substring(i + 1).toLowerCase();
         return ext;
     }
 
@@ -44,16 +50,22 @@ public abstract class Utils {
         } else if (inputFile.isDirectory()) {
             rawSize = dirSize(inputFile);
         }
-        if (rawSize > 1000000000) return String.format("%.2f GB", (float) rawSize / 1000000000);
-        else if (rawSize > 1000000) return String.format("%.2f MB", (float) rawSize / 1000000);
-        else if (rawSize > 1000) return String.format("%.2f kB", (float) rawSize / 1000);
+        if (rawSize > 1000000000)
+            return String.format("%.2f GB", (float) rawSize / 1000000000);
+        else if (rawSize > 1000000)
+            return String.format("%.2f MB", (float) rawSize / 1000000);
+        else if (rawSize > 1000)
+            return String.format("%.2f kB", (float) rawSize / 1000);
         else return String.format("%d B", rawSize);
     }
 
     public static String getFriendlySize(long rawSize) {
-        if (rawSize > 1000000000) return String.format("%.2f GB", (float) rawSize / 1000000000);
-        else if (rawSize > 1000000) return String.format("%.2f MB", (float) rawSize / 1000000);
-        else if (rawSize > 1000) return String.format("%.2f kB", (float) rawSize / 1000);
+        if (rawSize > 1000000000)
+            return String.format("%.2f GB", (float) rawSize / 1000000000);
+        else if (rawSize > 1000000)
+            return String.format("%.2f MB", (float) rawSize / 1000000);
+        else if (rawSize > 1000)
+            return String.format("%.2f kB", (float) rawSize / 1000);
         else return String.format("%d B", rawSize);
     }
 
@@ -122,19 +134,26 @@ public abstract class Utils {
         return set.contains(v);
     }
 
-    public static int getStyledResource(final Context context, final int attribResId, final int defaultValue) {
-        final TypedValue tv = new TypedValue();
-        final boolean found = context.getTheme().resolveAttribute(attribResId, tv, true);
-        return found ? tv.resourceId : defaultValue;
+    public static Drawable tintDrawable(Context context, int drawableId) {
+        if (Build.VERSION.SDK_INT >= 22) {
+            return context.getResources().getDrawable(drawableId, context.getTheme());
+        }
+
+        @SuppressWarnings("deprecation") final Drawable inDrawable = context.getResources().getDrawable(drawableId);
+        if (inDrawable == null) {
+            return null;
+        }
+
+        final Drawable outDrawable = DrawableCompat.wrap(inDrawable);
+        DrawableCompat.setTintMode(outDrawable, PorterDuff.Mode.SRC_IN);
+
+        final TypedValue value = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.colorAccent, value, true);
+        final int tintColor = value.data;
+
+        DrawableCompat.setTint(outDrawable, tintColor);
+
+        return outDrawable;
     }
 
-    public static int getResId(int theme, String resName, Class<?> resourceClass) {
-        try {
-            Field idField = resourceClass.getDeclaredField(resName);
-            return idField.getInt(idField);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
 }

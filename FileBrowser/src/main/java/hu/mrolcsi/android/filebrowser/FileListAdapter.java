@@ -9,13 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import java.io.File;
+import java.util.List;
+
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
 import hu.mrolcsi.android.filebrowser.option.SortMode;
 import hu.mrolcsi.android.filebrowser.util.SizeCalculatorTask;
 import hu.mrolcsi.android.filebrowser.util.Utils;
-
-import java.io.File;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -45,7 +46,8 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
             data.add(0, new File(context.getString(R.string.browser_titleSelectDir)));
         }
 
-        if (!isRoot) data.add(0, new File(context.getString(R.string.browser_upFolder)));
+        if (!isRoot)
+            data.add(0, new File(context.getString(R.string.browser_upFolder)));
 
         if (inputData.size() <= 0) {
             if (browseMode != BrowseMode.SELECT_DIR) {
@@ -79,18 +81,18 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
         final boolean isDirSelector = holder.file.getAbsolutePath().equals(File.separator + context.getString(R.string.browser_titleSelectDir));
 
         if (isUp) {
-            holder.icon.setImageResource(Utils.getStyledResource(context, R.attr.browser_left_up_2, R.drawable.browser_left_up_2_dark));
+            holder.icon.setImageDrawable(Utils.tintDrawable(context, R.drawable.browser_left_up_2));
             holder.extra.setText(null);
         } else if (isDirSelector) {
-            holder.icon.setImageResource(Utils.getStyledResource(context, R.attr.browser_checkmark, R.drawable.browser_checkmark_dark));
+            holder.icon.setImageDrawable(Utils.tintDrawable(context, R.drawable.browser_checkmark));
             holder.extra.setText(null);
         } else {
             if (holder.file.isDirectory()) {
-                holder.icon.setImageResource(Utils.getStyledResource(context, R.attr.browser_folder, R.drawable.browser_folder_dark));
+                holder.icon.setImageDrawable(Utils.tintDrawable(context, R.drawable.browser_folder));
             }
             if (holder.file.isFile()) {
                 //TODO: switch (extension) -> document, image, music,video,text,other
-                holder.icon.setImageResource(Utils.getStyledResource(context, R.attr.browser_file, R.drawable.browser_file_dark));
+                holder.icon.setImageDrawable(Utils.tintDrawable(context, R.drawable.browser_file));
             }
         }
 
@@ -101,7 +103,8 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
                 default:
                 case BY_NAME_ASC:
                 case BY_NAME_DESC:
-                    if (holder.extra != null) holder.extra.setVisibility(View.GONE);
+                    if (holder.extra != null)
+                        holder.extra.setVisibility(View.GONE);
                     break;
                 case BY_EXTENSION_ASC:
                 case BY_EXTENSION_DESC:
@@ -112,7 +115,8 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
                             holder.extra.setText(new StringBuilder().append(".").append(Utils.getExtension(holder.file.getName())));
                         }
                     } else {
-                        if (holder.extra != null) holder.extra.setVisibility(View.GONE);
+                        if (holder.extra != null)
+                            holder.extra.setVisibility(View.GONE);
                     }
                     break;
                 case BY_DATE_ASC:
@@ -147,7 +151,8 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
                                 } catch (NullPointerException e) {
                                     holder.extra.setText(R.string.browser_unknown);
                                 }
-                            } else if (holder.file.isFile()) holder.extra.setText(Utils.getFriendlySize(size));
+                            } else if (holder.file.isFile())
+                                holder.extra.setText(Utils.getFriendlySize(size));
                             holder.extra.setVisibility(View.VISIBLE);
                             holder.progress.setVisibility(View.GONE);
                         }
