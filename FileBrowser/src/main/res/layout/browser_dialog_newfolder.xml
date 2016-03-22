@@ -4,15 +4,15 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:gravity="center"
-              android:orientation="vertical">
+              android:orientation="vertical"
+              android:paddingLeft="24dp"
+              android:paddingRight="24dp"
+              android:paddingTop="12dp">
 
     <EditText
         android:id="@+id/browser_etNewFolder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="@dimen/browser_margin"
-        android:layout_marginRight="@dimen/browser_margin"
         android:hint="@string/browser_newFolderHint"
         android:singleLine="true" />
 </LinearLayout>

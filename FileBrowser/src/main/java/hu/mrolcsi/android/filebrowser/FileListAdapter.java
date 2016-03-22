@@ -38,7 +38,7 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
         this.context = context;
         this.layoutResourceId = layoutResourceId;
         this.sortMode = sortMode;
-        this.inflater = LayoutInflater.from(context);
+        inflater = LayoutInflater.from(context);
 
         data = inputData;
 

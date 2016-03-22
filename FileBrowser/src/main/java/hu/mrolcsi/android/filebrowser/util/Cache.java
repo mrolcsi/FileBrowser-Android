@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public class Cache {
-    private static Cache ourInstance = new Cache();
+    private static final Cache ourInstance = new Cache();
 
     Map<String, Long> sizeCache = new ConcurrentHashMap<>();
 

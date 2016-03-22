@@ -1,11 +1,17 @@
 package hu.mrolcsi.android.filebrowser.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.io.File;
 import java.util.Arrays;
@@ -156,4 +162,28 @@ public abstract class Utils {
         return outDrawable;
     }
 
+    public static AlertDialog showProgressDialog(final Context context, final CharSequence message) {
+
+        //get dialog theme from attrs
+        final TypedValue tv = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.alertDialogTheme, tv, true);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context, tv.resourceId)
+                .setCancelable(false);
+
+        @SuppressLint("InflateParams") final View contentView = LayoutInflater.from(context).inflate(R.layout.browser_progress_dialog, null);
+        ((TextView) contentView.findViewById(android.R.id.message)).setText(message);
+        final ProgressBar progressBar = (ProgressBar) contentView.findViewById(android.R.id.progress);
+        final Drawable indeterminateDrawable = progressBar.getIndeterminateDrawable().mutate();
+
+        //get accent color from attrs
+        context.getTheme().resolveAttribute(R.attr.colorAccent, tv, true);
+
+        indeterminateDrawable.setColorFilter(tv.data, PorterDuff.Mode.SRC_IN);
+        progressBar.setIndeterminateDrawable(indeterminateDrawable);
+
+        builder.setView(contentView);
+
+        return builder.show();
+    }
 }

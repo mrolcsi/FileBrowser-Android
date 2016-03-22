@@ -1,13 +1,14 @@
 package hu.mrolcsi.android.filebrowser.util;
 
 import android.os.AsyncTask;
-import hu.mrolcsi.android.filebrowser.option.SortMode;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import hu.mrolcsi.android.filebrowser.option.SortMode;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,7 +22,7 @@ public class FileSorterTask extends AsyncTask<File, Integer, List<File>> {
     private final SortMode mSortMode;
 
     public FileSorterTask(SortMode sortMode) {
-        this.mSortMode = sortMode;
+        mSortMode = sortMode;
     }
 
     public List<File> sortFiles(File[] input, Comparator<File> comparator) {
@@ -46,7 +47,7 @@ public class FileSorterTask extends AsyncTask<File, Integer, List<File>> {
 
     @Override
     protected List<File> doInBackground(File... inputData) {
-        switch (this.mSortMode) {
+        switch (mSortMode) {
             default:
             case BY_NAME_ASC:
                 return sortFiles(inputData, new FileComparator.ByFileName());

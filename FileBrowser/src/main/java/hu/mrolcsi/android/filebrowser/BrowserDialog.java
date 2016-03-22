@@ -1,18 +1,18 @@
 package hu.mrolcsi.android.filebrowser;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -141,6 +141,7 @@ public class BrowserDialog extends DialogFragment {
         OPTION_LAYOUT = "layout";
     }
 
+    private final Map<String, Parcelable> mStates = new ConcurrentHashMap<>();
     //region Privates
     private BrowseMode mBrowseMode = BrowseMode.OPEN_FILE;
     private SortMode mSortMode = SortMode.BY_NAME_ASC;
@@ -154,7 +155,6 @@ public class BrowserDialog extends DialogFragment {
     private Layout mActiveLayout = Layout.LIST;
     private int mItemLayoutID = R.layout.browser_listitem_layout;
     private boolean mOverwrite = false;
-    private Map<String, Parcelable> mStates = new ConcurrentHashMap<>();
     private AsyncTask<File, Integer, List<File>> mFileSorter;
 
     private RecyclerView rvFileList;
@@ -181,7 +181,7 @@ public class BrowserDialog extends DialogFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setStyle(STYLE_NO_TITLE, this.getTheme());
+        setStyle(STYLE_NO_TITLE, getTheme());
         if (savedInstanceState != null) {
             mStartPath = savedInstanceState.getString(OPTION_START_PATH);
             mCurrentPath = savedInstanceState.getString("currentPath");
@@ -210,9 +210,9 @@ public class BrowserDialog extends DialogFragment {
         setupToolbar();
 
         rvFileList = (RecyclerView) view.findViewById(R.id.browser_recyclerView);
-        mListItemDecor = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST);
-        mLinearLayout = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        mGridLayout = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.browser_columnCount), LinearLayoutManager.VERTICAL, false);
+        mListItemDecor = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST);
+        mLinearLayout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        mGridLayout = new GridLayoutManager(getContext(), getResources().getInteger(R.integer.browser_columnCount), LinearLayoutManager.VERTICAL, false);
         mItemClickSupport = ItemClickSupport.addTo(rvFileList);
         setListListeners();
 
@@ -227,26 +227,31 @@ public class BrowserDialog extends DialogFragment {
         }
 
         if (mBrowseMode == BrowseMode.SAVE_FILE) {
-            btnSave = (btnSave == null) ? (ImageButton) view.findViewById(R.id.browser_imageButtonSave) : btnSave;
-            etFilename = (etFilename == null) ? (EditText) view.findViewById(R.id.browser_editTextFileName) : etFilename;
+            if (btnSave == null) {
+                btnSave = (ImageButton) view.findViewById(R.id.browser_imageButtonSave);
+                btnSave.setImageDrawable(Utils.tintDrawable(getContext(), R.drawable.browser_save));
+            }
 
-            etFilename.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                    if (i == EditorInfo.IME_ACTION_DONE) {
-                        sendResult();
-                        return true;
+            if (etFilename == null) {
+                etFilename = (EditText) view.findViewById(R.id.browser_editTextFileName);
+                etFilename.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                        if (i == EditorInfo.IME_ACTION_DONE) {
+                            sendResult();
+                            return true;
+                        }
+                        return false;
                     }
-                    return false;
-                }
-            });
+                });
+            }
 
             RelativeLayout rlSave = (RelativeLayout) view.findViewById(R.id.browser_rlSave);
             rlSave.setVisibility(View.VISIBLE);
 
             final Spinner spnExtension = (Spinner) view.findViewById(R.id.browser_spnExtension);
             if (mExtensionFilter != null) {
-                final ArrayAdapter<String> extensionAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, mExtensionFilter);
+                final ArrayAdapter<String> extensionAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, mExtensionFilter);
                 extensionAdapter.setDropDownViewResource(R.layout.browser_dropdown_item);
                 spnExtension.setAdapter(extensionAdapter);
                 spnExtension.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -321,7 +326,7 @@ public class BrowserDialog extends DialogFragment {
             File f = new File(result);
             if (f.exists()) {
                 if (!mOverwrite) {
-                    Toast.makeText(getActivity(), getString(R.string.browser_confirmOverwrite), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.browser_confirmOverwrite), Toast.LENGTH_SHORT).show();
                     mOverwrite = true;
                     //TODO: check
                 } else {
@@ -354,7 +359,7 @@ public class BrowserDialog extends DialogFragment {
     private void toListView() {
         mActiveLayout = Layout.LIST;
         mItemLayoutID = R.layout.browser_listitem_layout;
-        rvFileList.addItemDecoration(mListItemDecor);
+        //rvFileList.addItemDecoration(mListItemDecor);
         rvFileList.setLayoutManager(mLinearLayout);
         loadList(new File(mCurrentPath));
 
@@ -365,7 +370,7 @@ public class BrowserDialog extends DialogFragment {
     private void toGridView() {
         mActiveLayout = Layout.GRID;
         rvFileList.setLayoutManager(mGridLayout);
-        rvFileList.removeItemDecoration(mListItemDecor);
+        //rvFileList.removeItemDecoration(mListItemDecor);
         mItemLayoutID = R.layout.browser_griditem_layout;
         loadList(new File(mCurrentPath));
 
@@ -374,7 +379,7 @@ public class BrowserDialog extends DialogFragment {
     }
 
     private void showSortDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.browser_menu_sortBy)
                 .setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_alphabetical_sorting_asc))
                 .setItems(R.array.browser_sortOptions, new DialogInterface.OnClickListener() {
@@ -524,16 +529,13 @@ public class BrowserDialog extends DialogFragment {
         mFileSorter = new FileSorterTask(mSortMode) {
 
             long startTime;
-            private ProgressDialog pd;
+            private AlertDialog pd;
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
 
-                pd = new ProgressDialog(getActivity());
-                pd.setMessage(getString(R.string.browser_loadingFileList));
-                //pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                //pd.setIndeterminate(false);
+                pd = Utils.showProgressDialog(getContext(), getString(R.string.browser_loadingFileList));
                 pd.setCanceledOnTouchOutside(false);
                 pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
@@ -549,8 +551,8 @@ public class BrowserDialog extends DialogFragment {
             @Override
             protected void onProgressUpdate(Integer... values) {
                 super.onProgressUpdate(values);
-                pd.setProgress(values[0]);
-                pd.setMax(values[1]);
+//                pd.setProgress(values[0]);
+//                pd.setMax(values[1]);
 
                 //if (System.currentTimeMillis() - startTime > 3000)
                 pd.show();
@@ -566,7 +568,7 @@ public class BrowserDialog extends DialogFragment {
 
                 boolean isRoot = mStartIsRoot ? mCurrentPath.equals(mStartPath) || mCurrentPath.equals(mRootPath) : mCurrentPath.equals(mRootPath);
 
-                rvFileList.setAdapter(new FileListAdapter(getActivity(), mItemLayoutID, files, mBrowseMode, mSortMode, isRoot));
+                rvFileList.setAdapter(new FileListAdapter(getContext(), mItemLayoutID, files, mBrowseMode, mSortMode, isRoot));
 
                 Parcelable state = mStates.get(mCurrentPath);
                 if (state != null)
@@ -581,7 +583,7 @@ public class BrowserDialog extends DialogFragment {
     }
 
     private void showOverwriteDialog(final String fileName) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setIcon(Utils.tintDrawable(getContext(), android.R.drawable.ic_dialog_alert))
                 .setMessage(R.string.browser_fileExists_message)
                 .setTitle(R.string.browser_fileExists_title)
@@ -603,8 +605,12 @@ public class BrowserDialog extends DialogFragment {
     }
 
     private void showNewFolderDialog() {
-        @SuppressLint("InflateParams") final View view = getActivity().getLayoutInflater().inflate(R.layout.browser_dialog_newfolder, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
+        @SuppressLint("InflateParams") final View view = LayoutInflater.from(getContext()).inflate(R.layout.browser_dialog_newfolder, null);
+
+        final TypedValue tv = new TypedValue();
+        getContext().getTheme().resolveAttribute(R.attr.alertDialogTheme, tv, true);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), tv.resourceId)
                 .setTitle(R.string.browser_menu_newFolder)
                 .setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_open_folder))
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -633,23 +639,23 @@ public class BrowserDialog extends DialogFragment {
     }
 
     private void showErrorDialog(Error error) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setIcon(Utils.tintDrawable(getContext(), android.R.drawable.ic_dialog_alert));
         builder.setNeutralButton(android.R.string.ok, null);
 
         switch (error) {
             case CANT_CREATE_FOLDER:
-                builder = new AlertDialog.Builder(getActivity())
+                builder = new AlertDialog.Builder(getContext())
                         .setMessage(R.string.browser_error_cantCreateFolder_message)
                         .setTitle(R.string.browser_error_cantCreateFolder_title);
                 break;
             case FOLDER_NOT_READABLE:
-                builder = new AlertDialog.Builder(getActivity())
+                builder = new AlertDialog.Builder(getContext())
                         .setMessage(R.string.browser_error_folderCantBeOpened_message)
                         .setTitle(R.string.browser_error_folderCantBeOpened_title);
                 break;
             case INVALID_FILENAME:
-//                builder = new AlertDialog.Builder(getActivity())
+//                builder = new AlertDialog.Builder(getContext())
 //                        .setIcon(android.R.drawable.ic_dialog_alert)
 //                        .setMessage(R.string.browser_error_invalidFilename_message)
 //                        .setTitle(R.string.browser_error_invalidFilename_title)
@@ -658,10 +664,10 @@ public class BrowserDialog extends DialogFragment {
 //                            public void onClick(DialogInterface dialogInterface, int i) {
 //                            }
 //                        });
-//                Toast.makeText(getActivity(), R.string.browser_error_invalidFilename_message, Toast.LENGTH_LONG).show();
+//                Toast.makeText(getContext(), R.string.browser_error_invalidFilename_message, Toast.LENGTH_LONG).show();
                 break;
             case INVALID_FOLDERNAME:
-                builder = new AlertDialog.Builder(getActivity())
+                builder = new AlertDialog.Builder(getContext())
                         .setMessage(R.string.browser_error_invalidFolderName_message)
                         .setTitle(R.string.browser_error_invalidFolderName_title);
                 break;
@@ -685,7 +691,7 @@ public class BrowserDialog extends DialogFragment {
     }
 
     public BrowserDialog setOnDialogResultListener(OnDialogResultListener listener) {
-        this.onDialogResultListener = listener;
+        onDialogResultListener = listener;
         return this;
     }
 
@@ -700,7 +706,7 @@ public class BrowserDialog extends DialogFragment {
     }
 
     public BrowserDialog setBrowseMode(BrowseMode browseMode) {
-        this.mBrowseMode = browseMode;
+        mBrowseMode = browseMode;
         return this;
     }
 
@@ -709,7 +715,7 @@ public class BrowserDialog extends DialogFragment {
     }
 
     public BrowserDialog setSortMode(SortMode sortMode) {
-        this.mSortMode = sortMode;
+        mSortMode = sortMode;
         return this;
     }
 
@@ -718,12 +724,12 @@ public class BrowserDialog extends DialogFragment {
     }
 
     public BrowserDialog setExtensionFilter(String... extensions) {
-        this.mExtensionFilter = extensions;
+        mExtensionFilter = extensions;
         return this;
     }
 
     public BrowserDialog setExtensionFilter(String extensionFilter) {
-        this.mExtensionFilter = extensionFilter.split(";");
+        mExtensionFilter = extensionFilter.split(";");
         return this;
     }
 
@@ -732,7 +738,7 @@ public class BrowserDialog extends DialogFragment {
     }
 
     public BrowserDialog setDefaultFileName(String defaultFileName) {
-        this.mDefaultFileName = defaultFileName;
+        mDefaultFileName = defaultFileName;
         return this;
     }
 
@@ -741,12 +747,12 @@ public class BrowserDialog extends DialogFragment {
     }
 
     public BrowserDialog setStartPath(String startPath) {
-        this.mStartPath = startPath;
+        mStartPath = startPath;
         return this;
     }
 
     public BrowserDialog setRootPath(String rootPath) {
-        this.mRootPath = rootPath;
+        mRootPath = rootPath;
         return this;
     }
 
@@ -755,12 +761,12 @@ public class BrowserDialog extends DialogFragment {
     }
 
     public BrowserDialog setStartIsRoot(boolean startIsRoot) {
-        this.mStartIsRoot = startIsRoot;
+        mStartIsRoot = startIsRoot;
         return this;
     }
 
     public BrowserDialog setLayout(Layout layout) {
-        this.mActiveLayout = layout;
+        mActiveLayout = layout;
         return this;
     }
 

@@ -66,7 +66,7 @@
             android:contentDescription="@android:string/ok"
             android:focusable="false"
             android:scaleType="fitCenter"
-            android:src="@drawable/browser_save_light" />
+            android:src="@drawable/browser_save" />
     </RelativeLayout>
 
     <!--<ListView-->

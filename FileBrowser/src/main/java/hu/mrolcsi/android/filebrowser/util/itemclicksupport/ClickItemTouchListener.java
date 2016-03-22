@@ -26,12 +26,12 @@ abstract class ClickItemTouchListener implements OnItemTouchListener {
         if (Build.VERSION.SDK_INT >= 19) {
             return hostView.isAttachedToWindow();
         } else {
-            return (hostView.getHandler() != null);
+            return hostView.getHandler() != null;
         }
     }
 
     private boolean hasAdapter(RecyclerView hostView) {
-        return (hostView.getAdapter() != null);
+        return hostView.getAdapter() != null;
     }
 
     @Override
@@ -84,7 +84,7 @@ abstract class ClickItemTouchListener implements OnItemTouchListener {
             final int y = (int) event.getY();
 
             mTargetChild = mHostView.findChildViewUnder(x, y);
-            return (mTargetChild != null);
+            return mTargetChild != null;
         }
 
         @Override
