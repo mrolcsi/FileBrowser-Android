@@ -339,6 +339,7 @@ public class BrowserDialog extends DialogFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putString("currentPath", mCurrentPath);
         outState.putSerializable(OPTION_BROWSE_MODE, mBrowseMode);
         outState.putSerializable(OPTION_SORT_MODE, mSortMode);
@@ -348,7 +349,6 @@ public class BrowserDialog extends DialogFragment {
         outState.putSerializable(OPTION_LAYOUT, mActiveLayout);
         outState.putInt("itemLayoutID", mItemLayoutID);
         outState.putString(OPTION_DEFAULT_FILENAME, mDefaultFileName);
-        super.onSaveInstanceState(outState);
     }
 
     private void toListView() {
@@ -721,13 +721,13 @@ public class BrowserDialog extends DialogFragment {
         return mExtensionFilter;
     }
 
-    public BrowserDialog setExtensionFilter(String extensionFilter) {
-        mExtensionFilter = extensionFilter.split(";");
+    public BrowserDialog setExtensionFilter(String... extensions) {
+        mExtensionFilter = extensions;
         return this;
     }
 
-    public BrowserDialog setExtensionFilter(String... extensions) {
-        mExtensionFilter = extensions;
+    public BrowserDialog setExtensionFilter(String extensionFilter) {
+        mExtensionFilter = extensionFilter.split(";");
         return this;
     }
 

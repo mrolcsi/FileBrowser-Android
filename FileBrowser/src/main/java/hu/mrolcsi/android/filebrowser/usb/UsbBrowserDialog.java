@@ -27,6 +27,7 @@ import com.github.mjdev.libaums.UsbMassStorageDevice;
 import com.github.mjdev.libaums.fs.FileSystem;
 import com.github.mjdev.libaums.fs.UsbFile;
 import hu.mrolcsi.android.filebrowser.BrowserDialog;
+import hu.mrolcsi.android.filebrowser.BuildConfig;
 import hu.mrolcsi.android.filebrowser.R;
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
 import hu.mrolcsi.android.filebrowser.util.Error;
@@ -40,12 +41,13 @@ import hu.mrolcsi.android.filebrowser.util.itemclicksupport.ItemClickSupport;
 public class UsbBrowserDialog extends BrowserDialog {
 
     private static final String TAG = "UsbBrowserDialog";
-    private static final String ACTION_USB_PERMISSION = "com.github.mjdev.libaums.USB_PERMISSION";
+    private static final String ACTION_USB_PERMISSION = BuildConfig.APPLICATION_ID + ".USB_PERMISSION";
     private final Stack<UsbFile> mHistory = new Stack<>();
     private UsbMassStorageDevice mDevice;
     private AlertDialog mWaitingForUsbDialog;
     private OnDialogResultListener mOnDialogResultListener;
     private UsbFile mCurrentDir;
+    private String mPathToRestore;
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -89,6 +91,11 @@ public class UsbBrowserDialog extends BrowserDialog {
         if (Build.VERSION.SDK_INT < 16) {
             throw new UnsupportedOperationException("USB Mass Storage is not supported under API Level 16");
         }
+
+        if (savedInstanceState != null) {
+            mPathToRestore = savedInstanceState.getString("currentPath");
+        }
+
         super.onCreate(savedInstanceState);
     }
 
@@ -167,11 +174,27 @@ public class UsbBrowserDialog extends BrowserDialog {
             // we always use the first partition of the device
             FileSystem fs = mDevice.getPartitions().get(0).getFileSystem();
             mCurrentDir = fs.getRootDirectory();
-            mHistory.push(mCurrentDir);
+            mHistory.clear();
+            mHistory.push(fs.getRootDirectory());   //root is always first
+
+            if (mPathToRestore != null) {
+                final String[] paths = mPathToRestore.substring(1, mPathToRestore.length() - 1).split(File.separator);
+                for (String dir : paths) {
+                    mCurrentDir = mCurrentDir.search(dir);
+                    mHistory.push(mCurrentDir);
+                }
+            }
+
             loadList(mCurrentDir);
         } catch (IOException e) {
             showErrorDialog(Error.USB_ERROR);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("currentPath", getCurrentPath());
     }
 
     @Override
