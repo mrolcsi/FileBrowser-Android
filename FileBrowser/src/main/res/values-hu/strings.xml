@@ -47,4 +47,5 @@
     <string name="browser_error_cantCreateFile_title">Fájl létrehozása sikertelen</string>
     <string name="browser_error_usbError_title">USB hiba</string>
     <string name="browser_error_usbError_message">Hiba történt az USB meghajtó megnyitása közben.</string>
+    <string name="browser_error_usbError_onlyFat32partitions">Csak FAT32 fájlrendszer támogatott.</string>
 </resources>

@@ -26,6 +26,7 @@ import java.util.Stack;
 import com.github.mjdev.libaums.UsbMassStorageDevice;
 import com.github.mjdev.libaums.fs.FileSystem;
 import com.github.mjdev.libaums.fs.UsbFile;
+import com.github.mjdev.libaums.partition.Partition;
 import hu.mrolcsi.android.filebrowser.BrowserDialog;
 import hu.mrolcsi.android.filebrowser.BuildConfig;
 import hu.mrolcsi.android.filebrowser.R;
@@ -172,7 +173,14 @@ public class UsbBrowserDialog extends BrowserDialog {
             mDevice.init();
 
             // we always use the first partition of the device
-            FileSystem fs = mDevice.getPartitions().get(0).getFileSystem();
+            final List<Partition> partitions = mDevice.getPartitions();
+            if (partitions.size() < 1) {
+                showErrorDialog(Error.USB_ERROR, getString(R.string.browser_error_usbError_onlyFat32partitions));
+                dismiss();
+                return;
+            }
+
+            FileSystem fs = partitions.get(0).getFileSystem();
             mCurrentDir = fs.getRootDirectory();
             mHistory.clear();
             mHistory.push(fs.getRootDirectory());   //root is always first
@@ -249,6 +257,28 @@ public class UsbBrowserDialog extends BrowserDialog {
     @Override
     protected void loadList(File directory) {
         // do nothing
+    }
+
+    protected void toListView() {
+        super.toListView();
+        if (mCurrentDir != null) {
+            try {
+                loadList(mCurrentDir);
+            } catch (IOException e) {
+                showErrorDialog(Error.FOLDER_NOT_READABLE);
+            }
+        }
+    }
+
+    protected void toGridView() {
+        super.toGridView();
+        if (mCurrentDir != null) {
+            try {
+                loadList(mCurrentDir);
+            } catch (IOException e) {
+                showErrorDialog(Error.FOLDER_NOT_READABLE);
+            }
+        }
     }
 
     private void loadList(final UsbFile directory) throws IOException {

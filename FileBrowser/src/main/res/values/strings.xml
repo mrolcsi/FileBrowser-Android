@@ -49,4 +49,5 @@
     <string name="browser_error_cantCreateFile_message">There was a write error while trying to save the file.</string>
     <string name="browser_error_usbError_title">USB Error</string>
     <string name="browser_error_usbError_message">An error occurred while trying to access the USB drive.</string>
+    <string name="browser_error_usbError_onlyFat32partitions">Only FAT32 partitions are supported.</string>
 </resources>

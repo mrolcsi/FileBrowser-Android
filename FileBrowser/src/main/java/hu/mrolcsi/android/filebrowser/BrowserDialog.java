@@ -351,7 +351,7 @@ public class BrowserDialog extends DialogFragment {
         outState.putString(OPTION_DEFAULT_FILENAME, mDefaultFileName);
     }
 
-    private void toListView() {
+    protected void toListView() {
         mActiveLayout = Layout.LIST;
         mItemLayoutID = R.layout.browser_listitem_layout;
         //rvFileList.addItemDecoration(mListItemDecor);
@@ -362,7 +362,7 @@ public class BrowserDialog extends DialogFragment {
         menuSwitchLayout.setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_grid));
     }
 
-    private void toGridView() {
+    protected void toGridView() {
         mActiveLayout = Layout.GRID;
         rvFileList.setLayoutManager(mGridLayout);
         //rvFileList.removeItemDecoration(mListItemDecor);
@@ -635,10 +635,14 @@ public class BrowserDialog extends DialogFragment {
         }
     }
 
-    protected void showErrorDialog(Error error) {
+    protected void showErrorDialog(Error error, String extraMessage) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setIcon(Utils.tintDrawable(getContext(), android.R.drawable.ic_dialog_alert));
         builder.setPositiveButton(android.R.string.ok, null);
+
+        @SuppressLint("InflateParams") final View view = LayoutInflater.from(getContext()).inflate(R.layout.browser_error_extra, null);
+        TextView tvExtra = (TextView) view.findViewById(R.id.tvExtra);
+        builder.setView(view);
 
         switch (error) {
             case CANT_CREATE_FOLDER:
@@ -669,7 +673,15 @@ public class BrowserDialog extends DialogFragment {
                 break;
         }
 
+        if (extraMessage != null) {
+            tvExtra.setText(extraMessage);
+        }
+
         builder.show();
+    }
+
+    protected void showErrorDialog(Error error) {
+        showErrorDialog(error, null);
     }
 
     protected String checkExtension(String input) {
@@ -721,13 +733,13 @@ public class BrowserDialog extends DialogFragment {
         return mExtensionFilter;
     }
 
-    public BrowserDialog setExtensionFilter(String... extensions) {
-        mExtensionFilter = extensions;
+    public BrowserDialog setExtensionFilter(String extensionFilter) {
+        mExtensionFilter = extensionFilter.split(";");
         return this;
     }
 
-    public BrowserDialog setExtensionFilter(String extensionFilter) {
-        mExtensionFilter = extensionFilter.split(";");
+    public BrowserDialog setExtensionFilter(String... extensions) {
+        mExtensionFilter = extensions;
         return this;
     }
 
