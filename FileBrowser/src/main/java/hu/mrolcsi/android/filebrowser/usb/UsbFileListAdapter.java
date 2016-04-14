@@ -1,6 +1,7 @@
 package hu.mrolcsi.android.filebrowser.usb;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -124,26 +125,51 @@ public class UsbFileListAdapter extends FileListAdapter {
                     break;
                 case BY_DATE_ASC:
                 case BY_DATE_DESC:
-                    holder.extra.setVisibility(View.VISIBLE);
-                    holder.extra.setText(DATE_FORMAT.format(new Date(usbHolder.usbFile.lastModified())));
+                    usbHolder.extra.setVisibility(View.VISIBLE);
+                    usbHolder.extra.setText(DATE_FORMAT.format(new Date(usbHolder.usbFile.lastModified())));
                     break;
                 case BY_SIZE_ASC:
                 case BY_SIZE_DESC:
-                    if (usbHolder.usbFile.isDirectory()) {
-                        int count;
-                        try {
-                            count = usbHolder.usbFile.listFiles().length;
-                            holder.extra.setText(context.getResources().getQuantityString(R.plurals.browser_numberOfFiles, count, count));
-                        } catch (NullPointerException e) {
-                            holder.extra.setText(R.string.browser_unknown);
-                        } catch (IOException e) {
-                            holder.extra.setText(R.string.browser_error_folderCantBeOpened_message);
+                    usbHolder.sizeCalculator = new AsyncTask<UsbFile, Long, Long>() {
+                        @Override
+                        protected void onPreExecute() {
+                            holder.extra.setVisibility(View.GONE);
+                            holder.progress.setVisibility(View.VISIBLE);
                         }
-                    } else {
-                        holder.extra.setText(Utils.getFriendlySize(usbHolder.usbFile.getLength()));
-                    }
-                    holder.extra.setVisibility(View.VISIBLE);
-                    holder.progress.setVisibility(View.GONE);
+
+                        @Override
+                        protected Long doInBackground(UsbFile... usbFiles) {
+                            if (!usbFiles[0].isDirectory()) {
+                                return usbFiles[0].getLength();
+                            } else {
+                                return Utils.dirSize(usbFiles[0]);
+                            }
+                        }
+
+                        @Override
+                        protected void onProgressUpdate(Long... values) {
+                            holder.extra.setText(Utils.getFriendlySize(values[0]));
+                        }
+
+                        @Override
+                        protected void onPostExecute(Long size) {
+                            if (usbHolder.usbFile.isDirectory()) {
+                                int count;
+                                try {
+                                    count = usbHolder.usbFile.listFiles().length;
+                                    usbHolder.extra.setText(context.getResources().getQuantityString(R.plurals.browser_numberOfFiles, count, count) + "\n" + Utils.getFriendlySize(size));
+                                } catch (NullPointerException e) {
+                                    usbHolder.extra.setText(R.string.browser_unknown);
+                                } catch (IOException e) {
+                                    usbHolder.extra.setText(R.string.browser_error_folderCantBeOpened_message);
+                                }
+                            } else {
+                                usbHolder.extra.setText(Utils.getFriendlySize(usbHolder.usbFile.getLength()));
+                            }
+                            usbHolder.extra.setVisibility(View.VISIBLE);
+                            usbHolder.progress.setVisibility(View.GONE);
+                        }
+                    }.execute(usbHolder.usbFile);
                     break;
             }
         }
@@ -151,6 +177,7 @@ public class UsbFileListAdapter extends FileListAdapter {
 
     protected class UsbFileHolder extends FileHolder {
 
+        public AsyncTask<UsbFile, Long, Long> sizeCalculator;
         UsbFile usbFile;
 
         public UsbFileHolder(View itemView) {
