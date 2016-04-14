@@ -33,8 +33,8 @@
     </plurals>
     <string name="browser_unknown">N/A</string>
     <string name="browser_newFolderHint">Mappanév…</string>
-    <string name="browser_error_cantCreateFolder_title">Létrehozás sikertelen</string>
-    <string name="browser_error_cantCreateFolder_message">A mappa nem jött létre.</string>
+    <string name="browser_error_cantCreateFolder_title">Mappa létrehozása sikertelen</string>
+    <string name="browser_error_cantCreateFolder_message">A mappa nem jött létre. Ellenőrizze, hogy létezik-e már mappa ezzel a névvel.</string>
     <string name="browser_error_invalidFilename_title">Érvénytelen fájlnév</string>
     <string name="browser_error_invalidFilename_message">A megadott fájlnév nem használható.</string>
     <string name="browser_error_invalidFolderName_title">Érvénytelen mappanév</string>
@@ -42,4 +42,9 @@
     <string name="browser_pressAgainToCancel">Nyomja meg mégegyszer a kilépéshez.</string>
     <string name="browser_confirmOverwrite">Felülíráshoz nyomja meg mégyegyszer a \'Mentés\'-t</string>
     <string name="browser_loadingFileList">Fájlok listázása…</string>
+    <string name="browser_save">MENTÉS</string>
+    <string name="browser_error_cantCreateFile_message">Írási hiba tötént a fájl mentése közben.</string>
+    <string name="browser_error_cantCreateFile_title">Fájl létrehozása sikertelen</string>
+    <string name="browser_error_usbError_title">USB hiba</string>
+    <string name="browser_error_usbError_message">Hiba történt az USB meghajtó megnyitása közben.</string>
 </resources>

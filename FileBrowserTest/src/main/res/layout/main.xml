@@ -58,8 +58,14 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/buttonSaveFile"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
         android:text="Open File - Fragment" />
+
+    <Button
+        android:id="@+id/buttonOpenUsb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttonOpenAsFragment"
+        android:layout_centerHorizontal="true"
+        android:text="Open From USB" />
 
 </RelativeLayout>

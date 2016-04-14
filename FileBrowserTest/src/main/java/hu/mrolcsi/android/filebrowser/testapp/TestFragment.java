@@ -11,10 +11,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.github.mjdev.libaums.fs.UsbFile;
 import hu.mrolcsi.android.filebrowser.BrowserDialog;
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
 import hu.mrolcsi.android.filebrowser.option.Layout;
 import hu.mrolcsi.android.filebrowser.option.SortMode;
+import hu.mrolcsi.android.filebrowser.usb.UsbBrowserDialog;
 
 /**
  * Ez az activity nem a modul része, csupán tesztelési célokat szolgál.
@@ -37,7 +39,8 @@ public class TestFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (mRootView == null) mRootView = inflater.inflate(R.layout.main, container, false);
+        if (mRootView == null)
+            mRootView = inflater.inflate(R.layout.main, container, false);
         return mRootView;
     }
 
@@ -50,6 +53,7 @@ public class TestFragment extends Fragment {
         Button btnSaveFile = (Button) view.findViewById(R.id.buttonSaveFile);
         Button btnOpenFileFiltered = (Button) view.findViewById(R.id.buttonOpenWithFilter);
         Button btnOpenFileInFragment = (Button) view.findViewById(R.id.buttonOpenAsFragment);
+        Button btnOpenUsb = (Button) view.findViewById(R.id.buttonOpenUsb);
         tvPath = (TextView) view.findViewById(R.id.textViewPath);
 
         onDialogResultListener = new BrowserDialog.OnDialogResultListener() {
@@ -130,6 +134,26 @@ public class TestFragment extends Fragment {
                         .setLayout(Layout.GRID)
                         .setOnDialogResultListener(onDialogResultListener);
                 mActivity.swapFragment(dialog);
+            }
+        });
+
+        btnOpenUsb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UsbBrowserDialog dialog = new UsbBrowserDialog();
+                dialog.setBrowseMode(BrowseMode.SAVE_FILE);
+                dialog.setOnDialogResultListener(new UsbBrowserDialog.OnDialogResultListener() {
+                    @Override
+                    public void onPositiveResult(UsbFile file) {
+                        tvPath.setText(file.getName());
+                    }
+
+                    @Override
+                    public void onNegativeResult() {
+                        tvPath.setText(android.R.string.cancel);
+                    }
+                });
+                dialog.show(getChildFragmentManager(), dialog.toString());
             }
         });
     }

@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
@@ -25,22 +26,24 @@ import hu.mrolcsi.android.filebrowser.util.Utils;
  * Time: 16:17
  */
 
-class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
+public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHolder> {
 
-    private final int layoutResourceId;
-    private final Context context;
-    private final SortMode sortMode;
-    private final LayoutInflater inflater;
-    private List<File> data = null;
+    protected final int layoutResourceId;
+    protected final Context context;
+    protected final BrowseMode browseMode;
+    protected final SortMode sortMode;
+    protected final LayoutInflater inflater;
+    private List<File> data;
 
     public FileListAdapter(Context context, int layoutResourceId, List<File> inputData, BrowseMode browseMode, SortMode sortMode, boolean isRoot) {
         super();
         this.context = context;
         this.layoutResourceId = layoutResourceId;
+        this.browseMode = browseMode;
         this.sortMode = sortMode;
         inflater = LayoutInflater.from(context);
 
-        data = inputData;
+        data = inputData == null ? new ArrayList<File>() : inputData;
 
         if (browseMode == BrowseMode.SELECT_DIR) {
             data.add(0, new File(context.getString(R.string.browser_titleSelectDir)));
@@ -49,7 +52,7 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
         if (!isRoot)
             data.add(0, new File(context.getString(R.string.browser_upFolder)));
 
-        if (inputData.size() <= 0) {
+        if (inputData == null || inputData.size() <= 0) {
             if (browseMode != BrowseMode.SELECT_DIR) {
                 data.add(new File(context.getString(R.string.browser_emptyFolder)));
             }
@@ -166,22 +169,22 @@ class FileListAdapter extends RecyclerView.Adapter<FileHolder> {
     public int getItemCount() {
         return data.size();
     }
-}
 
-class FileHolder extends RecyclerView.ViewHolder {
-    ImageView icon;
-    TextView text;
-    TextView extra;
-    ProgressBar progress;
-    File file;
-    AsyncTask<File, Long, Long> sizeCalculator;
+    protected class FileHolder extends RecyclerView.ViewHolder {
+        public ImageView icon;
+        public TextView text;
+        public TextView extra;
+        public ProgressBar progress;
+        public AsyncTask<File, Long, Long> sizeCalculator;
+        File file;
 
-    public FileHolder(View itemView) {
-        super(itemView);
+        public FileHolder(View itemView) {
+            super(itemView);
 
-        icon = (ImageView) itemView.findViewById(R.id.browser_listItemIcon);
-        text = (TextView) itemView.findViewById(R.id.browser_listItemText);
-        extra = (TextView) itemView.findViewById(R.id.browser_listItemExtra);
-        progress = (ProgressBar) itemView.findViewById(R.id.browser_listItemProgress);
+            icon = (ImageView) itemView.findViewById(R.id.browser_listItemIcon);
+            text = (TextView) itemView.findViewById(R.id.browser_listItemText);
+            extra = (TextView) itemView.findViewById(R.id.browser_listItemExtra);
+            progress = (ProgressBar) itemView.findViewById(R.id.browser_listItemProgress);
+        }
     }
 }
