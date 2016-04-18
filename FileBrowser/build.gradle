@@ -8,6 +8,30 @@ buildscript {
 }
 apply plugin: 'com.android.library'
 
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'file-browser-android'
+
+    publishedGroupId = 'hu.mrolcsi.android'
+    libraryName = 'FileBrowser'
+    artifact = 'FileBrowser'
+
+    libraryDescription = 'An easy to use, ready to go file browser library for Android applications.'
+
+    siteUrl = 'https://github.com/mrolcsi/FileBrowser-Android'
+    gitUrl = 'https://github.com/mrolcsi/FileBrowser-Android.git'
+
+    libraryVersion = '0.6'
+
+    developerId = 'mrolcsi'
+    developerName = 'Matusinka Roland'
+    developerEmail = 'matusinka.roland@outlook.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
 repositories {
     jcenter()
 }
@@ -113,4 +137,13 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.3.0'
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.github.mjdev:libaums:0.3'
+}
+
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
+
+afterEvaluate {
+    javadoc.classpath += files(android.libraryVariants.collect { variant ->
+        variant.javaCompile.classpath.files
+    })
 }
