@@ -25,7 +25,7 @@ public class FileSorterTask extends AsyncTask<File, Integer, List<File>> {
         mSortMode = sortMode;
     }
 
-    public List<File> sortFiles(File[] input, Comparator<File> comparator) {
+    private List<File> sortFiles(File[] input, Comparator<File> comparator) {
         if (input != null) {
             List<File> files = new ArrayList<>();
             List<File> dirs = new ArrayList<>();

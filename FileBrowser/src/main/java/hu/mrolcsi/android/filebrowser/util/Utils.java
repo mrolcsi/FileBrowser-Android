@@ -14,10 +14,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Stack;
 
+import com.github.mjdev.libaums.fs.UsbFile;
 import hu.mrolcsi.android.filebrowser.R;
 
 /**
@@ -82,7 +84,7 @@ public abstract class Utils {
      * @return A mappa mérete byte-ban.
      * @see <a href="http://stackoverflow.com/questions/4040912/how-can-i-get-the-size-of-a-folder-on-sd-card-in-android">forrás</a>
      */
-    static long dirSize(File dir) {
+    public static long dirSize(File dir) {
 
         if (Cache.getInstance().sizeCache.containsKey(dir.getAbsolutePath()))
             return Cache.getInstance().sizeCache.get(dir.getAbsolutePath());
@@ -111,6 +113,42 @@ public abstract class Utils {
         }
 
         Cache.getInstance().sizeCache.put(dir.getAbsolutePath(), result);
+
+        return result;
+    }
+
+    public static long dirSize(UsbFile dir) {
+        if (Cache.getInstance().sizeCache.containsKey(dir.getName()))
+            return Cache.getInstance().sizeCache.get(dir.getName());
+
+        long result = 0;
+
+        Stack<UsbFile> dirlist = new Stack<>();
+        dirlist.clear();
+
+        dirlist.push(dir);
+
+        while (!dirlist.isEmpty()) {
+            UsbFile dirCurrent = dirlist.pop();
+
+            try {
+                UsbFile[] fileList = dirCurrent.listFiles();
+
+                if (fileList != null) {
+                    for (UsbFile file : fileList) {
+
+                        if (file.isDirectory())
+                            dirlist.push(file);
+                        else
+                            result += file.getLength();
+                    }
+                } else result = 0;
+            } catch (IOException e) {
+                //skip
+            }
+        }
+
+        Cache.getInstance().sizeCache.put(dir.getName(), result);
 
         return result;
     }

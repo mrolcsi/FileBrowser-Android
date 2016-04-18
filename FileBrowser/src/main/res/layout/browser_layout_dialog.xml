@@ -16,7 +16,6 @@
         android:id="@+id/browser_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/browser_rlSave"
         android:layout_below="@+id/browser_toolbar"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/browser_margin"
@@ -27,7 +26,7 @@
         android:id="@+id/browser_rlSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/browser_recyclerView"
         android:visibility="gone">
 
         <EditText
@@ -49,24 +48,36 @@
             android:id="@+id/browser_spnExtension"
             android:layout_width="@dimen/browser_columnWidth"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/browser_editTextFileName"
-            android:layout_alignTop="@+id/browser_editTextFileName"
+            android:layout_alignBaseline="@+id/browser_editTextFileName"
             android:layout_marginBottom="@dimen/browser_margin"
             android:layout_toLeftOf="@+id/browser_imageButtonSave" />
 
-        <ImageButton
+        <!--<ImageButton-->
+        <!--android:id="@+id/browser_imageButtonSave"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignBottom="@+id/browser_editTextFileName"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignTop="@+id/browser_editTextFileName"-->
+        <!--android:layout_margin="@dimen/browser_margin"-->
+        <!--android:background="@null"-->
+        <!--android:contentDescription="@android:string/ok"-->
+        <!--android:focusable="false"-->
+        <!--android:scaleType="fitCenter"-->
+        <!--android:src="@drawable/browser_save" />-->
+
+        <Button
             android:id="@+id/browser_imageButtonSave"
+            style="?attr/buttonBarPositiveButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/browser_editTextFileName"
+            android:layout_alignBaseline="@+id/browser_editTextFileName"
             android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/browser_editTextFileName"
             android:layout_margin="@dimen/browser_margin"
-            android:background="@null"
             android:contentDescription="@android:string/ok"
             android:focusable="false"
             android:scaleType="fitCenter"
-            android:src="@drawable/browser_save" />
+            android:text="@string/browser_save" />
     </RelativeLayout>
 
     <!--<ListView-->

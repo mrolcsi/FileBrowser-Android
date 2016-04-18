@@ -35,7 +35,7 @@
     <string name="browser_unknown">N/A</string>
     <string name="browser_newFolderHint">Enter folder name here…</string>
     <string name="browser_error_cantCreateFolder_title">Couldn\'t Create Folder</string>
-    <string name="browser_error_cantCreateFolder_message">The folder could not be created.</string>
+    <string name="browser_error_cantCreateFolder_message">The folder could not be created. Check if a folder with the same name already exists.</string>
     <string name="browser_error_invalidFilename_title">Invalid Filename</string>
     <string name="browser_error_invalidFilename_message">The specified filename is invalid.</string>
     <string name="browser_error_invalidFolderName_title">Invalid Folder Name</string>
@@ -44,4 +44,11 @@
     <string name="browser_upFolder" translatable="false">..</string>
     <string name="browser_confirmOverwrite">Press \'Save\' again to overwrite file.</string>
     <string name="browser_loadingFileList">Loading files list…</string>
+    <string name="browser_save">SAVE</string>
+    <string name="browser_error_cantCreateFile_title">Couldn\'t Create File</string>
+    <string name="browser_error_cantCreateFile_message">There was a write error while trying to save the file.</string>
+    <string name="browser_error_usbError_title">USB Error</string>
+    <string name="browser_error_usbError_message">An error occurred while trying to access the USB drive.</string>
+    <string name="browser_error_usbError_onlyFat32partitions">Only FAT32 partitions are supported.</string>
+    <string name="browser_pleaseConnectUsb">Please connect a USB Mass Storage device.</string>
 </resources>
