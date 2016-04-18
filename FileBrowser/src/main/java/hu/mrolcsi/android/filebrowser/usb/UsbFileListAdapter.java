@@ -46,6 +46,20 @@ public class UsbFileListAdapter extends FileListAdapter {
                     return mCurrentDir;
                 }
             });
+        } else {
+            if (mFiles.size() == 0) {
+                mFiles.add(0, new DummyFile() {
+                    @Override
+                    public String getName() {
+                        return context.getString(R.string.browser_emptyFolder);
+                    }
+
+                    @Override
+                    public UsbFile getParent() {
+                        return mCurrentDir.getParent();
+                    }
+                });
+            }
         }
 
         if (!mCurrentDir.isRoot()) {

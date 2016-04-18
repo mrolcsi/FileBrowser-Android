@@ -221,7 +221,7 @@ public class UsbBrowserDialog extends BrowserDialog {
                         showErrorDialog(Error.FOLDER_NOT_READABLE);
                     }
                 } else if (mBrowseMode == BrowseMode.SELECT_DIR && holder.usbFile.getName().equals(getString(R.string.browser_titleSelectDir))) {
-                    mOnDialogResultListener.onPositiveResult(holder.usbFile);
+                    mOnDialogResultListener.onPositiveResult(holder.usbFile.getParent());
                     dismiss();
                 } else {
                     if (holder.usbFile.isDirectory()) {
@@ -297,7 +297,10 @@ public class UsbBrowserDialog extends BrowserDialog {
             final UsbFile[] usbFiles = directory.listFiles();
             if (mExtensionFilter != null) {
                 for (UsbFile file : usbFiles) {
-                    if (file.isDirectory()) continue;
+                    if (file.isDirectory()) {
+                        filesToLoad.add(file);
+                        continue;
+                    }
 
                     String ext = Utils.getExtension(file.getName());
                     int i = 0;
@@ -310,6 +313,13 @@ public class UsbBrowserDialog extends BrowserDialog {
                 }
             } else {
                 filesToLoad = Arrays.asList(usbFiles);
+            }
+        } else {
+            final UsbFile[] usbFiles = directory.listFiles();
+            for (UsbFile file : usbFiles) {
+                if (file.isDirectory()) {
+                    filesToLoad.add(file);
+                }
             }
         }
 

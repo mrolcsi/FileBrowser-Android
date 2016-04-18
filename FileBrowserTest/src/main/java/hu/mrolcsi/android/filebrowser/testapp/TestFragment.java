@@ -141,7 +141,7 @@ public class TestFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 UsbBrowserDialog dialog = new UsbBrowserDialog();
-                dialog.setBrowseMode(BrowseMode.SAVE_FILE);
+                dialog.setBrowseMode(BrowseMode.SELECT_DIR);
                 dialog.setOnDialogResultListener(new UsbBrowserDialog.OnDialogResultListener() {
                     @Override
                     public void onPositiveResult(UsbFile file) {
