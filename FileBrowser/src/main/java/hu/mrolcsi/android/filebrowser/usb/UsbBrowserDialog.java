@@ -130,7 +130,7 @@ public class UsbBrowserDialog extends BrowserDialog {
             if (mWaitingForUsbDialog == null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setCancelable(false);
-                builder.setMessage("Please connect a USB Mass Storage device.");
+                builder.setMessage(R.string.browser_pleaseConnectUsb);
                 builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
