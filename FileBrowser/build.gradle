@@ -8,34 +8,6 @@ buildscript {
 }
 apply plugin: 'com.android.library'
 
-ext {
-    bintrayRepo = 'maven'
-    bintrayName = 'file-browser-android'
-
-    publishedGroupId = 'hu.mrolcsi.android'
-    libraryName = 'FileBrowser'
-    artifact = 'FileBrowser'
-
-    libraryDescription = 'An easy to use, ready to go file browser library for Android applications.'
-
-    siteUrl = 'https://github.com/mrolcsi/FileBrowser-Android'
-    gitUrl = 'https://github.com/mrolcsi/FileBrowser-Android.git'
-
-    libraryVersion = '0.6'
-
-    developerId = 'mrolcsi'
-    developerName = 'Matusinka Roland'
-    developerEmail = 'matusinka.roland@outlook.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
-}
-
-repositories {
-    jcenter()
-}
-
 def makeVersionCode = { ->
     try {
         def code = new ByteArrayOutputStream()
@@ -78,9 +50,9 @@ def makeVersionNameRelease = { ->
         logger.info("*** Version Name: " + versionName.toString().trim())
 
         if (lastCommits.toString().equals(''))
-            return 'v' + versionName.toString().trim()
+            return versionName.toString().trim()
         else
-            return 'v' + versionName.toString().trim() + '.' + lastCommits.toString().trim()
+            return versionName.toString().trim() + '.' + lastCommits.toString().trim()
     }
     catch (ignored) {
         logger.error(ignored.printStackTrace())
@@ -111,6 +83,34 @@ def makeVersionNameDebug = { ->
     }
 }
 
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'file-browser-android'
+
+    publishedGroupId = 'hu.mrolcsi.android'
+    libraryName = 'FileBrowser'
+    artifact = 'FileBrowser'
+
+    libraryDescription = 'An easy to use, ready to go file browser library for Android applications.'
+
+    siteUrl = 'https://github.com/mrolcsi/FileBrowser-Android'
+    gitUrl = 'https://github.com/mrolcsi/FileBrowser-Android.git'
+
+    libraryVersion = makeVersionNameRelease()
+
+    developerId = 'mrolcsi'
+    developerName = 'Matusinka Roland'
+    developerEmail = 'matusinka.roland@outlook.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+repositories {
+    jcenter()
+}
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
@@ -120,7 +120,7 @@ android {
         minSdkVersion 10
         targetSdkVersion 23
         versionCode makeVersionCode()
-        versionName makeVersionNameDebug()
+        versionName 'v' + makeVersionNameDebug()
     }
 
     buildTypes {
