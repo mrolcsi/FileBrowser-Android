@@ -2,8 +2,6 @@ package hu.mrolcsi.android.filebrowser.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
 
@@ -139,18 +137,12 @@ public abstract class FileUtils {
     public static String getAbsolutePath(UsbFile file) {
         UsbFile child = file;
 
-        List<String> parents = new ArrayList<>();
-
-        while (child.getParent() != null) {
-            parents.add(0, child.getName());
-            child = child.getParent();
-        }
-
         StringBuilder sb = new StringBuilder();
 
-        for (String name : parents) {
-            sb.append("/");
-            sb.append(name);
+        while (child.getParent() != null) {
+            sb.insert(0, child.getName());
+            sb.insert(0, "/");
+            child = child.getParent();
         }
 
         return sb.toString();
