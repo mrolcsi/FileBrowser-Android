@@ -32,6 +32,7 @@ import hu.mrolcsi.android.filebrowser.BuildConfig;
 import hu.mrolcsi.android.filebrowser.R;
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
 import hu.mrolcsi.android.filebrowser.util.Error;
+import hu.mrolcsi.android.filebrowser.util.FileUtils;
 import hu.mrolcsi.android.filebrowser.util.Utils;
 import hu.mrolcsi.android.filebrowser.util.itemclicksupport.ItemClickSupport;
 
@@ -302,7 +303,7 @@ public class UsbBrowserDialog extends BrowserDialog {
                         continue;
                     }
 
-                    String ext = Utils.getExtension(file.getName());
+                    String ext = FileUtils.getExtension(file.getName());
                     int i = 0;
                     int n = mExtensionFilter.length;
                     while (i < n && !mExtensionFilter[i].toLowerCase().equals(ext))
@@ -374,7 +375,7 @@ public class UsbBrowserDialog extends BrowserDialog {
     protected void saveFile(boolean overwrite) {
         final String filename = checkExtension(etFilename.getText().toString());
 
-        if (!filename.isEmpty() && Utils.isFilenameValid(filename)) {
+        if (!filename.isEmpty() && FileUtils.isFilenameValid(filename)) {
             UsbFile existingFile;
             try {
                 existingFile = mCurrentDir.search(filename);
@@ -407,7 +408,7 @@ public class UsbBrowserDialog extends BrowserDialog {
 
     @Override
     protected void createFolder(String folderName) {
-        if (Utils.isFilenameValid(folderName)) {
+        if (FileUtils.isFilenameValid(folderName)) {
             try {
                 final UsbFile newDir = mCurrentDir.createDirectory(folderName);
                 mHistory.push(newDir);

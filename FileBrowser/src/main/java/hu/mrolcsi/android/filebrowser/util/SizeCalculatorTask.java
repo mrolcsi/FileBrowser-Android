@@ -20,6 +20,6 @@ public class SizeCalculatorTask extends AsyncTask<File, Long, Long> {
         if (files[0].isFile()) return files[0].length();
 
         // if it's a directory, calculate size recursively
-        return Utils.dirSize(files[0]);
+        return FileUtils.dirSize(files[0]);
     }
 }

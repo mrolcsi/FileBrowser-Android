@@ -39,6 +39,7 @@ import hu.mrolcsi.android.filebrowser.option.SortMode;
 import hu.mrolcsi.android.filebrowser.util.DividerItemDecoration;
 import hu.mrolcsi.android.filebrowser.util.Error;
 import hu.mrolcsi.android.filebrowser.util.FileSorterTask;
+import hu.mrolcsi.android.filebrowser.util.FileUtils;
 import hu.mrolcsi.android.filebrowser.util.Utils;
 import hu.mrolcsi.android.filebrowser.util.itemclicksupport.ItemClickSupport;
 
@@ -319,7 +320,7 @@ public class BrowserDialog extends DialogFragment {
         final String filename = checkExtension(etFilename.getText().toString());
         String result = mCurrentPath + "/" + filename;
 
-        if (!result.isEmpty() && Utils.isFilenameValid(result)) {
+        if (!result.isEmpty() && FileUtils.isFilenameValid(result)) {
             File f = new File(result);
             if (f.exists()) {
                 if (!overwrite) {
@@ -497,7 +498,7 @@ public class BrowserDialog extends DialogFragment {
                     @Override
                     public boolean accept(File file) {
                         if (file.isFile()) {
-                            String ext = Utils.getExtension(file.getName());
+                            String ext = FileUtils.getExtension(file.getName());
                             int i = 0;
                             int n = mExtensionFilter.length;
                             while (i < n && !mExtensionFilter[i].toLowerCase().equals(ext))
@@ -623,7 +624,7 @@ public class BrowserDialog extends DialogFragment {
     }
 
     protected void createFolder(String folderName) {
-        if (Utils.isFilenameValid(folderName)) {
+        if (FileUtils.isFilenameValid(folderName)) {
             File newDir = new File(mCurrentPath + "/" + folderName);
             if (newDir.mkdir()) {
                 loadList(new File(mCurrentPath));
@@ -733,13 +734,13 @@ public class BrowserDialog extends DialogFragment {
         return mExtensionFilter;
     }
 
-    public BrowserDialog setExtensionFilter(String extensionFilter) {
-        mExtensionFilter = extensionFilter.split(";");
+    public BrowserDialog setExtensionFilter(String... extensions) {
+        mExtensionFilter = extensions;
         return this;
     }
 
-    public BrowserDialog setExtensionFilter(String... extensions) {
-        mExtensionFilter = extensions;
+    public BrowserDialog setExtensionFilter(String extensionFilter) {
+        mExtensionFilter = extensionFilter.split(";");
         return this;
     }
 

@@ -3,7 +3,7 @@ package hu.mrolcsi.android.filebrowser.usb;
 import java.util.Comparator;
 
 import com.github.mjdev.libaums.fs.UsbFile;
-import hu.mrolcsi.android.filebrowser.util.Utils;
+import hu.mrolcsi.android.filebrowser.util.FileUtils;
 
 /**
  * Created by Matusinka Roland on 2016.04.14..
@@ -29,8 +29,8 @@ public abstract class UsbFileComparator {
             if (f1.isDirectory() && !f2.isDirectory()) return -1;
             if (!f1.isDirectory() && f2.isDirectory()) return 1;
 
-            String ext1 = Utils.getExtension(f1.getName());
-            String ext2 = Utils.getExtension(f2.getName());
+            String ext1 = FileUtils.getExtension(f1.getName());
+            String ext2 = FileUtils.getExtension(f2.getName());
             if (ext1 == null) return -1;
             if (ext2 == null) return 1;
             return ext1.compareToIgnoreCase(ext2);
@@ -59,8 +59,8 @@ public abstract class UsbFileComparator {
             }
 
             if (f1.isDirectory() && f2.isDirectory()) {
-                f1size = Utils.dirSize(f1);
-                f2size = Utils.dirSize(f2);
+                f1size = FileUtils.dirSize(f1);
+                f2size = FileUtils.dirSize(f2);
             }
 
             if (f1size < f2size) return -1;

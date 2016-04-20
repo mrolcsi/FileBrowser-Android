@@ -17,6 +17,7 @@ import hu.mrolcsi.android.filebrowser.option.BrowseMode;
 import hu.mrolcsi.android.filebrowser.option.Layout;
 import hu.mrolcsi.android.filebrowser.option.SortMode;
 import hu.mrolcsi.android.filebrowser.usb.UsbBrowserDialog;
+import hu.mrolcsi.android.filebrowser.util.FileUtils;
 
 /**
  * Ez az activity nem a modul része, csupán tesztelési célokat szolgál.
@@ -141,11 +142,11 @@ public class TestFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 UsbBrowserDialog dialog = new UsbBrowserDialog();
-                dialog.setBrowseMode(BrowseMode.SELECT_DIR);
+                dialog.setBrowseMode(BrowseMode.OPEN_FILE);
                 dialog.setOnDialogResultListener(new UsbBrowserDialog.OnDialogResultListener() {
                     @Override
                     public void onPositiveResult(UsbFile file) {
-                        tvPath.setText(file.getName());
+                        tvPath.setText(FileUtils.getAbsolutePath(file));
                     }
 
                     @Override

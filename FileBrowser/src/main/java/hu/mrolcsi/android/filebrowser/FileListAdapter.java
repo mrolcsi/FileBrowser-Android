@@ -16,6 +16,7 @@ import java.util.List;
 
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
 import hu.mrolcsi.android.filebrowser.option.SortMode;
+import hu.mrolcsi.android.filebrowser.util.FileUtils;
 import hu.mrolcsi.android.filebrowser.util.SizeCalculatorTask;
 import hu.mrolcsi.android.filebrowser.util.Utils;
 
@@ -111,11 +112,11 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHo
                     break;
                 case BY_EXTENSION_ASC:
                 case BY_EXTENSION_DESC:
-                    if (holder.file.isFile() && Utils.getExtension(holder.file.getName()) != null) {
-                        holder.text.setText(Utils.getNameWithoutExtension(holder.file.getName()));
+                    if (holder.file.isFile() && FileUtils.getExtension(holder.file.getName()) != null) {
+                        holder.text.setText(FileUtils.getNameWithoutExtension(holder.file.getName()));
                         if (holder.extra != null) {
                             holder.extra.setVisibility(View.VISIBLE);
-                            holder.extra.setText(new StringBuilder().append(".").append(Utils.getExtension(holder.file.getName())));
+                            holder.extra.setText(new StringBuilder().append(".").append(FileUtils.getExtension(holder.file.getName())));
                         }
                     } else {
                         if (holder.extra != null)
@@ -140,7 +141,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHo
                         @Override
                         protected void onProgressUpdate(Long... values) {
                             super.onProgressUpdate(values);
-                            holder.extra.setText(Utils.getFriendlySize(values[0]));
+                            holder.extra.setText(FileUtils.getFriendlySize(values[0]));
                         }
 
                         @Override
@@ -150,12 +151,12 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHo
                                 int count;
                                 try {
                                     count = holder.file.listFiles().length;
-                                    holder.extra.setText(context.getResources().getQuantityString(R.plurals.browser_numberOfFiles, count, count) + "\n" + Utils.getFriendlySize(size));
+                                    holder.extra.setText(context.getResources().getQuantityString(R.plurals.browser_numberOfFiles, count, count) + "\n" + FileUtils.getFriendlySize(size));
                                 } catch (NullPointerException e) {
                                     holder.extra.setText(R.string.browser_unknown);
                                 }
                             } else if (holder.file.isFile())
-                                holder.extra.setText(Utils.getFriendlySize(size));
+                                holder.extra.setText(FileUtils.getFriendlySize(size));
                             holder.extra.setVisibility(View.VISIBLE);
                             holder.progress.setVisibility(View.GONE);
                         }

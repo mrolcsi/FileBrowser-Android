@@ -28,8 +28,8 @@ public abstract class FileComparator {
             if (f1.isDirectory() && f2.isFile()) return -1;
             if (f1.isFile() && f2.isDirectory()) return 1;
 
-            String ext1 = Utils.getExtension(f1.getName());
-            String ext2 = Utils.getExtension(f2.getName());
+            String ext1 = FileUtils.getExtension(f1.getName());
+            String ext2 = FileUtils.getExtension(f2.getName());
             if (ext1 == null) return -1;
             if (ext2 == null) return 1;
             return ext1.compareToIgnoreCase(ext2);
@@ -61,8 +61,8 @@ public abstract class FileComparator {
                 f2size = f2.length();
             }
             if (f1.isDirectory() && f2.isDirectory()) {
-                f1size = Utils.dirSize(f1);
-                f2size = Utils.dirSize(f2);
+                f1size = FileUtils.dirSize(f1);
+                f2size = FileUtils.dirSize(f2);
             }
             if (f1size < f2size) return -1;
             else if (f1size > f2size) return 1;

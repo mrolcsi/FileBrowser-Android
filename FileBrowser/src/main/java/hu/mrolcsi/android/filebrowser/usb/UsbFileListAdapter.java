@@ -15,6 +15,7 @@ import hu.mrolcsi.android.filebrowser.FileListAdapter;
 import hu.mrolcsi.android.filebrowser.R;
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
 import hu.mrolcsi.android.filebrowser.option.SortMode;
+import hu.mrolcsi.android.filebrowser.util.FileUtils;
 import hu.mrolcsi.android.filebrowser.util.Utils;
 
 /**
@@ -126,11 +127,11 @@ public class UsbFileListAdapter extends FileListAdapter {
                     break;
                 case BY_EXTENSION_ASC:
                 case BY_EXTENSION_DESC:
-                    if (!usbHolder.usbFile.isDirectory() && Utils.getExtension(usbHolder.usbFile.getName()) != null) {
-                        usbHolder.text.setText(Utils.getNameWithoutExtension(usbHolder.usbFile.getName()));
+                    if (!usbHolder.usbFile.isDirectory() && FileUtils.getExtension(usbHolder.usbFile.getName()) != null) {
+                        usbHolder.text.setText(FileUtils.getNameWithoutExtension(usbHolder.usbFile.getName()));
                         if (usbHolder.extra != null) {
                             usbHolder.extra.setVisibility(View.VISIBLE);
-                            usbHolder.extra.setText(new StringBuilder().append(".").append(Utils.getExtension(usbHolder.usbFile.getName())));
+                            usbHolder.extra.setText(new StringBuilder().append(".").append(FileUtils.getExtension(usbHolder.usbFile.getName())));
                         }
                     } else {
                         if (usbHolder.extra != null)
@@ -156,13 +157,13 @@ public class UsbFileListAdapter extends FileListAdapter {
                             if (!usbFiles[0].isDirectory()) {
                                 return usbFiles[0].getLength();
                             } else {
-                                return Utils.dirSize(usbFiles[0]);
+                                return FileUtils.dirSize(usbFiles[0]);
                             }
                         }
 
                         @Override
                         protected void onProgressUpdate(Long... values) {
-                            holder.extra.setText(Utils.getFriendlySize(values[0]));
+                            holder.extra.setText(FileUtils.getFriendlySize(values[0]));
                         }
 
                         @Override
@@ -171,14 +172,14 @@ public class UsbFileListAdapter extends FileListAdapter {
                                 int count;
                                 try {
                                     count = usbHolder.usbFile.listFiles().length;
-                                    usbHolder.extra.setText(context.getResources().getQuantityString(R.plurals.browser_numberOfFiles, count, count) + "\n" + Utils.getFriendlySize(size));
+                                    usbHolder.extra.setText(context.getResources().getQuantityString(R.plurals.browser_numberOfFiles, count, count) + "\n" + FileUtils.getFriendlySize(size));
                                 } catch (NullPointerException e) {
                                     usbHolder.extra.setText(R.string.browser_unknown);
                                 } catch (IOException e) {
                                     usbHolder.extra.setText(R.string.browser_error_folderCantBeOpened_message);
                                 }
                             } else {
-                                usbHolder.extra.setText(Utils.getFriendlySize(usbHolder.usbFile.getLength()));
+                                usbHolder.extra.setText(FileUtils.getFriendlySize(usbHolder.usbFile.getLength()));
                             }
                             usbHolder.extra.setVisibility(View.VISIBLE);
                             usbHolder.progress.setVisibility(View.GONE);
