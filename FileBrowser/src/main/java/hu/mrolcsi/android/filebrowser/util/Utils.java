@@ -45,12 +45,15 @@ public abstract class Utils {
         return set.contains(v);
     }
 
-    public static Drawable tintDrawable(Context context, int drawableId) {
+    public static Drawable getTintedDrawable(Context context, int drawableId) {
+        Drawable inDrawable;
         if (Build.VERSION.SDK_INT >= 22) {
-            return context.getResources().getDrawable(drawableId, context.getTheme());
+            inDrawable = context.getResources().getDrawable(drawableId, context.getTheme());
+        } else {
+            //noinspection deprecation
+            inDrawable = context.getResources().getDrawable(drawableId);
         }
 
-        @SuppressWarnings("deprecation") final Drawable inDrawable = context.getResources().getDrawable(drawableId);
         if (inDrawable == null) {
             return null;
         }

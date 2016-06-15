@@ -101,17 +101,17 @@ public class UsbFileListAdapter extends FileListAdapter {
         final boolean isDirSelector = usbHolder.usbFile.getName().equals(context.getString(R.string.browser_titleSelectDir));
 
         if (isUp) {
-            usbHolder.icon.setImageDrawable(Utils.tintDrawable(context, R.drawable.browser_left_up_2));
+            usbHolder.icon.setImageDrawable(Utils.getTintedDrawable(context, R.drawable.browser_left_up_2));
             usbHolder.extra.setText(null);
         } else if (isDirSelector) {
-            usbHolder.icon.setImageDrawable(Utils.tintDrawable(context, R.drawable.browser_checkmark));
+            usbHolder.icon.setImageDrawable(Utils.getTintedDrawable(context, R.drawable.browser_checkmark));
             usbHolder.extra.setText(null);
         } else {
             if (usbHolder.usbFile.isDirectory()) {
-                usbHolder.icon.setImageDrawable(Utils.tintDrawable(context, R.drawable.browser_folder));
+                usbHolder.icon.setImageDrawable(Utils.getTintedDrawable(context, R.drawable.browser_folder));
             } else {
                 //TODO: switch (extension) -> document, image, music, video, text, other
-                usbHolder.icon.setImageDrawable(Utils.tintDrawable(context, R.drawable.browser_file));
+                usbHolder.icon.setImageDrawable(Utils.getTintedDrawable(context, R.drawable.browser_file));
             }
         }
 

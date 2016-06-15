@@ -435,7 +435,7 @@ public class UsbBrowserDialog extends BrowserDialog {
     protected void showSortDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.browser_menu_sortBy)
-                .setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_alphabetical_sorting_asc))
+                .setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_asc))
                 .setItems(R.array.browser_sortOptions, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

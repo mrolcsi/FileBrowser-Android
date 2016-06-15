@@ -85,18 +85,18 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHo
         final boolean isDirSelector = holder.file.getAbsolutePath().equals(File.separator + context.getString(R.string.browser_titleSelectDir));
 
         if (isUp) {
-            holder.icon.setImageDrawable(Utils.tintDrawable(context, R.drawable.browser_left_up_2));
+            holder.icon.setImageDrawable(Utils.getTintedDrawable(context, R.drawable.browser_left_up_2));
             holder.extra.setText(null);
         } else if (isDirSelector) {
-            holder.icon.setImageDrawable(Utils.tintDrawable(context, R.drawable.browser_checkmark));
+            holder.icon.setImageDrawable(Utils.getTintedDrawable(context, R.drawable.browser_checkmark));
             holder.extra.setText(null);
         } else {
             if (holder.file.isDirectory()) {
-                holder.icon.setImageDrawable(Utils.tintDrawable(context, R.drawable.browser_folder));
+                holder.icon.setImageDrawable(Utils.getTintedDrawable(context, R.drawable.browser_folder));
             }
             if (holder.file.isFile()) {
                 //TODO: switch (extension) -> document, image, music,video,text,other
-                holder.icon.setImageDrawable(Utils.tintDrawable(context, R.drawable.browser_file));
+                holder.icon.setImageDrawable(Utils.getTintedDrawable(context, R.drawable.browser_file));
             }
         }
 

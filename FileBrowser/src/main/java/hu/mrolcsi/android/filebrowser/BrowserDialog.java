@@ -279,14 +279,14 @@ public class BrowserDialog extends DialogFragment {
         mToolbar.inflateMenu(R.menu.browser_menu);
         mToolbar.setTitle(R.string.browser_currentDirectory);
 
-        mToolbar.getMenu().findItem(R.id.browser_menuNewFolder).setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_open_folder));
+        mToolbar.getMenu().findItem(R.id.browser_menuNewFolder).setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_open_folder));
 
         menuSortMode = mToolbar.getMenu().findItem(R.id.browser_menuSort);
 
         setupSortMode();
 
         menuSwitchLayout = mToolbar.getMenu().findItem(R.id.browser_menuSwitchLayout);
-        menuSwitchLayout.setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_grid));
+        menuSwitchLayout.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_grid));
 
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -302,11 +302,11 @@ public class BrowserDialog extends DialogFragment {
                 } else if (id == R.id.browser_menuSwitchLayout) {
                     if (mActiveLayout == Layout.LIST) {
                         menuItem.setTitle(R.string.browser_menu_viewAsList);
-                        menuItem.setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_list));
+                        menuItem.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_list));
                         toGridView();
                     } else if (mActiveLayout == Layout.GRID) {
                         menuItem.setTitle(R.string.browser_menu_viewAsGrid);
-                        menuItem.setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_grid));
+                        menuItem.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_grid));
                         toListView();
                     }
                     return true;
@@ -360,7 +360,7 @@ public class BrowserDialog extends DialogFragment {
         loadList(new File(mCurrentPath));
 
         menuSwitchLayout.setTitle(R.string.browser_menu_viewAsGrid);
-        menuSwitchLayout.setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_grid));
+        menuSwitchLayout.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_grid));
     }
 
     protected void toGridView() {
@@ -371,13 +371,13 @@ public class BrowserDialog extends DialogFragment {
         loadList(new File(mCurrentPath));
 
         menuSwitchLayout.setTitle(R.string.browser_menu_viewAsList);
-        menuSwitchLayout.setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_list));
+        menuSwitchLayout.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_list));
     }
 
     protected void showSortDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.browser_menu_sortBy)
-                .setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_alphabetical_sorting_asc))
+                .setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_asc))
                 .setItems(R.array.browser_sortOptions, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -398,35 +398,35 @@ public class BrowserDialog extends DialogFragment {
         switch (mSortMode) {
             case BY_NAME_ASC:
                 menuSortMode.setTitle(sortOptions[0]);
-                menuSortMode.setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_alphabetical_sorting_asc));
+                menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_asc));
                 break;
             case BY_NAME_DESC:
                 menuSortMode.setTitle(sortOptions[1]);
-                menuSortMode.setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_alphabetical_sorting_desc));
+                menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_desc));
                 break;
             case BY_EXTENSION_ASC:
                 menuSortMode.setTitle(sortOptions[2]);
-                menuSortMode.setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_alphabetical_sorting_asc));
+                menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_asc));
                 break;
             case BY_EXTENSION_DESC:
                 menuSortMode.setTitle(sortOptions[3]);
-                menuSortMode.setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_alphabetical_sorting_desc));
+                menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_desc));
                 break;
             case BY_DATE_ASC:
                 menuSortMode.setTitle(sortOptions[4]);
-                menuSortMode.setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_numerical_sorting_asc));
+                menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_numerical_sorting_asc));
                 break;
             case BY_DATE_DESC:
                 menuSortMode.setTitle(sortOptions[5]);
-                menuSortMode.setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_numerical_sorting_desc));
+                menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_numerical_sorting_desc));
                 break;
             case BY_SIZE_ASC:
                 menuSortMode.setTitle(sortOptions[6]);
-                menuSortMode.setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_numerical_sorting_asc));
+                menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_numerical_sorting_asc));
                 break;
             case BY_SIZE_DESC:
                 menuSortMode.setTitle(sortOptions[7]);
-                menuSortMode.setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_numerical_sorting_desc));
+                menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_numerical_sorting_desc));
                 break;
         }
     }
@@ -582,7 +582,7 @@ public class BrowserDialog extends DialogFragment {
 
     protected void showOverwriteDialog(final String fileName) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
-                .setIcon(Utils.tintDrawable(getContext(), android.R.drawable.ic_dialog_alert))
+                .setIcon(Utils.getTintedDrawable(getContext(), android.R.drawable.ic_dialog_alert))
                 .setMessage(R.string.browser_fileExists_message)
                 .setTitle(R.string.browser_fileExists_title)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -604,7 +604,7 @@ public class BrowserDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), tv.resourceId)
                 .setTitle(R.string.browser_menu_newFolder)
-                .setIcon(Utils.tintDrawable(getContext(), R.drawable.browser_open_folder))
+                .setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_open_folder))
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -638,7 +638,7 @@ public class BrowserDialog extends DialogFragment {
 
     protected void showErrorDialog(Error error, String extraMessage) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setIcon(Utils.tintDrawable(getContext(), android.R.drawable.ic_dialog_alert));
+        builder.setIcon(Utils.getTintedDrawable(getContext(), android.R.drawable.ic_dialog_alert));
         builder.setPositiveButton(android.R.string.ok, null);
 
         @SuppressLint("InflateParams") final View view = LayoutInflater.from(getContext()).inflate(R.layout.browser_error_extra, null);
@@ -734,13 +734,13 @@ public class BrowserDialog extends DialogFragment {
         return mExtensionFilter;
     }
 
-    public BrowserDialog setExtensionFilter(String... extensions) {
-        mExtensionFilter = extensions;
+    public BrowserDialog setExtensionFilter(String extensionFilter) {
+        mExtensionFilter = extensionFilter.split(";");
         return this;
     }
 
-    public BrowserDialog setExtensionFilter(String extensionFilter) {
-        mExtensionFilter = extensionFilter.split(";");
+    public BrowserDialog setExtensionFilter(String... extensions) {
+        mExtensionFilter = extensions;
         return this;
     }
 
