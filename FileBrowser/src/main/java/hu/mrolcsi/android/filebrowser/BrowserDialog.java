@@ -30,6 +30,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -65,19 +66,19 @@ public class BrowserDialog extends DialogFragment {
      *
      * @see hu.mrolcsi.android.filebrowser.option.BrowseMode
      */
-    public static final String OPTION_BROWSE_MODE;
+    private static final String OPTION_BROWSE_MODE;
     /**
      * String:  Absolute path to starting directory (Default: root of EXTERNAL_STORAGE (SD-Card) or "/")
      */
-    public static final String OPTION_START_PATH;
+    private static final String OPTION_START_PATH;
     /**
      * String:  File extensions to show separated with semicolons (;) (Default: empty (*.*))
      */
-    public static final String OPTION_EXTENSION_FILTER;
+    private static final String OPTION_EXTENSION_FILTER;
     /**
      * Return value: Absolute path to selected file/directory
      */
-    public static final String RESULT;
+    private static final String RESULT;
     /**
      * Sort Mode: (Directories always have priority before files)
      * <ul>
@@ -94,19 +95,19 @@ public class BrowserDialog extends DialogFragment {
      *
      * @see hu.mrolcsi.android.filebrowser.option.SortMode
      */
-    public static final String OPTION_SORT_MODE;
+    private static final String OPTION_SORT_MODE;
     /**
      * String:  Default filename; only used when saving.
      *
      * @see hu.mrolcsi.android.filebrowser.option.BrowseMode
      */
-    public static final String OPTION_DEFAULT_FILENAME;
+    private static final String OPTION_DEFAULT_FILENAME;
     /**
      * Boolean: Should the specified start path be considered as Root?
      *
      * @see #OPTION_START_PATH
      */
-    public static final String OPTION_START_IS_ROOT;
+    private static final String OPTION_START_IS_ROOT;
     /**
      * Starting layout (can be change at runtime)
      * <ul>
@@ -117,7 +118,8 @@ public class BrowserDialog extends DialogFragment {
      *
      * @see hu.mrolcsi.android.filebrowser.option.Layout
      */
-    public static final String OPTION_LAYOUT;
+    private static final String OPTION_LAYOUT;
+
     public static final SortMode[] SORT_HASHES = new SortMode[]{
             SortMode.BY_NAME_ASC,
             SortMode.BY_NAME_DESC,
@@ -146,9 +148,9 @@ public class BrowserDialog extends DialogFragment {
     protected BrowseMode mBrowseMode = BrowseMode.OPEN_FILE;
     protected SortMode mSortMode = SortMode.BY_NAME_ASC;
     protected String[] mExtensionFilter;
-    protected String mStartPath = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ? Environment.getExternalStorageDirectory().getAbsolutePath() : "/";
-    protected String mRootPath = File.listRoots()[0].getAbsolutePath();
-    protected boolean mStartIsRoot = true;
+    private String mStartPath = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ? Environment.getExternalStorageDirectory().getAbsolutePath() : "/";
+    private String mRootPath = File.listRoots()[0].getAbsolutePath();
+    private boolean mStartIsRoot = true;
     protected int mItemLayoutID = R.layout.browser_listitem_layout;
     protected AsyncTask mFileSorter;
     protected RecyclerView rvFileList;
@@ -162,7 +164,6 @@ public class BrowserDialog extends DialogFragment {
     private Button btnSave;
     private LinearLayoutManager mLinearLayout;
     private GridLayoutManager mGridLayout;
-    private DividerItemDecoration mListItemDecor;
     private OnDialogResultListener onDialogResultListener = new OnDialogResultListener() {
         @Override
         public void onPositiveResult(String path) {
@@ -208,7 +209,7 @@ public class BrowserDialog extends DialogFragment {
         setupToolbar();
 
         rvFileList = (RecyclerView) view.findViewById(R.id.browser_recyclerView);
-        mListItemDecor = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST);
+        DividerItemDecoration listItemDecor = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST);
         mLinearLayout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mGridLayout = new GridLayoutManager(getContext(), getResources().getInteger(R.integer.browser_columnCount), LinearLayoutManager.VERTICAL, false);
         mItemClickSupport = ItemClickSupport.addTo(rvFileList);
@@ -501,7 +502,7 @@ public class BrowserDialog extends DialogFragment {
                             String ext = FileUtils.getExtension(file.getName());
                             int i = 0;
                             int n = mExtensionFilter.length;
-                            while (i < n && !mExtensionFilter[i].toLowerCase().equals(ext))
+                            while (i < n && !mExtensionFilter[i].toLowerCase(Locale.getDefault()).equals(ext))
                                 i++;
                             return i < n;
                         } else return file.canRead();
@@ -596,7 +597,7 @@ public class BrowserDialog extends DialogFragment {
         ad.show();
     }
 
-    protected void showNewFolderDialog() {
+    private void showNewFolderDialog() {
         @SuppressLint("InflateParams") final View view = LayoutInflater.from(getContext()).inflate(R.layout.browser_dialog_newfolder, null);
 
         final TypedValue tv = new TypedValue();

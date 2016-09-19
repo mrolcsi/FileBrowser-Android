@@ -13,6 +13,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
 import hu.mrolcsi.android.filebrowser.option.SortMode;
@@ -126,7 +127,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHo
                 case BY_DATE_ASC:
                 case BY_DATE_DESC:
                     holder.extra.setVisibility(View.VISIBLE);
-                    holder.extra.setText(String.format("%1$tY.%1$tm.%1$td\n%1$tH:%1$tM", holder.file.lastModified()));
+                    holder.extra.setText(String.format(Locale.getDefault(), "%1$tY.%1$tm.%1$td\n%1$tH:%1$tM", holder.file.lastModified()));
                     break;
                 case BY_SIZE_ASC:
                 case BY_SIZE_DESC:
@@ -151,7 +152,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHo
                                 int count;
                                 try {
                                     count = holder.file.listFiles().length;
-                                    holder.extra.setText(context.getResources().getQuantityString(R.plurals.browser_numberOfFiles, count, count) + "\n" + FileUtils.getFriendlySize(size));
+                                    holder.extra.setText(String.format(Locale.getDefault(), "%s\n%s", context.getResources().getQuantityString(R.plurals.browser_numberOfFiles, count, count), FileUtils.getFriendlySize(size)));
                                 } catch (NullPointerException e) {
                                     holder.extra.setText(R.string.browser_unknown);
                                 }
@@ -176,7 +177,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHo
         public TextView text;
         public TextView extra;
         public ProgressBar progress;
-        public AsyncTask<File, Long, Long> sizeCalculator;
+        AsyncTask<File, Long, Long> sizeCalculator;
         File file;
 
         public FileHolder(View itemView) {

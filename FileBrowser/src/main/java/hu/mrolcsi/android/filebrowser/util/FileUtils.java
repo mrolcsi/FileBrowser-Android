@@ -17,7 +17,7 @@ public abstract class FileUtils {
         String ext = null;
         int i = fileName.lastIndexOf('.');
         if (i > 0 && i < fileName.length() - 1)
-            ext = fileName.substring(i + 1).toLowerCase();
+            ext = fileName.substring(i + 1).toLowerCase(Locale.getDefault());
         return ext;
     }
 
@@ -65,20 +65,20 @@ public abstract class FileUtils {
      * @return A mappa mérete byte-ban.
      * @see <a href="http://stackoverflow.com/questions/4040912/how-can-i-get-the-size-of-a-folder-on-sd-card-in-android">forrás</a>
      */
-    public static long dirSize(File dir) {
+    static long dirSize(File dir) {
 
         if (Cache.getInstance().sizeCache.containsKey(dir.getAbsolutePath()))
             return Cache.getInstance().sizeCache.get(dir.getAbsolutePath());
 
         long result = 0;
 
-        Stack<File> dirlist = new Stack<>();
-        dirlist.clear();
+        Stack<File> dirList = new Stack<>();
+        dirList.clear();
 
-        dirlist.push(dir);
+        dirList.push(dir);
 
-        while (!dirlist.isEmpty()) {
-            File dirCurrent = dirlist.pop();
+        while (!dirList.isEmpty()) {
+            File dirCurrent = dirList.pop();
 
             File[] fileList = dirCurrent.listFiles();
 
@@ -86,7 +86,7 @@ public abstract class FileUtils {
                 for (File aFileList : fileList) {
 
                     if (aFileList.isDirectory())
-                        dirlist.push(aFileList);
+                        dirList.push(aFileList);
                     else
                         result += aFileList.length();
                 }
@@ -104,13 +104,13 @@ public abstract class FileUtils {
 
         long result = 0;
 
-        Stack<UsbFile> dirlist = new Stack<>();
-        dirlist.clear();
+        Stack<UsbFile> dirList = new Stack<>();
+        dirList.clear();
 
-        dirlist.push(dir);
+        dirList.push(dir);
 
-        while (!dirlist.isEmpty()) {
-            UsbFile dirCurrent = dirlist.pop();
+        while (!dirList.isEmpty()) {
+            UsbFile dirCurrent = dirList.pop();
 
             try {
                 UsbFile[] fileList = dirCurrent.listFiles();
@@ -119,7 +119,7 @@ public abstract class FileUtils {
                     for (UsbFile file : fileList) {
 
                         if (file.isDirectory())
-                            dirlist.push(file);
+                            dirList.push(file);
                         else
                             result += file.getLength();
                     }

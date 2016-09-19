@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import com.github.mjdev.libaums.fs.UsbFile;
 import hu.mrolcsi.android.filebrowser.FileListAdapter;
@@ -172,7 +173,7 @@ public class UsbFileListAdapter extends FileListAdapter {
                                 int count;
                                 try {
                                     count = usbHolder.usbFile.listFiles().length;
-                                    usbHolder.extra.setText(context.getResources().getQuantityString(R.plurals.browser_numberOfFiles, count, count) + "\n" + FileUtils.getFriendlySize(size));
+                                    usbHolder.extra.setText(String.format(Locale.getDefault(), "%s\n%s", context.getResources().getQuantityString(R.plurals.browser_numberOfFiles, count, count), FileUtils.getFriendlySize(size)));
                                 } catch (NullPointerException e) {
                                     usbHolder.extra.setText(R.string.browser_unknown);
                                 } catch (IOException e) {
@@ -190,12 +191,12 @@ public class UsbFileListAdapter extends FileListAdapter {
         }
     }
 
-    protected class UsbFileHolder extends FileHolder {
+    class UsbFileHolder extends FileHolder {
 
-        public AsyncTask<UsbFile, Long, Long> sizeCalculator;
+        AsyncTask<UsbFile, Long, Long> sizeCalculator;
         UsbFile usbFile;
 
-        public UsbFileHolder(View itemView) {
+        UsbFileHolder(View itemView) {
             super(itemView);
         }
     }

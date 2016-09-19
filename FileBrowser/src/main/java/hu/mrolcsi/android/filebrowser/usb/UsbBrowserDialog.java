@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Stack;
 
 import com.github.mjdev.libaums.UsbMassStorageDevice;
@@ -306,7 +307,7 @@ public class UsbBrowserDialog extends BrowserDialog {
                     String ext = FileUtils.getExtension(file.getName());
                     int i = 0;
                     int n = mExtensionFilter.length;
-                    while (i < n && !mExtensionFilter[i].toLowerCase().equals(ext))
+                    while (i < n && !mExtensionFilter[i].toLowerCase(Locale.getDefault()).equals(ext))
                         i++;
                     if (i < n) {
                         filesToLoad.add(file);
