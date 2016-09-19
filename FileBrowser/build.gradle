@@ -62,7 +62,7 @@ dependencies {
     compile 'com.android.support:design:24.2.1'
     compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.github.mjdev:libaums:0.3'
+    compile project(':libaums')
 }
 
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
