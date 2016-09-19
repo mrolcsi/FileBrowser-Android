@@ -38,7 +38,7 @@ public interface BlockDeviceDriver {
     /**
      * Reads from the block device at a certain offset into the given buffer.
      * The amount of bytes to be read are determined by
-     * {@link java.nio.ByteBuffer#remaining()}.
+     * {@link ByteBuffer#remaining()}.
      * <p>
      * The deviceOffset can either be the amount of bytes or a logical block
      * addressing using the block size. To get the bytes in the last case you
@@ -54,7 +54,7 @@ public interface BlockDeviceDriver {
     /**
      * Writes to the block device at a certain offset from the given buffer. The
      * amount of bytes to be written are determined by
-     * {@link java.nio.ByteBuffer#remaining()}.
+     * {@link ByteBuffer#remaining()}.
      * <p>
      * The deviceOffset can either be the amount of bytes or a logical block
      * addressing using the block size. To get the bytes in the last case you

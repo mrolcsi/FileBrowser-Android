@@ -47,13 +47,13 @@ import com.github.mjdev.libaums.partition.PartitionTableFactory;
  * devices or if no device is connected an empty array.
  * <p>
  * After choosing a device you have to get the permission for the underlying
- * {@link android.hardware.usb.UsbDevice}. The underlying
- * {@link android.hardware.usb.UsbDevice} can be accessed via
+ * {@link UsbDevice}. The underlying
+ * {@link UsbDevice} can be accessed via
  * {@link #getUsbDevice()}.
  * <p>
  * After that you need to call {@link #setupDevice()}. This will initialize the
  * mass storage device and read the partitions (
- * {@link com.github.mjdev.libaums.partition.Partition}).
+ * {@link Partition}).
  * <p>
  * The supported partitions can then be accessed via {@link #getPartitions()}
  * and you can begin to read directories and files.
@@ -164,7 +164,7 @@ public class UsbMassStorageDevice {
     private List<Partition> partitions = new ArrayList<Partition>();
 
     /**
-     * Construct a new {@link com.github.mjdev.libaums.UsbMassStorageDevice}.
+     * Construct a new {@link UsbMassStorageDevice}.
      * The given parameters have to actually be a mass storage device, this is
      * not checked in the constructor!
      *
@@ -266,11 +266,11 @@ public class UsbMassStorageDevice {
 
     /**
      * Sets the device up. Claims interface and initiates the device connection.
-     * Chooses the right{@link com.github.mjdev.libaums.UsbCommunication}
+     * Chooses the right{@link UsbCommunication}
      * depending on the Android version (
-     * {@link com.github.mjdev.libaums.UsbMassStorageDevice.HoneyCombMr1Communication}
+     * {@link HoneyCombMr1Communication}
      * or (
-     * {@link com.github.mjdev.libaums.UsbMassStorageDevice.JellyBeanMr2Communication}
+     * {@link JellyBeanMr2Communication}
      * ).
      * <p>
      * Initializes the {@link #blockDevice} and reads the partitions.
@@ -324,8 +324,8 @@ public class UsbMassStorageDevice {
     }
 
     /**
-     * Releases the {@link android.hardware.usb.UsbInterface} and closes the
-     * {@link android.hardware.usb.UsbDeviceConnection}. After calling this
+     * Releases the {@link UsbInterface} and closes the
+     * {@link UsbDeviceConnection}. After calling this
      * method no further communication is possible. That means you can not read
      * or write from or to the partitions returned by {@link #getPartitions()}.
      */
@@ -351,10 +351,10 @@ public class UsbMassStorageDevice {
     }
 
     /**
-     * This returns the {@link android.hardware.usb.UsbDevice} which can be used
+     * This returns the {@link UsbDevice} which can be used
      * to request permission for communication.
      *
-     * @return Underlying {@link android.hardware.usb.UsbDevice} used for
+     * @return Underlying {@link UsbDevice} used for
      * communication.
      */
     public UsbDevice getUsbDevice() {

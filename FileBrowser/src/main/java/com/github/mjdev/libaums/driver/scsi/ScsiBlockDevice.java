@@ -68,11 +68,11 @@ public class ScsiBlockDevice implements BlockDeviceDriver {
      *
      * @throws IOException If initialing fails due to an unsupported device or if
      *                     reading fails.
-     * @see com.github.mjdev.libaums.driver.scsi.commands.ScsiInquiry
-     * @see com.github.mjdev.libaums.driver.scsi.commands.ScsiInquiryResponse
-     * @see com.github.mjdev.libaums.driver.scsi.commands.ScsiTestUnitReady
-     * @see com.github.mjdev.libaums.driver.scsi.commands.ScsiReadCapacity
-     * @see com.github.mjdev.libaums.driver.scsi.commands.ScsiReadCapacityResponse
+     * @see ScsiInquiry
+     * @see ScsiInquiryResponse
+     * @see ScsiTestUnitReady
+     * @see ScsiReadCapacity
+     * @see ScsiReadCapacityResponse
      */
     @Override
     public void init() throws IOException {
@@ -107,12 +107,12 @@ public class ScsiBlockDevice implements BlockDeviceDriver {
      * Transfers the desired command to the device. If the command has a data
      * phase the parameter <code>inBuffer</code> is used to store or read data
      * to resp. from it. The direction of the data phase is determined by
-     * {@link com.github.mjdev.libaums.driver.scsi.commands.CommandBlockWrapper #getDirection()}
+     * {@link CommandBlockWrapper #getDirection()}
      * .
      * <p>
      * Return value is true if the status of the command status wrapper is
      * successful (
-     * {@link com.github.mjdev.libaums.driver.scsi.commands.CommandStatusWrapper #getbCswStatus()}
+     * {@link CommandStatusWrapper #getbCswStatus()}
      * ).
      *
      * @param command  The command which should be transferred.

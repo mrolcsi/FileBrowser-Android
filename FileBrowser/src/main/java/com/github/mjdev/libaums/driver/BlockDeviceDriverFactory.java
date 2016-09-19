@@ -22,14 +22,14 @@ import com.github.mjdev.libaums.driver.scsi.ScsiBlockDevice;
 
 /**
  * A helper class to create different
- * {@link com.github.mjdev.libaums.driver.BlockDeviceDriver}s.
+ * {@link BlockDeviceDriver}s.
  *
  * @author mjahnen
  */
 public class BlockDeviceDriverFactory {
     /**
      * This method creates a
-     * {@link com.github.mjdev.libaums.driver.BlockDeviceDriver} which is
+     * {@link BlockDeviceDriver} which is
      * suitable for the underlying mass storage device.
      *
      * @param usbCommunication The underlying USB communication.

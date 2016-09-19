@@ -1,1 +1,1 @@
-include ':FileBrowserTest', ':FileBrowser', ':libaums'
+include ':FileBrowserTest', ':FileBrowser'

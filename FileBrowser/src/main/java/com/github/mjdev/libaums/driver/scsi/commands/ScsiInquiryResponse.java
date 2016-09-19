@@ -27,7 +27,7 @@ import java.nio.ByteOrder;
  * This response is received in the data phase.
  *
  * @author mjahnen
- * @see com.github.mjdev.libaums.driver.scsi.commands.ScsiInquiry
+ * @see ScsiInquiry
  */
 public class ScsiInquiryResponse {
 

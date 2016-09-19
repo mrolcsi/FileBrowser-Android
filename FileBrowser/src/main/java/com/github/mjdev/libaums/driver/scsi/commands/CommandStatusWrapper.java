@@ -39,7 +39,7 @@ public class CommandStatusWrapper {
      * SCSI command could not be executed, host should issue an SCSI request
      * sense.
      *
-     * @see com.github.mjdev.libaums.driver.scsi.commands.ScsiRequestSense
+     * @see ScsiRequestSense
      */
     public static final int COMMAND_FAILED = 1;
     /**
@@ -84,11 +84,11 @@ public class CommandStatusWrapper {
 
     /**
      * Returns the tag which can be used to determine the corresponding
-     * {@link com.github.mjdev.libaums.driver.scsi.commands.CommandBlockWrapper
+     * {@link CommandBlockWrapper
      * CBW}.
      *
      * @return The command status wrapper tag.
-     * @see com.github.mjdev.libaums.driver.scsi.commands.CommandBlockWrapper
+     * @see CommandBlockWrapper
      * #getdCswTag()
      */
     public int getdCswTag() {
@@ -109,11 +109,11 @@ public class CommandStatusWrapper {
      * Returns the status of execution of the transmitted SCSI command.
      *
      * @return The status.
-     * @see com.github.mjdev.libaums.driver.scsi.commands.CommandStatusWrapper
+     * @see CommandStatusWrapper
      * #COMMAND_PASSED
-     * @see com.github.mjdev.libaums.driver.scsi.commands.CommandStatusWrapper
+     * @see CommandStatusWrapper
      * #COMMAND_FAILED
-     * @see com.github.mjdev.libaums.driver.scsi.commands.CommandStatusWrapper
+     * @see CommandStatusWrapper
      * #PHASE_ERROR
      */
     public byte getbCswStatus() {

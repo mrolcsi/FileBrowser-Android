@@ -70,7 +70,7 @@ public abstract class CommandBlockWrapper {
      *                       phase (Zero if no data phase).
      * @param direction      The direction the data shall be transferred in the data phase.
      *                       If there is no data phase it should be
-     *                       {@link com.github.mjdev.libaums.driver.scsi.commands.CommandBlockWrapper.Direction #NONE
+     *                       {@link Direction #NONE
      *                       NONE}
      * @param lun            The logical unit number the command is directed to.
      * @param cbwcbLength    The length in bytes of the scsi command.
@@ -143,7 +143,7 @@ public abstract class CommandBlockWrapper {
      * Returns the direction in the data phase.
      *
      * @return The direction.
-     * @see com.github.mjdev.libaums.driver.scsi.commands.CommandBlockWrapper.Direction
+     * @see Direction
      * Direction
      */
     public Direction getDirection() {
