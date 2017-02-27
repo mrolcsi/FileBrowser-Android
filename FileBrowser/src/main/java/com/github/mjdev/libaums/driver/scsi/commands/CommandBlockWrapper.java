@@ -28,126 +28,128 @@ import java.nio.ByteOrder;
  * {@link #CommandBlockWrapper(int, Direction, byte, byte)} with the desired
  * information. When transmitting the command, the
  * {@link #serialize(ByteBuffer)} method has to be called!
- *
+ * 
  * @author mjahnen
+ * 
  */
 public abstract class CommandBlockWrapper {
 
+  /**
+   * The direction of the data phase of the SCSI command.
+   *
+   * @author mjahnen
+   */
+  public enum Direction {
     /**
-     * The direction of the data phase of the SCSI command.
-     *
-     * @author mjahnen
+     * Means from device to host (Android).
      */
-    public enum Direction {
-        /**
-         * Means from device to host (Android).
-         */
-        IN,
-        /**
-         * Means from host (Android) to device.
-         */
-        OUT,
-        /**
-         * There is no data phase
-         */
-        NONE
-    }
-
-    private static final int D_CBW_SIGNATURE = 0x43425355;
-
-    private int dCbwTag;
-    private int dCbwDataTransferLength;
-    private byte bmCbwFlags;
-    private byte bCbwLun;
-    private byte bCbwcbLength;
-    private Direction direction;
-
+    IN,
     /**
-     * Constructs a new command block wrapper with the given information which
-     * can than easily be serialized with {@link #serialize(ByteBuffer)}.
-     *
-     * @param transferLength The bytes which should be transferred in the following data
-     *                       phase (Zero if no data phase).
-     * @param direction      The direction the data shall be transferred in the data phase.
-     *                       If there is no data phase it should be
-     *                       {@link Direction #NONE
-     *                       NONE}
-     * @param lun            The logical unit number the command is directed to.
-     * @param cbwcbLength    The length in bytes of the scsi command.
+     * Means from host (Android) to device.
      */
-    protected CommandBlockWrapper(int transferLength, Direction direction, byte lun,
-                                  byte cbwcbLength) {
-        dCbwDataTransferLength = transferLength;
-        this.direction = direction;
-        if (direction == Direction.IN)
-            bmCbwFlags = (byte) 0x80;
-        bCbwLun = lun;
-        bCbwcbLength = cbwcbLength;
-    }
-
+    OUT,
     /**
-     * Serializes the command block wrapper for transmission.
-     * <p>
-     * This method should be called in every subclass right before the specific
-     * SCSI command serializes itself to the buffer!
-     *
-     * @param buffer The buffer were the serialized data should be copied to.
+     * There is no data phase
      */
-    public void serialize(ByteBuffer buffer) {
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
-        buffer.putInt(D_CBW_SIGNATURE);
-        buffer.putInt(dCbwTag);
-        buffer.putInt(dCbwDataTransferLength);
-        buffer.put(bmCbwFlags);
-        buffer.put(bCbwLun);
-        buffer.put(bCbwcbLength);
-    }
+    NONE
+  }
 
-    /**
-     * Returns the tag which can be used to determine the corresponding
-     * {@link com.github.mjdev.libaums.driver.scsi.commands.CommandStatusWrapper
-     * CBW}.
-     *
-     * @return The command block wrapper tag.
-     * @see com.github.mjdev.libaums.driver.scsi.commands.CommandStatusWrapper
-     * #getdCswTag()
-     */
-    public int getdCbwTag() {
-        return dCbwTag;
-    }
+  private static final int D_CBW_SIGNATURE = 0x43425355;
 
-    /**
-     * Sets the tag which can be used to determine the corresponding
-     * {@link com.github.mjdev.libaums.driver.scsi.commands.CommandStatusWrapper
-     * CBW}.
-     *
-     * @param dCbwTag The command block wrapper tag
-     * @see com.github.mjdev.libaums.driver.scsi.commands.CommandStatusWrapper
-     * #getdCswTag()
-     */
-    public void setdCbwTag(int dCbwTag) {
-        this.dCbwTag = dCbwTag;
-    }
+  private int dCbwTag;
+  protected int dCbwDataTransferLength;
+  private byte bmCbwFlags;
+  private byte bCbwLun;
+  private byte bCbwcbLength;
+  private Direction direction;
 
-    /**
-     * Returns the amount of bytes which should be transmitted in the data
-     * phase.
-     *
-     * @return The length in bytes.
-     */
-    public int getdCbwDataTransferLength() {
-        return dCbwDataTransferLength;
+  /**
+   * Constructs a new command block wrapper with the given information which
+   * can than easily be serialized with {@link #serialize(ByteBuffer)}.
+   *
+   * @param transferLength The bytes which should be transferred in the following data phase (Zero
+   * if no data phase).
+   * @param direction The direction the data shall be transferred in the data phase. If there is no
+   * data phase it should be {@link com.github.mjdev.libaums.driver.scsi.commands.CommandBlockWrapper.Direction
+   * #NONE NONE}
+   * @param lun The logical unit number the command is directed to.
+   * @param cbwcbLength The length in bytes of the scsi command.
+   */
+  protected CommandBlockWrapper(int transferLength, Direction direction, byte lun,
+      byte cbwcbLength) {
+    dCbwDataTransferLength = transferLength;
+    this.direction = direction;
+    if (direction == Direction.IN) {
+      bmCbwFlags = (byte) 0x80;
     }
+    bCbwLun = lun;
+    bCbwcbLength = cbwcbLength;
+  }
 
-    /**
-     * Returns the direction in the data phase.
-     *
-     * @return The direction.
-     * @see Direction
-     * Direction
-     */
-    public Direction getDirection() {
-        return direction;
-    }
+	/**
+   * Serializes the command block wrapper for transmission.
+	 * <p>
+	 * This method should be called in every subclass right before the specific
+   * SCSI command serializes itself to the buffer!
+   *
+   * @param buffer
+   *            The buffer were the serialized data should be copied to.
+   */
+  public void serialize(ByteBuffer buffer) {
+    buffer.order(ByteOrder.LITTLE_ENDIAN);
+    buffer.putInt(D_CBW_SIGNATURE);
+    buffer.putInt(dCbwTag);
+    buffer.putInt(dCbwDataTransferLength);
+    buffer.put(bmCbwFlags);
+    buffer.put(bCbwLun);
+    buffer.put(bCbwcbLength);
+  }
+
+  /**
+   * Returns the tag which can be used to determine the corresponding
+   * {@link com.github.mjdev.libaums.driver.scsi.commands.CommandStatusWrapper
+   * CBW}.
+   *
+   * @return The command block wrapper tag.
+   * @see com.github.mjdev.libaums.driver.scsi.commands.CommandStatusWrapper
+   *      #getdCswTag()
+   */
+  public int getdCbwTag() {
+    return dCbwTag;
+  }
+
+  /**
+   * Sets the tag which can be used to determine the corresponding
+   * {@link com.github.mjdev.libaums.driver.scsi.commands.CommandStatusWrapper
+   * CBW}.
+   *
+   * @param dCbwTag The command block wrapper tag
+   * @see com.github.mjdev.libaums.driver.scsi.commands.CommandStatusWrapper
+   *      #getdCswTag()
+   */
+  public void setdCbwTag(int dCbwTag) {
+    this.dCbwTag = dCbwTag;
+  }
+
+  /**
+   * Returns the amount of bytes which should be transmitted in the data
+   * phase.
+   *
+   * @return The length in bytes.
+   */
+  public int getdCbwDataTransferLength() {
+    return dCbwDataTransferLength;
+  }
+
+  /**
+   * Returns the direction in the data phase.
+   *
+   * @return The direction.
+   * @see com.github.mjdev.libaums.driver.scsi.commands.CommandBlockWrapper.Direction
+   *      Direction
+   */
+  public Direction getDirection() {
+    return direction;
+  }
 
 }

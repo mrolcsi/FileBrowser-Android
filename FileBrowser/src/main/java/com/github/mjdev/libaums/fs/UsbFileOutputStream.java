@@ -19,7 +19,6 @@
 package com.github.mjdev.libaums.fs;
 
 import android.support.annotation.NonNull;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -34,7 +33,7 @@ public class UsbFileOutputStream extends OutputStream {
 
     public UsbFileOutputStream(@NonNull UsbFile file) {
 
-        if (file.isDirectory()) {
+      if (file.isDirectory()) {
             throw new RuntimeException("UsbFileOutputStream cannot be created on directory!");
         }
 
@@ -43,7 +42,7 @@ public class UsbFileOutputStream extends OutputStream {
 
     @Override
     public void write(int oneByte) throws IOException {
-        ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[]{(byte) oneByte});
+      ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[]{(byte) oneByte});
         file.write(currentByteOffset, byteBuffer);
 
         currentByteOffset++;

@@ -19,30 +19,30 @@ package com.github.mjdev.libaums.fs;
 
 /**
  * This class represents a file system.
- *
+ * 
  * @author mjahnen
+ * 
  */
 public interface FileSystem {
 
-    /**
-     * This method returns the root directory of the file system.
-     *
-     * @return The root directory of the file system.
-     */
-    UsbFile getRootDirectory();
+  /**
+   * This method returns the root directory of the file system.
+   *
+   * @return The root directory of the file system.
+   */
+  UsbFile getRootDirectory();
+
+  /**
+   * This method returns the name of the volume which is mostly saved in the
+   * file system.
+   * <p>
+   * In Windows the name of a volume is shown in the explorer before the drive
+   * letter.
+   */
+  String getVolumeLabel();
 
     /**
-     * This method returns the name of the volume which is mostly saved in the
-     * file system.
-     * <p>
-     * In Windows the name of a volume is shown in the explorer before the drive
-     * letter.
      *
-     * @return
-     */
-    String getVolumeLabel();
-
-    /**
      * @return The total "capacity" of the file system in bytes.
      */
     long getCapacity();
@@ -50,7 +50,6 @@ public interface FileSystem {
     /**
      * ATTENTION: This value can be inaccurate, depending on actual file system and certain file
      * system specific properties. Use as an estimation.
-     *
      * @return Occupied space in the file system in bytes (estimate).
      */
     long getOccupiedSpace();
@@ -58,9 +57,13 @@ public interface FileSystem {
     /**
      * ATTENTION: This value can be inaccurate, depending on actual file system and certain file
      * system specific properties. Use as an estimation.
-     *
      * @return Free space in the file system in bytes (estimate).
      */
     long getFreeSpace();
 
+	/**
+   *
+   * @return returns the optimal chuck size in bytes (you should read and write in multiples of that)
+   */
+  int getChunkSize();
 }

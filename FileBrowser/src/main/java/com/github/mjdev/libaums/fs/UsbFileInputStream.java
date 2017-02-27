@@ -18,7 +18,6 @@
 package com.github.mjdev.libaums.fs;
 
 import android.util.Log;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -34,7 +33,7 @@ public class UsbFileInputStream extends InputStream {
 
     public UsbFileInputStream(UsbFile file) {
 
-        if (file.isDirectory()) {
+      if (file.isDirectory()) {
             throw new RuntimeException("UsbFileInputStream cannot be created on directory!");
         }
 
@@ -51,7 +50,7 @@ public class UsbFileInputStream extends InputStream {
     @Override
     public int read() throws IOException {
 
-        if (currentByteOffset >= file.getLength()) {
+      if (currentByteOffset >= file.getLength()) {
             return -1;
         }
 
@@ -71,7 +70,7 @@ public class UsbFileInputStream extends InputStream {
     @Override
     public int read(byte[] buffer) throws IOException {
 
-        if (currentByteOffset >= file.getLength()) {
+      if (currentByteOffset >= file.getLength()) {
             return -1;
         }
 
@@ -90,7 +89,7 @@ public class UsbFileInputStream extends InputStream {
     @Override
     public int read(byte[] buffer, int byteOffset, int byteCount) throws IOException {
 
-        if (currentByteOffset >= file.getLength()) {
+      if (currentByteOffset >= file.getLength()) {
             return -1;
         }
 
