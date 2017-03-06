@@ -32,15 +32,15 @@ import java.util.Collection;
  */
 public interface PartitionTable {
 
-  /**
-   * @return The size in bytes the partition table occupies.
-   */
-  int getSize();
+	/**
+	 * @return The size in bytes the partition table occupies.
+	 */
+	int getSize();
 
 	/**
-   *
-   * @return A collection of {@link PartitionTableEntry}s located on the block
-   *         device.
-   */
-  Collection<PartitionTableEntry> getPartitionTableEntries();
+	 *
+	 * @return A collection of {@link PartitionTableEntry}s located on the block
+	 *         device.
+	 */
+	Collection<PartitionTableEntry> getPartitionTableEntries();
 }

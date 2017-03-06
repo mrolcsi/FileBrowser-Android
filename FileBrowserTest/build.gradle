@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         applicationId "hu.mrolcsi.android.filebrowser"
-        minSdkVersion 10
+        minSdkVersion 12
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"

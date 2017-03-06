@@ -43,7 +43,7 @@ android {
     resourcePrefix 'browser_'
 
     defaultConfig {
-        minSdkVersion 10
+        minSdkVersion 12
         targetSdkVersion 25
         versionCode makeVersionCode()
         versionName 'v' + makeVersionNameDebug()

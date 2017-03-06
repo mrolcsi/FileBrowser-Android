@@ -31,25 +31,25 @@ import java.nio.ByteBuffer;
  */
 public class ScsiInquiry extends CommandBlockWrapper {
 
-  private static final byte LENGTH = 0x6;
-  private static final byte OPCODE = 0x12;
+	private static final byte LENGTH = 0x6;
+	private static final byte OPCODE = 0x12;
 
-  private byte allocationLength;
+	private byte allocationLength;
 
-  public ScsiInquiry(byte allocationLength) {
-    super(allocationLength, Direction.IN, (byte) 0, LENGTH);
+	public ScsiInquiry(byte allocationLength) {
+		super(allocationLength, Direction.IN, (byte) 0, LENGTH);
 
         this.allocationLength = allocationLength;
-  }
+	}
 
-  @Override
-  public void serialize(ByteBuffer buffer) {
-    super.serialize(buffer);
-    buffer.put(OPCODE);
-    buffer.put((byte) 0);
-    buffer.put((byte) 0);
-    buffer.put((byte) 0);
-    buffer.put(allocationLength);
-  }
+	@Override
+	public void serialize(ByteBuffer buffer) {
+		super.serialize(buffer);
+		buffer.put(OPCODE);
+		buffer.put((byte) 0);
+		buffer.put((byte) 0);
+		buffer.put((byte) 0);
+		buffer.put(allocationLength);
+	}
 
 }

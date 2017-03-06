@@ -25,28 +25,30 @@ import java.nio.ByteBuffer;
  * moment only bulk IN and OUT transfer are supported. Every class that follows
  * {@link com.github.mjdev.libaums.driver.BlockDeviceDriver} can use this to
  * communicate with the underlying USB stack.
- *
+ * 
  * @author mjahnen
+ * 
  */
 public interface UsbCommunication {
 
-  int TRANSFER_TIMEOUT = 5000;
+	int TRANSFER_TIMEOUT = 5000;
 
-  /**
-   * Performs a bulk out transfer beginning at the offset specified in the
-   * <code>buffer</code> of length <code>buffer#remaining()</code>.
-   *
-   * @param src The data to transfer.
-   * @return Bytes transmitted if successful.
-   */
-  int bulkOutTransfer(ByteBuffer src) throws IOException;
+	/**
+	 * Performs a bulk out transfer beginning at the offset specified in the <code>buffer</code> of
+	 * length <code>buffer#remaining()</code>.
+	 *
+	 * @param src The data to transfer.
+	 * @return Bytes transmitted if successful.
+	 */
+	int bulkOutTransfer(ByteBuffer src) throws IOException;
 
-  /**
-   * Performs a bulk in transfer beginning at offset zero in the
-   * <code>buffer</code> of length <code>buffer#remaining()</code>.
-   *
-   * @param dest The buffer where data should be transferred.
-   * @return Bytes read if successful.
-   */
-  int bulkInTransfer(ByteBuffer dest) throws IOException;
+	/**
+	 * Performs a bulk in transfer beginning at offset zero in the
+	 * <code>buffer</code> of length <code>buffer#remaining()</code>.
+	 *
+	 * @param dest
+	 *            The buffer where data should be transferred.
+	 * @return Bytes read if successful.
+	 */
+	int bulkInTransfer(ByteBuffer dest) throws IOException;
 }

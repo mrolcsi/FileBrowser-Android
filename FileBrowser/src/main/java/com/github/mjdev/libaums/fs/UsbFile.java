@@ -45,196 +45,194 @@ public interface UsbFile extends Closeable {
      * @param path The path to the resource to search.
      * @return UsbFile directory or file if found, null otherwise.
      */
-    @Nullable
-    UsbFile search(@NonNull String path) throws IOException;
-
-  /**
-   * @return True if representing a directory.
-   */
-  boolean isDirectory();
+		@Nullable
+		UsbFile search(@NonNull String path) throws IOException;
 
 	/**
-   *
-   * @return The name of the file or directory.
-   */
-  String getName();
-
-  /**
-   * Set a new name for this file or directory.
-   *
-   * @param newName
-   *            The new name.
-   * @throws IOException
-   *             If new name is already assigned or writing to the file system
-   *             fails.
-   */
-  void setName(String newName) throws IOException;
-
-  /**
-   * Returns the time this directory or file was created.
-   *
-   * @return Time in milliseconds since January 1 00:00:00, 1970 UTC
-   */
-  long createdAt();
-
-  /**
-   * Returns the time this directory or file was last modified.
-   *
-   * @return Time in milliseconds since January 1 00:00:00, 1970 UTC
-   */
-  long lastModified();
-
-  /**
-   * Returns the time this directory or file was last accessed.
-   *
-   * @return Time in milliseconds since January 1 00:00:00, 1970 UTC
-   */
-  long lastAccessed();
-
-  /**
-   * Returns the parent directory for the file or directory or null if this is
-   * the root directory.
-   *
-   * @return The parent directory or null.
-   */
-  UsbFile getParent();
-
-  /**
-   * Lists all files in the directory. Throws an exception if called on a
-   * file.
-   *
-   * @return String array containing all names in the directory.
-   * @throws IOException If reading fails
-   */
-  String[] list() throws IOException;
+	 * @return True if representing a directory.
+	 */
+	boolean isDirectory();
 
 	/**
-   * Lists all files in the directory. Throws an exception if called on a
-   * file.
-   *
-   * @return UsbFile array containing all files or directories in the
-   *         directory.
-   * @throws IOException
-   *             If reading fails
-   */
-  UsbFile[] listFiles() throws IOException;
+	 *
+	 * @return The name of the file or directory.
+	 */
+	String getName();
 
-  /**
-   * Returns the file length or throws an exception if called on a directory.
-   *
-   * @return File length in bytes.
-   */
-  long getLength();
+	/**
+	 * Set a new name for this file or directory.
+	 *
+	 * @param newName
+	 *            The new name.
+	 * @throws IOException
+	 *             If new name is already assigned or writing to the file system
+	 *             fails.
+	 */
+	void setName(String newName) throws IOException;
 
-  /**
-   * Sets the new file length. This can sometimes be more efficient if all
-   * needed place for a file is allocated on the disk at once and before
-   * writing to it.
-   * <p>
-   * If the space is not allocated before writing the space must be exceeded
-   * every time a new write occurs. This can sometimes be less efficient.
-   *
-   * @param newLength
-   *            The file length in bytes.
-   * @throws IOException
-   *             If requesting the needed space fails.
-   */
-  void setLength(long newLength) throws IOException;
+	/**
+	 * Returns the time this directory or file was created.
+	 *
+	 * @return Time in milliseconds since January 1 00:00:00, 1970 UTC
+	 */
+	long createdAt();
 
-  /**
-   * Reads from a file or throws an exception if called on a directory.
-   *
-   * @param offset
-   *            The offset in bytes where reading in the file should be begin.
-   * @param destination
-   *            Buffer the data shall be transferred to.
-   * @throws IOException
-   *             If reading fails.
-   */
-  void read(long offset, ByteBuffer destination) throws IOException;
+	/**
+	 * Returns the time this directory or file was last modified.
+	 *
+	 * @return Time in milliseconds since January 1 00:00:00, 1970 UTC
+	 */
+	long lastModified();
 
-  /**
-   * Writes to a file or throws an exception if called on a directory.
-   *
-   * @param offset
-   *            The offset in bytes where writing in the file should be begin.
-   * @param source
-   *            Buffer which contains the data which shall be transferred.
-   * @throws IOException
-   *             If writing fails.
-   */
-  void write(long offset, ByteBuffer source) throws IOException;
+	/**
+	 * Returns the time this directory or file was last accessed.
+	 *
+	 * @return Time in milliseconds since January 1 00:00:00, 1970 UTC
+	 */
+	long lastAccessed();
 
-  /**
-   * Forces a write. Every change to the file is then committed to the disk.
-   * Throws an exception if called on directories.
-   *
-   * @throws IOException
-   *             If flushing fails.
-   */
-  void flush() throws IOException;
+	/**
+	 * Returns the parent directory for the file or directory or null if this is the root directory.
+	 *
+	 * @return The parent directory or null.
+	 */
+	UsbFile getParent();
 
-  /**
-   * Closes and flushes the file. It is essential to close a file after making
-   * changes to it! Throws an exception if called on directories.
-   *
-   * @throws IOException
-   *             If closing fails.
-   */
-  @Override
-  void close() throws IOException;
+	/**
+	 * Lists all files in the directory. Throws an exception if called on a file.
+	 *
+	 * @return String array containing all names in the directory.
+	 * @throws IOException If reading fails
+	 */
+	String[] list() throws IOException;
 
-  /**
-   * This methods creates a new directory with the given name and returns it.
-   *
-   * @param name
-   *            The name of the new directory.
-   * @return The newly created directory.
-   * @throws IOException
-   *             If writing to the disk fails or a item with the same name
-   *             already exists.
-   */
-  UsbFile createDirectory(String name) throws IOException;
+	/**
+	 * Lists all files in the directory. Throws an exception if called on a
+	 * file.
+	 *
+	 * @return UsbFile array containing all files or directories in the
+	 *         directory.
+	 * @throws IOException
+	 *             If reading fails
+	 */
+	UsbFile[] listFiles() throws IOException;
 
-  /**
-   * This methods creates a new file with the given name and returns it.
-   *
-   * @param name
-   *            The name of the new file.
-   * @return The newly created file.
-   * @throws IOException
-   *             If writing to the disk fails or a item with the same name
-   *             already exists.
-   */
-  UsbFile createFile(String name) throws IOException;
+	/**
+	 * Returns the file length or throws an exception if called on a directory.
+	 *
+	 * @return File length in bytes.
+	 */
+	long getLength();
 
-  /**
-   * This methods moves THIS item to the destination directory. Make sure that
-   * the destination is a directory, otherwise an exception will be thrown.
-   * Make also sure that both items are on the same logical device (disk,
-   * partition, file system). Moving between different file systems is
-   * currently not supported. If you want to do this, you have to manually
-   * copy the content and delete the old item.
-   *
-   * @param destination
-   *            The directory where this item should be moved.
-   * @throws IOException
-   *             If writing fails, or the operation cannot be done (eg. item
-   *             already exists in the destination directory)
-   */
-  void moveTo(UsbFile destination) throws IOException;
+	/**
+	 * Sets the new file length. This can sometimes be more efficient if all
+	 * needed place for a file is allocated on the disk at once and before
+	 * writing to it.
+	 * <p>
+	 * If the space is not allocated before writing the space must be exceeded
+	 * every time a new write occurs. This can sometimes be less efficient.
+	 *
+	 * @param newLength
+	 *            The file length in bytes.
+	 * @throws IOException
+	 *             If requesting the needed space fails.
+	 */
+	void setLength(long newLength) throws IOException;
 
-  /**
-   * Deletes this file or directory from the parent directory.
-   *
-   * @throws IOException
-   *             If operation fails due to write errors.
-   */
-  void delete() throws IOException;
+	/**
+	 * Reads from a file or throws an exception if called on a directory.
+	 *
+	 * @param offset
+	 *            The offset in bytes where reading in the file should be begin.
+	 * @param destination
+	 *            Buffer the data shall be transferred to.
+	 * @throws IOException
+	 *             If reading fails.
+	 */
+	void read(long offset, ByteBuffer destination) throws IOException;
 
-  /**
-   *
-   * @return True if the current directory is the root directory, false if not or a file.
-   */
-  boolean isRoot();
+	/**
+	 * Writes to a file or throws an exception if called on a directory.
+	 *
+	 * @param offset
+	 *            The offset in bytes where writing in the file should be begin.
+	 * @param source
+	 *            Buffer which contains the data which shall be transferred.
+	 * @throws IOException
+	 *             If writing fails.
+	 */
+	void write(long offset, ByteBuffer source) throws IOException;
+
+	/**
+	 * Forces a write. Every change to the file is then committed to the disk.
+	 * Throws an exception if called on directories.
+	 *
+	 * @throws IOException
+	 *             If flushing fails.
+	 */
+	void flush() throws IOException;
+
+	/**
+	 * Closes and flushes the file. It is essential to close a file after making
+	 * changes to it! Throws an exception if called on directories.
+	 *
+	 * @throws IOException
+	 *             If closing fails.
+	 */
+	@Override
+	void close() throws IOException;
+
+	/**
+	 * This methods creates a new directory with the given name and returns it.
+	 *
+	 * @param name
+	 *            The name of the new directory.
+	 * @return The newly created directory.
+	 * @throws IOException
+	 *             If writing to the disk fails or a item with the same name
+	 *             already exists.
+	 */
+	UsbFile createDirectory(String name) throws IOException;
+
+	/**
+	 * This methods creates a new file with the given name and returns it.
+	 *
+	 * @param name
+	 *            The name of the new file.
+	 * @return The newly created file.
+	 * @throws IOException
+	 *             If writing to the disk fails or a item with the same name
+	 *             already exists.
+	 */
+	UsbFile createFile(String name) throws IOException;
+
+	/**
+	 * This methods moves THIS item to the destination directory. Make sure that
+	 * the destination is a directory, otherwise an exception will be thrown.
+	 * Make also sure that both items are on the same logical device (disk,
+	 * partition, file system). Moving between different file systems is
+	 * currently not supported. If you want to do this, you have to manually
+	 * copy the content and delete the old item.
+	 *
+	 * @param destination
+	 *            The directory where this item should be moved.
+	 * @throws IOException
+	 *             If writing fails, or the operation cannot be done (eg. item
+	 *             already exists in the destination directory)
+	 */
+	void moveTo(UsbFile destination) throws IOException;
+
+	/**
+	 * Deletes this file or directory from the parent directory.
+	 *
+	 * @throws IOException
+	 *             If operation fails due to write errors.
+	 */
+	void delete() throws IOException;
+
+	/**
+	 *
+	 * @return True if the current directory is the root directory, false if not or a file.
+	 */
+	boolean isRoot();
 }

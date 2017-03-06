@@ -12,76 +12,77 @@ import java.nio.ByteBuffer;
  * zero.
  *
  * @author mjahnen
+ *
  */
 class HoneyCombMr1Communication implements UsbCommunication {
 
-  private UsbDeviceConnection deviceConnection;
-  private UsbEndpoint outEndpoint;
-  private UsbEndpoint inEndpoint;
+    private UsbDeviceConnection deviceConnection;
+    private UsbEndpoint outEndpoint;
+    private UsbEndpoint inEndpoint;
 
-  HoneyCombMr1Communication(UsbDeviceConnection deviceConnection, UsbEndpoint outEndpoint,
-      UsbEndpoint inEndpoint) {
-    this.deviceConnection = deviceConnection;
-    this.outEndpoint = outEndpoint;
-    this.inEndpoint = inEndpoint;
-  }
-
-  @Override
-  public int bulkOutTransfer(ByteBuffer src) throws IOException {
-    int offset = src.position();
-
-    if (offset == 0) {
-      int result = deviceConnection.bulkTransfer(outEndpoint,
-          src.array(), src.remaining(), TRANSFER_TIMEOUT);
-
-      if (result == -1) {
-        throw new IOException("Could not write to device, result == -1");
-      }
-
-      src.position(src.position() + result);
-      return result;
+    HoneyCombMr1Communication(UsbDeviceConnection deviceConnection, UsbEndpoint outEndpoint,
+        UsbEndpoint inEndpoint) {
+        this.deviceConnection = deviceConnection;
+        this.outEndpoint = outEndpoint;
+        this.inEndpoint = inEndpoint;
     }
 
-    byte[] tmpBuffer = new byte[src.remaining()];
-    System.arraycopy(src.array(), offset, tmpBuffer, 0, src.remaining());
-    int result = deviceConnection.bulkTransfer(outEndpoint,
-        tmpBuffer, src.remaining(), TRANSFER_TIMEOUT);
+    @Override
+    public int bulkOutTransfer(ByteBuffer src) throws IOException {
+        int offset = src.position();
 
-    if (result == -1) {
-      throw new IOException("Could not write to device, result == -1");
+        if (offset == 0) {
+            int result = deviceConnection.bulkTransfer(outEndpoint,
+                src.array(), src.remaining(), TRANSFER_TIMEOUT);
+
+            if (result == -1) {
+                throw new IOException("Could not write to device, result == -1");
+            }
+
+            src.position(src.position() + result);
+            return result;
+        }
+
+        byte[] tmpBuffer = new byte[src.remaining()];
+        System.arraycopy(src.array(), offset, tmpBuffer, 0, src.remaining());
+        int result = deviceConnection.bulkTransfer(outEndpoint,
+            tmpBuffer, src.remaining(), TRANSFER_TIMEOUT);
+
+        if (result == -1) {
+            throw new IOException("Could not write to device, result == -1");
+        }
+
+        src.position(src.position() + result);
+        return result;
     }
 
-    src.position(src.position() + result);
-    return result;
-  }
+    @Override
+    public int bulkInTransfer(ByteBuffer dest) throws IOException {
+        int offset = dest.position();
 
-  @Override
-  public int bulkInTransfer(ByteBuffer dest) throws IOException {
-    int offset = dest.position();
+        if (offset == 0) {
+            int result = deviceConnection.bulkTransfer(inEndpoint,
+                dest.array(), dest.remaining(), TRANSFER_TIMEOUT);
 
-    if (offset == 0) {
-      int result = deviceConnection.bulkTransfer(inEndpoint,
-          dest.array(), dest.remaining(), TRANSFER_TIMEOUT);
+            if (result == -1) {
+                throw new IOException("Could read from to device, result == -1");
+            }
 
-      if (result == -1) {
-        throw new IOException("Could read from to device, result == -1");
-      }
+            dest.position(dest.position() + result);
+            return result;
 
-      dest.position(dest.position() + result);
-      return result;
+        }
 
+        byte[] tmpBuffer = new byte[dest.remaining()];
+        int result = deviceConnection
+            .bulkTransfer(inEndpoint, tmpBuffer, dest.remaining(), TRANSFER_TIMEOUT);
+
+        if (result == -1) {
+            throw new IOException("Could not read from device, result == -1");
+        }
+
+        System.arraycopy(tmpBuffer, 0, dest.array(), offset, result);
+        dest.position(dest.position() + result);
+        return result;
     }
-
-    byte[] tmpBuffer = new byte[dest.remaining()];
-    int result = deviceConnection
-        .bulkTransfer(inEndpoint, tmpBuffer, dest.remaining(), TRANSFER_TIMEOUT);
-
-    if (result == -1) {
-      throw new IOException("Could not read from device, result == -1");
-    }
-
-    System.arraycopy(tmpBuffer, 0, dest.array(), offset, result);
-    dest.position(dest.position() + result);
-    return result;
-  }
 }

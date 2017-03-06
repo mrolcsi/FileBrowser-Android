@@ -25,21 +25,18 @@ package com.github.mjdev.libaums.fs;
  */
 public interface FileSystem {
 
-  /**
-   * This method returns the root directory of the file system.
-   *
-   * @return The root directory of the file system.
-   */
-  UsbFile getRootDirectory();
+	/**
+	 * This method returns the root directory of the file system.
+	 *
+	 * @return The root directory of the file system.
+	 */
+	UsbFile getRootDirectory();
 
-  /**
-   * This method returns the name of the volume which is mostly saved in the
-   * file system.
-   * <p>
-   * In Windows the name of a volume is shown in the explorer before the drive
-   * letter.
-   */
-  String getVolumeLabel();
+	/**
+	 * This method returns the name of the volume which is mostly saved in the file system. <p> In
+	 * Windows the name of a volume is shown in the explorer before the drive letter.
+	 */
+	String getVolumeLabel();
 
     /**
      *
@@ -62,8 +59,8 @@ public interface FileSystem {
     long getFreeSpace();
 
 	/**
-   *
-   * @return returns the optimal chuck size in bytes (you should read and write in multiples of that)
-   */
-  int getChunkSize();
+	 *
+	 * @return returns the optimal chuck size in bytes (you should read and write in multiples of that)
+	 */
+	int getChunkSize();
 }
