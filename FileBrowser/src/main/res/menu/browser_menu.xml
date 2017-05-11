@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools">
-    <item
-        android:id="@+id/browser_menuNewFolder"
-        android:title="@string/browser_menu_newFolder"
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction" />
-    <item
-        android:id="@+id/browser_menuSort"
-        android:title="@string/browser_menu_sortBy"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/browser_menuSwitchLayout"
-        android:title="@string/browser_menu_viewAsGrid"
-        app:showAsAction="always" />
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools">
+  <item
+    android:id="@+id/browser_menuNewFolder"
+    android:title="@string/browser_menu_newFolder"
+    app:showAsAction="always"
+    tools:ignore="AlwaysShowAction"/>
+  <item
+    android:id="@+id/browser_menuSort"
+    android:title="@string/browser_menu_sortBy"
+    app:showAsAction="always"/>
+  <item
+    android:id="@+id/browser_menuSwitchLayout"
+    android:title="@string/browser_menu_viewAsGrid"
+    app:showAsAction="always"/>
 </menu>

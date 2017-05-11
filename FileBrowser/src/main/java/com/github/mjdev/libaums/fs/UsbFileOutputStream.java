@@ -28,53 +28,53 @@ import java.nio.ByteBuffer;
  */
 public class UsbFileOutputStream extends OutputStream {
 
-    private UsbFile file;
-    private int currentByteOffset = 0;
+  private UsbFile file;
+  private int currentByteOffset = 0;
 
-    public UsbFileOutputStream(@NonNull UsbFile file) {
+  public UsbFileOutputStream(@NonNull UsbFile file) {
 
-        if (file.isDirectory()) {
-            throw new RuntimeException("UsbFileOutputStream cannot be created on directory!");
-        }
-
-        this.file = file;
+    if (file.isDirectory()) {
+      throw new RuntimeException("UsbFileOutputStream cannot be created on directory!");
     }
 
-    @Override
-    public void write(int oneByte) throws IOException {
-        ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[]{(byte) oneByte});
-        file.write(currentByteOffset, byteBuffer);
+    this.file = file;
+  }
 
-        currentByteOffset++;
-    }
+  @Override
+  public void write(int oneByte) throws IOException {
+    ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[]{(byte) oneByte});
+    file.write(currentByteOffset, byteBuffer);
 
-    @Override
-    public void close() throws IOException {
-        file.close();
-    }
+    currentByteOffset++;
+  }
 
-    @Override
-    public void flush() throws IOException {
-        file.flush();
-    }
+  @Override
+  public void close() throws IOException {
+    file.close();
+  }
 
-    @Override
-    public void write(byte[] buffer) throws IOException {
-        ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
-        file.write(currentByteOffset, byteBuffer);
+  @Override
+  public void flush() throws IOException {
+    file.flush();
+  }
 
-        currentByteOffset += buffer.length;
-    }
+  @Override
+  public void write(byte[] buffer) throws IOException {
+    ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
+    file.write(currentByteOffset, byteBuffer);
 
-    @Override
-    public void write(byte[] buffer, int offset, int count) throws IOException {
-        ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
+    currentByteOffset += buffer.length;
+  }
 
-        byteBuffer.position(offset);
-        byteBuffer.limit(count + offset);
+  @Override
+  public void write(byte[] buffer, int offset, int count) throws IOException {
+    ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
 
-        file.write(currentByteOffset, byteBuffer);
+    byteBuffer.position(offset);
+    byteBuffer.limit(count + offset);
 
-        currentByteOffset += count;
-    }
+    file.write(currentByteOffset, byteBuffer);
+
+    currentByteOffset += count;
+  }
 }

@@ -22,38 +22,38 @@ package hu.mrolcsi.android.filebrowser.option;
  * (Alapértelmezett: fájlnév szerint növekvő)
  */
 public enum SortMode {
-    /**
-     * Név szerint rendezés, növekvő
-     */
-    BY_NAME_ASC,
-    /**
-     * Név szerint rendezés,. csökkenő
-     */
-    BY_NAME_DESC,
-    /**
-     * Kiterjesztés szerint rendezés, növekvő
-     */
-    BY_EXTENSION_ASC,
-    /**
-     * Kiterjesztés szerint rendezés, csökkenő
-     */
-    BY_EXTENSION_DESC,
-    /**
-     * Módosítás dátuma szerint rendezés, növekvő
-     */
-    BY_DATE_ASC,
-    /**
-     * Módosítás dátuma szerint rendezés, csökkenő
-     */
-    BY_DATE_DESC,
-    /**
-     * Méret szerint rendezés, növekvő
-     * (Pontatlan, a nem olvasható mappák mérete 0 byte)
-     */
-    BY_SIZE_ASC,
-    /**
-     * Méret szerint rendezés, csökkenő
-     * (Pontatlan, a nem olvasható mappák mérete 0 byte)
-     */
-    BY_SIZE_DESC
+  /**
+   * Név szerint rendezés, növekvő
+   */
+  BY_NAME_ASC,
+  /**
+   * Név szerint rendezés,. csökkenő
+   */
+  BY_NAME_DESC,
+  /**
+   * Kiterjesztés szerint rendezés, növekvő
+   */
+  BY_EXTENSION_ASC,
+  /**
+   * Kiterjesztés szerint rendezés, csökkenő
+   */
+  BY_EXTENSION_DESC,
+  /**
+   * Módosítás dátuma szerint rendezés, növekvő
+   */
+  BY_DATE_ASC,
+  /**
+   * Módosítás dátuma szerint rendezés, csökkenő
+   */
+  BY_DATE_DESC,
+  /**
+   * Méret szerint rendezés, növekvő
+   * (Pontatlan, a nem olvasható mappák mérete 0 byte)
+   */
+  BY_SIZE_ASC,
+  /**
+   * Méret szerint rendezés, csökkenő
+   * (Pontatlan, a nem olvasható mappák mérete 0 byte)
+   */
+  BY_SIZE_DESC
 }

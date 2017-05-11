@@ -16,12 +16,12 @@ package hu.mrolcsi.android.filebrowser.option;
  * Alapértelmezett: lista.
  */
 public enum Layout {
-    /**
-     * Lista nézet
-     */
-    LIST,
-    /**
-     * Négyzetrács (grid) nézet
-     */
-    GRID
+  /**
+   * Lista nézet
+   */
+  LIST,
+  /**
+   * Négyzetrács (grid) nézet
+   */
+  GRID
 }

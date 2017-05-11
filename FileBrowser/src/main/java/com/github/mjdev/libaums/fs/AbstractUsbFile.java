@@ -41,9 +41,9 @@ public abstract class AbstractUsbFile implements UsbFile {
 
   private UsbFile searchThis(String name) throws IOException {
     for (UsbFile file : listFiles()) {
-        if (file.getName().equals(name)) {
-            return file;
-        }
+      if (file.getName().equals(name)) {
+        return file;
+      }
     }
 
     return null;

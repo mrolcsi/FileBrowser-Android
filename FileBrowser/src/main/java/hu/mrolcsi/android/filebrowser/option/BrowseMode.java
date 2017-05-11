@@ -17,16 +17,16 @@ package hu.mrolcsi.android.filebrowser.option;
  * (Alapértelmezett: fájl megnyitása)
  */
 public enum BrowseMode {
-    /**
-     * Fájl megnyitása
-     */
-    OPEN_FILE,
-    /**
-     * Mappa kiválasztása
-     */
-    SELECT_DIR,
-    /**
-     * Fájl mentése
-     */
-    SAVE_FILE
+  /**
+   * Fájl megnyitása
+   */
+  OPEN_FILE,
+  /**
+   * Mappa kiválasztása
+   */
+  SELECT_DIR,
+  /**
+   * Fájl mentése
+   */
+  SAVE_FILE
 }

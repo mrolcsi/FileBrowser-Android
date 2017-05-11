@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.FileBrowser" parent="Theme.AppCompat.Light">
-        <item name="colorAccent">#FFAA00AA</item>
-    </style>
+  <style name="Theme.FileBrowser"
+    parent="Theme.AppCompat.Light">
+    <item name="colorAccent">#FFAA00AA</item>
+  </style>
 </resources>

@@ -27,23 +27,22 @@ import java.nio.ByteBuffer;
  * <p>
  * This command has no data phase, the result is determined by
  * {@link com.github.mjdev.libaums.driver.scsi.commands.CommandStatusWrapper #getbCswStatus()}.
- * 
+ *
  * @author mjahnen
- * 
  */
 public class ScsiTestUnitReady extends CommandBlockWrapper {
 
-	private static final byte LENGTH = 0x6;
-	private static final byte OPCODE = 0x0;
+  private static final byte LENGTH = 0x6;
+  private static final byte OPCODE = 0x0;
 
-	public ScsiTestUnitReady() {
-		super(0, Direction.NONE, (byte) 0, LENGTH);
-	}
+  public ScsiTestUnitReady() {
+    super(0, Direction.NONE, (byte) 0, LENGTH);
+  }
 
-	@Override
-	public void serialize(ByteBuffer buffer) {
-		super.serialize(buffer);
-		buffer.put(OPCODE);
-	}
+  @Override
+  public void serialize(ByteBuffer buffer) {
+    super.serialize(buffer);
+    buffer.put(OPCODE);
+  }
 
 }

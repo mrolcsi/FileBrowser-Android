@@ -12,11 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
+import hu.mrolcsi.android.filebrowser.R;
 import java.util.Arrays;
 import java.util.HashSet;
-
-import hu.mrolcsi.android.filebrowser.R;
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,8 +25,8 @@ import hu.mrolcsi.android.filebrowser.R;
 
 public abstract class Utils {
 
-    // http://stackoverflow.com/questions/1128723/in-java-how-can-i-test-if-an-array-contains-a-certain-value
-    public static <T> boolean contains(final T[] array, final T v) {
+  // http://stackoverflow.com/questions/1128723/in-java-how-can-i-test-if-an-array-contains-a-certain-value
+  public static <T> boolean contains(final T[] array, final T v) {
 //        if (v == null) {
 //            for (final T e : array)
 //                if (e == null)
@@ -41,57 +39,58 @@ public abstract class Utils {
 //
 //        return false;
 
-        final HashSet<T> set = new HashSet<>(Arrays.asList(array));
-        return set.contains(v);
+    final HashSet<T> set = new HashSet<>(Arrays.asList(array));
+    return set.contains(v);
+  }
+
+  public static Drawable getTintedDrawable(Context context, int drawableId) {
+    Drawable inDrawable;
+    if (Build.VERSION.SDK_INT >= 22) {
+      inDrawable = context.getResources().getDrawable(drawableId, context.getTheme());
+    } else {
+      //noinspection deprecation
+      inDrawable = context.getResources().getDrawable(drawableId);
     }
 
-    public static Drawable getTintedDrawable(Context context, int drawableId) {
-        Drawable inDrawable;
-        if (Build.VERSION.SDK_INT >= 22) {
-            inDrawable = context.getResources().getDrawable(drawableId, context.getTheme());
-        } else {
-            //noinspection deprecation
-            inDrawable = context.getResources().getDrawable(drawableId);
-        }
-
-        if (inDrawable == null) {
-            return null;
-        }
-
-        final Drawable outDrawable = DrawableCompat.wrap(inDrawable);
-        DrawableCompat.setTintMode(outDrawable, PorterDuff.Mode.SRC_IN);
-
-        final TypedValue value = new TypedValue();
-        context.getTheme().resolveAttribute(R.attr.colorAccent, value, true);
-        final int tintColor = value.data;
-
-        DrawableCompat.setTint(outDrawable, tintColor);
-
-        return outDrawable;
+    if (inDrawable == null) {
+      return null;
     }
 
-    public static AlertDialog showProgressDialog(final Context context, final CharSequence message) {
+    final Drawable outDrawable = DrawableCompat.wrap(inDrawable);
+    DrawableCompat.setTintMode(outDrawable, PorterDuff.Mode.SRC_IN);
 
-        //get dialog theme from attrs
-        final TypedValue tv = new TypedValue();
-        context.getTheme().resolveAttribute(R.attr.alertDialogTheme, tv, true);
+    final TypedValue value = new TypedValue();
+    context.getTheme().resolveAttribute(R.attr.colorAccent, value, true);
+    final int tintColor = value.data;
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context, tv.resourceId)
-                .setCancelable(false);
+    DrawableCompat.setTint(outDrawable, tintColor);
 
-        @SuppressLint("InflateParams") final View contentView = LayoutInflater.from(context).inflate(R.layout.browser_progress_dialog, null);
-        ((TextView) contentView.findViewById(android.R.id.message)).setText(message);
-        final ProgressBar progressBar = (ProgressBar) contentView.findViewById(android.R.id.progress);
-        final Drawable indeterminateDrawable = progressBar.getIndeterminateDrawable().mutate();
+    return outDrawable;
+  }
 
-        //get accent color from attrs
-        context.getTheme().resolveAttribute(R.attr.colorAccent, tv, true);
+  public static AlertDialog showProgressDialog(final Context context, final CharSequence message) {
 
-        indeterminateDrawable.setColorFilter(tv.data, PorterDuff.Mode.SRC_IN);
-        progressBar.setIndeterminateDrawable(indeterminateDrawable);
+    //get dialog theme from attrs
+    final TypedValue tv = new TypedValue();
+    context.getTheme().resolveAttribute(R.attr.alertDialogTheme, tv, true);
 
-        builder.setView(contentView);
+    final AlertDialog.Builder builder = new AlertDialog.Builder(context, tv.resourceId)
+        .setCancelable(false);
 
-        return builder.show();
-    }
+    @SuppressLint("InflateParams") final View contentView = LayoutInflater.from(context)
+        .inflate(R.layout.browser_progress_dialog, null);
+    ((TextView) contentView.findViewById(android.R.id.message)).setText(message);
+    final ProgressBar progressBar = (ProgressBar) contentView.findViewById(android.R.id.progress);
+    final Drawable indeterminateDrawable = progressBar.getIndeterminateDrawable().mutate();
+
+    //get accent color from attrs
+    context.getTheme().resolveAttribute(R.attr.colorAccent, tv, true);
+
+    indeterminateDrawable.setColorFilter(tv.data, PorterDuff.Mode.SRC_IN);
+    progressBar.setIndeterminateDrawable(indeterminateDrawable);
+
+    builder.setView(contentView);
+
+    return builder.show();
+  }
 }

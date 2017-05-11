@@ -1,7 +1,6 @@
 package hu.mrolcsi.android.filebrowser.util;
 
 import android.os.AsyncTask;
-
 import java.io.File;
 
 /**
@@ -13,13 +12,15 @@ import java.io.File;
 
 public class SizeCalculatorTask extends AsyncTask<File, Long, Long> {
 
-    @Override
-    protected Long doInBackground(File... files) {
+  @Override
+  protected Long doInBackground(File... files) {
 
-        // if input is a file (not directory) return its size
-        if (files[0].isFile()) return files[0].length();
-
-        // if it's a directory, calculate size recursively
-        return FileUtils.dirSize(files[0]);
+    // if input is a file (not directory) return its size
+    if (files[0].isFile()) {
+      return files[0].length();
     }
+
+    // if it's a directory, calculate size recursively
+    return FileUtils.dirSize(files[0]);
+  }
 }

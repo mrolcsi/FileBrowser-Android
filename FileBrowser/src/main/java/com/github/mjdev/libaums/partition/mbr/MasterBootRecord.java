@@ -32,91 +32,90 @@ import java.util.Map;
 /**
  * This class represents the Master Boot Record (MBR), which is a partition
  * table used by most block devices coming from Windows or Unix.
- * 
+ *
  * @author mjahnen
- * 
  */
 public class MasterBootRecord implements PartitionTable {
 
-	private static Map<Integer, Integer> partitionTypes = new HashMap<Integer, Integer>() {{
-		put(0x0b, PartitionTypes.FAT32);
-		put(0x0c, PartitionTypes.FAT32);
-		put(0x1b, PartitionTypes.FAT32);
-		put(0x1c, PartitionTypes.FAT32);
+  private static Map<Integer, Integer> partitionTypes = new HashMap<Integer, Integer>() {{
+    put(0x0b, PartitionTypes.FAT32);
+    put(0x0c, PartitionTypes.FAT32);
+    put(0x1b, PartitionTypes.FAT32);
+    put(0x1c, PartitionTypes.FAT32);
 
-		put(0x01, PartitionTypes.FAT12);
+    put(0x01, PartitionTypes.FAT12);
 
-		put(0x04, PartitionTypes.FAT16);
-		put(0x06, PartitionTypes.FAT16);
-		put(0x0e, PartitionTypes.FAT16);
+    put(0x04, PartitionTypes.FAT16);
+    put(0x06, PartitionTypes.FAT16);
+    put(0x0e, PartitionTypes.FAT16);
 
-		put(0x83, PartitionTypes.LINUX_EXT);
+    put(0x83, PartitionTypes.LINUX_EXT);
 
-		put(0x07, PartitionTypes.NTFS_EXFAT);
+    put(0x07, PartitionTypes.NTFS_EXFAT);
 
-		put(0xaf, PartitionTypes.APPLE_HFS_HFS_PLUS);
-	}};
+    put(0xaf, PartitionTypes.APPLE_HFS_HFS_PLUS);
+  }};
 
-	private static final String TAG = MasterBootRecord.class.getSimpleName();
-	private static final int TABLE_OFFSET = 446;
-	private static final int TABLE_ENTRY_SIZE = 16;
+  private static final String TAG = MasterBootRecord.class.getSimpleName();
+  private static final int TABLE_OFFSET = 446;
+  private static final int TABLE_ENTRY_SIZE = 16;
 
-	public List<PartitionTableEntry> partitions = new ArrayList<PartitionTableEntry>();
+  public List<PartitionTableEntry> partitions = new ArrayList<PartitionTableEntry>();
 
-	private MasterBootRecord() {
+  private MasterBootRecord() {
 
-	}
+  }
 
-	/**
-	 * Reads and parses the MBR located in the buffer.
-	 *
-	 * @param buffer The data which shall be examined.
-	 * @return A new {@link #MasterBootRecord()} or null if the data does not seem to be a MBR.
-	 */
-	public static MasterBootRecord read(ByteBuffer buffer) {
-		MasterBootRecord result = new MasterBootRecord();
-		buffer.order(ByteOrder.LITTLE_ENDIAN);
+  /**
+   * Reads and parses the MBR located in the buffer.
+   *
+   * @param buffer The data which shall be examined.
+   * @return A new {@link #MasterBootRecord()} or null if the data does not seem to be a MBR.
+   */
+  public static MasterBootRecord read(ByteBuffer buffer) {
+    MasterBootRecord result = new MasterBootRecord();
+    buffer.order(ByteOrder.LITTLE_ENDIAN);
 
-		// test if it is a valid master boot record
-		if (buffer.get(510) != (byte) 0x55 || buffer.get(511) != (byte) 0xaa) {
-			Log.i(TAG, "not a valid mbr partition table!");
-			return null;
-		}
+    // test if it is a valid master boot record
+    if (buffer.get(510) != (byte) 0x55 || buffer.get(511) != (byte) 0xaa) {
+      Log.i(TAG, "not a valid mbr partition table!");
+      return null;
+    }
 
-		for (int i = 0; i < 4; i++) {
-			int offset = TABLE_OFFSET + i * TABLE_ENTRY_SIZE;
-			byte partitionType = buffer.get(offset + 4);
-			// unused partition
-			if (partitionType == 0) {
-				continue;
-			}
-			if (partitionType == 0x05 || partitionType == 0x0f) {
-				Log.w(TAG, "extended partitions are currently unsupported!");
-				continue;
-			}
+    for (int i = 0; i < 4; i++) {
+      int offset = TABLE_OFFSET + i * TABLE_ENTRY_SIZE;
+      byte partitionType = buffer.get(offset + 4);
+      // unused partition
+      if (partitionType == 0) {
+        continue;
+      }
+      if (partitionType == 0x05 || partitionType == 0x0f) {
+        Log.w(TAG, "extended partitions are currently unsupported!");
+        continue;
+      }
 
-			Integer type = partitionTypes.get((int) partitionType);
+      Integer type = partitionTypes.get((int) partitionType);
 
-			if (type == null) {
-				type = PartitionTypes.UNKNOWN;
-			}
+      if (type == null) {
+        type = PartitionTypes.UNKNOWN;
+      }
 
-			PartitionTableEntry entry = new PartitionTableEntry(type,
-					buffer.getInt(offset + 8), buffer.getInt(offset + 12));
+      PartitionTableEntry entry = new PartitionTableEntry(type,
+          buffer.getInt(offset + 8), buffer.getInt(offset + 12));
 
-			result.partitions.add(entry);
-		}
+      result.partitions.add(entry);
+    }
 
-		return result;
-	}
+    return result;
+  }
 
-	@Override
-	public int getSize() {
-		return 512;
-	}
+  @Override
+  public int getSize() {
+    return 512;
+  }
 
-	@Override
-	public Collection<PartitionTableEntry> getPartitionTableEntries() {
-		return partitions;
-	}
+  @Override
+  public Collection<PartitionTableEntry> getPartitionTableEntries() {
+    return partitions;
+  }
 }

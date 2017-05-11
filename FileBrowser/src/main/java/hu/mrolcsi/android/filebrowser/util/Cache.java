@@ -11,14 +11,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public class Cache {
-    private static final Cache ourInstance = new Cache();
 
-    Map<String, Long> sizeCache = new ConcurrentHashMap<>();
+  private static final Cache ourInstance = new Cache();
 
-    private Cache() {
-    }
+  Map<String, Long> sizeCache = new ConcurrentHashMap<>();
 
-    public static Cache getInstance() {
-        return ourInstance;
-    }
+  private Cache() {
+  }
+
+  public static Cache getInstance() {
+    return ourInstance;
+  }
 }

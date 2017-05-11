@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import com.github.mjdev.libaums.fs.FileSystem;
 import com.github.mjdev.libaums.fs.UsbFile;
 import hu.mrolcsi.android.filebrowser.BrowserDialog;
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
@@ -147,7 +148,7 @@ public class TestFragment extends Fragment {
         dialog.setBrowseMode(BrowseMode.OPEN_FILE);
         dialog.setOnDialogResultListener(new UsbBrowserDialog.OnDialogResultListener() {
           @Override
-          public void onPositiveResult(UsbFile file) {
+          public void onPositiveResult(UsbFile file, FileSystem currentFs) {
             tvPath.setText(FileUtils.getAbsolutePath(file));
           }
 

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:gravity="center"
-              android:orientation="vertical"
-              android:paddingLeft="24dp"
-              android:paddingRight="24dp"
-              android:paddingTop="12dp">
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:gravity="center"
+  android:orientation="vertical"
+  android:paddingLeft="24dp"
+  android:paddingRight="24dp"
+  android:paddingTop="12dp">
 
-    <EditText
-        android:id="@+id/browser_etNewFolder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/browser_newFolderHint"
-        android:singleLine="true" />
+  <EditText
+    android:id="@+id/browser_etNewFolder"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="@string/browser_newFolderHint"
+    android:singleLine="true"/>
 </LinearLayout>

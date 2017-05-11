@@ -27,89 +27,89 @@ import java.nio.ByteBuffer;
  */
 public class UsbFileInputStream extends InputStream {
 
-    private static final String TAG = UsbFileInputStream.class.getSimpleName();
-    private UsbFile file;
-    private int currentByteOffset = 0;
+  private static final String TAG = UsbFileInputStream.class.getSimpleName();
+  private UsbFile file;
+  private int currentByteOffset = 0;
 
-    public UsbFileInputStream(UsbFile file) {
+  public UsbFileInputStream(UsbFile file) {
 
-        if (file.isDirectory()) {
-            throw new RuntimeException("UsbFileInputStream cannot be created on directory!");
-        }
-
-        this.file = file;
+    if (file.isDirectory()) {
+      throw new RuntimeException("UsbFileInputStream cannot be created on directory!");
     }
 
-    @Override
-    public int available() throws IOException {
-        Log.d(TAG, "available");
-        // return 0, because we always block
-        return 0;
+    this.file = file;
+  }
+
+  @Override
+  public int available() throws IOException {
+    Log.d(TAG, "available");
+    // return 0, because we always block
+    return 0;
+  }
+
+  @Override
+  public int read() throws IOException {
+
+    if (currentByteOffset >= file.getLength()) {
+      return -1;
     }
 
-    @Override
-    public int read() throws IOException {
+    ByteBuffer buffer = ByteBuffer.allocate(512);
+    buffer.limit(1);
+    file.read(currentByteOffset, buffer);
+    currentByteOffset++;
+    buffer.flip();
+    return buffer.get();
+  }
 
-        if (currentByteOffset >= file.getLength()) {
-            return -1;
-        }
+  @Override
+  public void close() throws IOException {
+    super.close();
+  }
 
-        ByteBuffer buffer = ByteBuffer.allocate(512);
-        buffer.limit(1);
-        file.read(currentByteOffset, buffer);
-        currentByteOffset++;
-        buffer.flip();
-        return buffer.get();
+  @Override
+  public int read(byte[] buffer) throws IOException {
+
+    if (currentByteOffset >= file.getLength()) {
+      return -1;
     }
 
-    @Override
-    public void close() throws IOException {
-        super.close();
+    long length = file.getLength();
+    long toRead = Math.min(buffer.length, length - currentByteOffset);
+
+    ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
+    byteBuffer.limit((int) toRead);
+
+    file.read(currentByteOffset, byteBuffer);
+    currentByteOffset += toRead;
+
+    return (int) toRead;
+  }
+
+  @Override
+  public int read(byte[] buffer, int byteOffset, int byteCount) throws IOException {
+
+    if (currentByteOffset >= file.getLength()) {
+      return -1;
     }
 
-    @Override
-    public int read(byte[] buffer) throws IOException {
+    long length = file.getLength();
+    long toRead = Math.min(byteCount, length - currentByteOffset);
 
-        if (currentByteOffset >= file.getLength()) {
-            return -1;
-        }
+    ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
+    byteBuffer.position(byteOffset);
+    byteBuffer.limit((int) toRead + byteOffset);
 
-        long length = file.getLength();
-        long toRead = Math.min(buffer.length, length - currentByteOffset);
+    file.read(currentByteOffset, byteBuffer);
+    currentByteOffset += toRead;
 
-        ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
-        byteBuffer.limit((int) toRead);
+    return (int) toRead;
+  }
 
-        file.read(currentByteOffset, byteBuffer);
-        currentByteOffset += toRead;
-
-        return (int) toRead;
-    }
-
-    @Override
-    public int read(byte[] buffer, int byteOffset, int byteCount) throws IOException {
-
-        if (currentByteOffset >= file.getLength()) {
-            return -1;
-        }
-
-        long length = file.getLength();
-        long toRead = Math.min(byteCount, length - currentByteOffset);
-
-        ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
-        byteBuffer.position(byteOffset);
-        byteBuffer.limit((int) toRead + byteOffset);
-
-        file.read(currentByteOffset, byteBuffer);
-        currentByteOffset += toRead;
-
-        return (int) toRead;
-    }
-
-    @Override
-    public long skip(long byteCount) throws IOException {
-        long skippedBytes = Math.min(byteCount, file.getLength() - currentByteOffset);
-        currentByteOffset += skippedBytes;
-        return skippedBytes;
-    }
+  @Override
+  public long skip(long byteCount) throws IOException {
+    long skippedBytes = Math.min(byteCount, file.getLength() - currentByteOffset);
+    currentByteOffset += skippedBytes;
+    return skippedBytes;
+  }
 }

@@ -9,14 +9,14 @@ import java.io.BufferedOutputStream;
 
 public class UsbFileStreamFactory {
 
-    private UsbFileStreamFactory() {
-    }
+  private UsbFileStreamFactory() {
+  }
 
-    public static BufferedOutputStream createBufferedOutputStream(UsbFile file, FileSystem fs) {
-        return new BufferedOutputStream(new UsbFileOutputStream(file), fs.getChunkSize());
-    }
+  public static BufferedOutputStream createBufferedOutputStream(UsbFile file, FileSystem fs) {
+    return new BufferedOutputStream(new UsbFileOutputStream(file), fs.getChunkSize());
+  }
 
-    public static BufferedInputStream createBufferedInputStream(UsbFile file, FileSystem fs) {
-        return new BufferedInputStream(new UsbFileInputStream(file), fs.getChunkSize());
-    }
+  public static BufferedInputStream createBufferedInputStream(UsbFile file, FileSystem fs) {
+    return new BufferedInputStream(new UsbFileInputStream(file), fs.getChunkSize());
+  }
 }

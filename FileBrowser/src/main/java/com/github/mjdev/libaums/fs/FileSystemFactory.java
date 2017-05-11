@@ -27,9 +27,8 @@ import java.util.List;
  * This is a helper class to create different supported file systems. The file
  * system is determined by {link
  * {@link com.github.mjdev.libaums.partition.PartitionTableEntry}.
- * 
+ *
  * @author mjahnen
- * 
  */
 public class FileSystemFactory {
 

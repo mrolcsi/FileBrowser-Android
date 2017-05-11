@@ -1,98 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="@dimen/browser_margin">
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:layout_gravity="center"
+  android:padding="@dimen/browser_margin">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/browser_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true" />
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/browser_toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:layout_alignParentTop="true"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/browser_recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/browser_toolbar"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/browser_margin"
-        android:layout_marginTop="@dimen/browser_margin"
-        android:scrollbars="vertical" />
+  <android.support.v7.widget.RecyclerView
+    android:id="@+id/browser_recyclerView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/browser_toolbar"
+    android:layout_centerHorizontal="true"
+    android:layout_marginBottom="@dimen/browser_margin"
+    android:layout_marginTop="@dimen/browser_margin"
+    android:scrollbars="vertical"/>
 
-    <RelativeLayout
-        android:id="@+id/browser_rlSave"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/browser_recyclerView"
-        android:visibility="gone">
+  <RelativeLayout
+    android:id="@+id/browser_rlSave"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/browser_recyclerView"
+    android:visibility="gone">
 
-        <EditText
-            android:id="@+id/browser_editTextFileName"
-            style="@android:style/TextAppearance.Small"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginBottom="@dimen/browser_margin"
-            android:layout_marginLeft="@dimen/browser_margin"
-            android:layout_marginTop="@dimen/browser_margin"
-            android:layout_toLeftOf="@+id/browser_spnExtension"
-            android:hint="@string/browser_filenamePlaceholder"
-            android:inputType="textNoSuggestions"
-            android:selectAllOnFocus="true"
-            android:singleLine="true" />
+    <EditText
+      android:id="@+id/browser_editTextFileName"
+      style="@android:style/TextAppearance.Small"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentLeft="true"
+      android:layout_marginBottom="@dimen/browser_margin"
+      android:layout_marginLeft="@dimen/browser_margin"
+      android:layout_marginTop="@dimen/browser_margin"
+      android:layout_toLeftOf="@+id/browser_spnExtension"
+      android:hint="@string/browser_filenamePlaceholder"
+      android:inputType="textNoSuggestions"
+      android:selectAllOnFocus="true"
+      android:singleLine="true"/>
 
-        <Spinner
-            android:id="@+id/browser_spnExtension"
-            android:layout_width="@dimen/browser_columnWidth"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/browser_editTextFileName"
-            android:layout_marginBottom="@dimen/browser_margin"
-            android:layout_toLeftOf="@+id/browser_imageButtonSave" />
+    <Spinner
+      android:id="@+id/browser_spnExtension"
+      android:layout_width="@dimen/browser_columnWidth"
+      android:layout_height="wrap_content"
+      android:layout_alignBaseline="@+id/browser_editTextFileName"
+      android:layout_marginBottom="@dimen/browser_margin"
+      android:layout_toLeftOf="@+id/browser_imageButtonSave"/>
 
-        <!--<ImageButton-->
-        <!--android:id="@+id/browser_imageButtonSave"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignBottom="@+id/browser_editTextFileName"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_alignTop="@+id/browser_editTextFileName"-->
-        <!--android:layout_margin="@dimen/browser_margin"-->
-        <!--android:background="@null"-->
-        <!--android:contentDescription="@android:string/ok"-->
-        <!--android:focusable="false"-->
-        <!--android:scaleType="fitCenter"-->
-        <!--android:src="@drawable/browser_save" />-->
+    <!--<ImageButton-->
+    <!--android:id="@+id/browser_imageButtonSave"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignBottom="@+id/browser_editTextFileName"-->
+    <!--android:layout_alignParentRight="true"-->
+    <!--android:layout_alignTop="@+id/browser_editTextFileName"-->
+    <!--android:layout_margin="@dimen/browser_margin"-->
+    <!--android:background="@null"-->
+    <!--android:contentDescription="@android:string/ok"-->
+    <!--android:focusable="false"-->
+    <!--android:scaleType="fitCenter"-->
+    <!--android:src="@drawable/browser_save" />-->
 
-        <Button
-            android:id="@+id/browser_imageButtonSave"
-            style="?attr/buttonBarPositiveButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/browser_editTextFileName"
-            android:layout_alignParentRight="true"
-            android:layout_margin="@dimen/browser_margin"
-            android:contentDescription="@android:string/ok"
-            android:focusable="false"
-            android:scaleType="fitCenter"
-            android:text="@string/browser_save" />
-    </RelativeLayout>
+    <Button
+      android:id="@+id/browser_imageButtonSave"
+      style="?attr/buttonBarPositiveButtonStyle"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignBaseline="@+id/browser_editTextFileName"
+      android:layout_alignParentRight="true"
+      android:layout_margin="@dimen/browser_margin"
+      android:contentDescription="@android:string/ok"
+      android:focusable="false"
+      android:scaleType="fitCenter"
+      android:text="@string/browser_save"/>
+  </RelativeLayout>
 
-    <!--<ListView-->
-    <!--android:id="@+id/browser_listView"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:fastScrollEnabled="true" />-->
+  <!--<ListView-->
+  <!--android:id="@+id/browser_listView"-->
+  <!--android:layout_width="match_parent"-->
+  <!--android:layout_height="match_parent"-->
+  <!--android:fastScrollEnabled="true" />-->
 
-    <!--<hu.mrolcsi.android.filebrowser.AutoGridView-->
-    <!--android:id="@+id/browser_gridView"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:columnWidth="@dimen/browser_columnWidth"-->
-    <!--android:numColumns="@integer/browser_columnCount"-->
-    <!--android:stretchMode="columnWidth" />-->
-    <!--http://stackoverflow.com/questions/7545915/gridview-rows-overlapping-how-to-make-row-height-fit-the-tallest-item-->
+  <!--<hu.mrolcsi.android.filebrowser.AutoGridView-->
+  <!--android:id="@+id/browser_gridView"-->
+  <!--android:layout_width="match_parent"-->
+  <!--android:layout_height="match_parent"-->
+  <!--android:columnWidth="@dimen/browser_columnWidth"-->
+  <!--android:numColumns="@integer/browser_columnCount"-->
+  <!--android:stretchMode="columnWidth" />-->
+  <!--http://stackoverflow.com/questions/7545915/gridview-rows-overlapping-how-to-make-row-height-fit-the-tallest-item-->
 
 </RelativeLayout>
