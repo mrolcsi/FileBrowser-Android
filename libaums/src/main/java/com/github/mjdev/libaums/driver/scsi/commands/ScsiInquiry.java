@@ -25,7 +25,7 @@ import java.nio.ByteBuffer;
  * the supported SCSI commands.
  * <p>
  * The response is sent in the data phase.
- * 
+ *
  * @author mjahnen
  * @see com.github.mjdev.libaums.driver.scsi.commands.ScsiInquiryResponse
  */

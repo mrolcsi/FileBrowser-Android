@@ -26,9 +26,8 @@ import java.util.Collection;
  * which says something about the partitions on the mass storage device. For
  * example where they start and end and which file system a specific partition
  * has.
- * 
+ *
  * @author mjahnen
- * 
  */
 public interface PartitionTable {
 
@@ -37,10 +36,8 @@ public interface PartitionTable {
    */
   int getSize();
 
-	/**
-   *
-   * @return A collection of {@link PartitionTableEntry}s located on the block
-   *         device.
+  /**
+   * @return A collection of {@link PartitionTableEntry}s located on the block device.
    */
   Collection<PartitionTableEntry> getPartitionTableEntries();
 }

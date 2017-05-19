@@ -23,9 +23,8 @@ import com.github.mjdev.libaums.usb.UsbCommunication;
 /**
  * A helper class to create different
  * {@link com.github.mjdev.libaums.driver.BlockDeviceDriver}s.
- * 
+ *
  * @author mjahnen
- * 
  */
 public class BlockDeviceDriverFactory {
 

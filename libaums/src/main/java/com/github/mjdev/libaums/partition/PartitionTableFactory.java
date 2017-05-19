@@ -24,9 +24,8 @@ import java.nio.ByteBuffer;
 
 /**
  * Helper class to create different supported {@link PartitionTable}s.
- * 
+ *
  * @author mjahnen
- * 
  */
 public class PartitionTableFactory {
 

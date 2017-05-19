@@ -83,6 +83,7 @@ public class UsbMassStorageDevice {
   private BlockDeviceDriver blockDevice;
   private PartitionTable partitionTable;
   private List<Partition> partitions = new ArrayList<Partition>();
+  private boolean inited = false;
 
   /**
    * Construct a new {@link com.github.mjdev.libaums.UsbMassStorageDevice}.
@@ -177,6 +178,8 @@ public class UsbMassStorageDevice {
       throw new IllegalStateException("Missing permission to access usb device: " + usbDevice);
     }
 
+    inited = true;
+
   }
 
   /**
@@ -247,6 +250,7 @@ public class UsbMassStorageDevice {
       Log.e(TAG, "could not release interface!");
     }
     deviceConnection.close();
+    inited = false;
   }
 
   /**

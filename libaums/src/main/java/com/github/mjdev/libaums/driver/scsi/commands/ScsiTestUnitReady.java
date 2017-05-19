@@ -27,9 +27,8 @@ import java.nio.ByteBuffer;
  * <p>
  * This command has no data phase, the result is determined by
  * {@link com.github.mjdev.libaums.driver.scsi.commands.CommandStatusWrapper #getbCswStatus()}.
- * 
+ *
  * @author mjahnen
- * 
  */
 public class ScsiTestUnitReady extends CommandBlockWrapper {
 

@@ -23,7 +23,7 @@ import java.nio.ByteBuffer;
  * Represents the command to read the capacity from the mass storage device.
  * <p>
  * The data is transferred in the data phase.
- * 
+ *
  * @author mjahnen
  * @see com.github.mjdev.libaums.driver.scsi.commands.ScsiReadCapacityResponse
  */
