@@ -1,6 +1,5 @@
 package hu.mrolcsi.android.filebrowser.testapp;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -10,14 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import com.github.mjdev.libaums.fs.FileSystem;
-import com.github.mjdev.libaums.fs.UsbFile;
 import hu.mrolcsi.android.filebrowser.BrowserDialog;
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
 import hu.mrolcsi.android.filebrowser.option.Layout;
 import hu.mrolcsi.android.filebrowser.option.SortMode;
-import hu.mrolcsi.android.filebrowser.usb.UsbBrowserDialog;
-import hu.mrolcsi.android.filebrowser.util.FileUtils;
 
 /**
  * Ez az activity nem a modul része, csupán tesztelési célokat szolgál.
@@ -28,21 +23,13 @@ public class TestFragment extends Fragment {
   private BrowserDialog.OnDialogResultListener onDialogResultListener;
   @SuppressWarnings("unused")
   private View mRootView;
-  private MainActivity mActivity;
-
-  @Override
-  public void onAttach(Activity activity) {
-    super.onAttach(activity);
-
-    this.mActivity = (MainActivity) activity;
-  }
 
   @Nullable
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     if (mRootView == null) {
-      mRootView = inflater.inflate(R.layout.main, container, false);
+      mRootView = inflater.inflate(R.layout.fragment_main, container, false);
     }
     return mRootView;
   }
@@ -63,13 +50,13 @@ public class TestFragment extends Fragment {
       @Override
       public void onPositiveResult(String path) {
         tvPath.setText(path);
-        mActivity.swapFragment(TestFragment.this);
+        ((MainActivity) getActivity()).swapFragment(TestFragment.this);
       }
 
       @Override
       public void onNegativeResult() {
         tvPath.setText(android.R.string.cancel);
-        mActivity.swapFragment(TestFragment.this);
+        ((MainActivity) getActivity()).swapFragment(TestFragment.this);
       }
     };
 
@@ -137,27 +124,14 @@ public class TestFragment extends Fragment {
             .setBrowseMode(BrowseMode.SAVE_FILE)
             .setLayout(Layout.GRID)
             .setOnDialogResultListener(onDialogResultListener);
-        mActivity.swapFragment(dialog);
+        ((MainActivity) getActivity()).swapFragment(dialog);
       }
     });
 
     btnOpenUsb.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        UsbBrowserDialog dialog = new UsbBrowserDialog();
-        dialog.setBrowseMode(BrowseMode.OPEN_FILE);
-        dialog.setOnDialogResultListener(new UsbBrowserDialog.OnDialogResultListener() {
-          @Override
-          public void onPositiveResult(UsbFile file, FileSystem currentFs) {
-            tvPath.setText(FileUtils.getAbsolutePath(file));
-          }
-
-          @Override
-          public void onNegativeResult() {
-            tvPath.setText(android.R.string.cancel);
-          }
-        });
-        dialog.show(getChildFragmentManager(), dialog.toString());
+        ((MainActivity) getActivity()).swapFragment(new ExportFileFragment());
       }
     });
   }
