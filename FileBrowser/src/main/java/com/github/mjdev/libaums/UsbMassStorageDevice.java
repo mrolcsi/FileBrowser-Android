@@ -272,4 +272,14 @@ public class UsbMassStorageDevice {
   public UsbDevice getUsbDevice() {
     return usbDevice;
   }
+
+  /**
+   * This returns the {@link BlockDeviceDriver} which be used to directly write to or read from the
+   * mass storage device.
+   *
+   * @return Underlying {@link BlockDeviceDriver} used for raw read and write operations.
+   */
+  public BlockDeviceDriver getBlockDevice() {
+    return blockDevice;
+  }
 }
