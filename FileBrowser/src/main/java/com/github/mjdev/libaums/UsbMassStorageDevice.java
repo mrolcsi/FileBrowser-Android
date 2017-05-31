@@ -79,6 +79,7 @@ public class UsbMassStorageDevice {
   private UsbInterface usbInterface;
   private UsbEndpoint inEndpoint;
   private UsbEndpoint outEndpoint;
+  private String serialNumber;
 
   private BlockDeviceDriver blockDevice;
   private PartitionTable partitionTable;
@@ -207,6 +208,7 @@ public class UsbMassStorageDevice {
     if (!claim) {
       throw new IOException("could not claim interface!");
     }
+    serialNumber = deviceConnection.getSerial();
 
     UsbCommunication communication = UsbCommunicationFactory
         .createUsbCommunication(deviceConnection, outEndpoint, inEndpoint);
@@ -223,6 +225,11 @@ public class UsbMassStorageDevice {
    * @throws IOException If reading from the {@link #blockDevice} fails.
    */
   private void initPartitions() throws IOException {
+    if (partitionTable == null) {
+      Log.w(TAG, "device does not have partitions.");
+      return;
+    }
+
     Collection<PartitionTableEntry> partitionEntrys = partitionTable.getPartitionTableEntries();
 
     for (PartitionTableEntry entry : partitionEntrys) {
@@ -251,6 +258,16 @@ public class UsbMassStorageDevice {
     }
     deviceConnection.close();
     inited = false;
+  }
+
+  /**
+   * Returns the serial number for the device. This will return null if the device has not been
+   * opened.
+   *
+   * @return the device serial number
+   */
+  public String getSerialNumber() {
+    return serialNumber;
   }
 
   /**

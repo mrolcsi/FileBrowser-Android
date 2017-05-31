@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">FileBrowserTest</string>
+  <string name="action_settings">Beállítások</string>
+  <string name="hello_world">Helló világ!</string>
+  <string name="title_activity_main">Teszt Program</string>
+</resources>
