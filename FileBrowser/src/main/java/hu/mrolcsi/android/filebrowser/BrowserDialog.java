@@ -119,6 +119,13 @@ public class BrowserDialog extends DialogFragment {
    * An optional title for the browser dialog.
    */
   private static final String OPTION_DIALOG_TITLE;
+  /**
+   * Boolean: should hidden files be shown when browsing?
+   *
+   * Hidden files are files starting with '.' (dot) or files which have the hidden file system
+   * attribute set.
+   */
+  private static final String OPTION_SHOW_HIDDEN_FILES;
 
   public static final SortMode[] SORT_HASHES = new SortMode[]{
       SortMode.BY_NAME_ASC,
@@ -142,6 +149,7 @@ public class BrowserDialog extends DialogFragment {
     OPTION_BROWSE_MODE = "browseMode";
     OPTION_LAYOUT = "layout";
     OPTION_DIALOG_TITLE = "dialogTitle";
+    OPTION_SHOW_HIDDEN_FILES = "showHiddenFiles";
   }
 
   //region Privates
@@ -166,6 +174,7 @@ public class BrowserDialog extends DialogFragment {
   private String mCurrentExtension;
   private String mCurrentPath = mStartPath;
   private Layout mActiveLayout = Layout.LIST;
+  private boolean mShowHiddenFiles = false;
   private Button btnSave;
   private LinearLayoutManager mLinearLayout;
   private GridLayoutManager mGridLayout;
@@ -198,6 +207,7 @@ public class BrowserDialog extends DialogFragment {
       mItemLayoutID = savedInstanceState.getInt("itemLayoutID");
       mDefaultFileName = savedInstanceState.getString(OPTION_DEFAULT_FILENAME);
       mDialogTitle = savedInstanceState.getString(OPTION_DIALOG_TITLE);
+      mShowHiddenFiles = savedInstanceState.getBoolean(OPTION_SHOW_HIDDEN_FILES, false);
     } else {
       mCurrentPath = mStartPath;
     }
@@ -305,6 +315,7 @@ public class BrowserDialog extends DialogFragment {
     outState.putInt("itemLayoutID", mItemLayoutID);
     outState.putString(OPTION_DEFAULT_FILENAME, mDefaultFileName);
     outState.putString(OPTION_DIALOG_TITLE, mDialogTitle);
+    outState.putBoolean(OPTION_SHOW_HIDDEN_FILES, mShowHiddenFiles);
   }
 
   private void setupToolbar() {
@@ -544,6 +555,10 @@ public class BrowserDialog extends DialogFragment {
           @Override
           public boolean accept(File file) {
             if (file.isFile()) {
+              if (file.isHidden() && !mShowHiddenFiles) {
+                return false;
+              }
+
               String ext = FileUtils.getExtension(file.getName());
               int i = 0;
               int n = mExtensionFilter.length;
@@ -551,9 +566,9 @@ public class BrowserDialog extends DialogFragment {
                   .equals(ext)) {
                 i++;
               }
-              return i < n;
+              return file.canRead() && i < n;
             } else {
-              return file.canRead();
+              return !(file.isHidden() && !mShowHiddenFiles) && file.canRead();
             }
           }
         });
@@ -561,7 +576,7 @@ public class BrowserDialog extends DialogFragment {
         filesToLoad = directory.listFiles(new FileFilter() {
           @Override
           public boolean accept(File file) {
-            return file.canRead();
+            return !(file.isHidden() && !mShowHiddenFiles) && file.canRead();
           }
         });
       }
@@ -569,7 +584,7 @@ public class BrowserDialog extends DialogFragment {
       filesToLoad = directory.listFiles(new FileFilter() {
         @Override
         public boolean accept(File file) {
-          return file.isDirectory() && file.canRead();
+          return file.isDirectory() && !(file.isHidden() && !mShowHiddenFiles) && file.canRead();
         }
       });
     }
@@ -848,6 +863,15 @@ public class BrowserDialog extends DialogFragment {
   public BrowserDialog setLayout(Layout layout) {
     mActiveLayout = layout;
     return this;
+  }
+
+  public BrowserDialog setShowHiddenFiles(boolean showHiddenFiles) {
+    mShowHiddenFiles = showHiddenFiles;
+    return this;
+  }
+
+  public boolean getShowHiddenFiles() {
+    return mShowHiddenFiles;
   }
 
   public interface OnDialogResultListener {
