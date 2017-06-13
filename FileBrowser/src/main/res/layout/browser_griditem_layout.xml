@@ -3,8 +3,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:orientation="vertical"
-  android:padding="@dimen/browser_margin">
+  android:padding="@dimen/browser_margin"
+  android:background="@drawable/browser_selectable_background"
+  android:orientation="vertical">
 
   <ImageView
     android:id="@+id/browser_listItemIcon"
@@ -16,29 +17,29 @@
 
   <TextView
     android:id="@+id/browser_listItemText"
+    android:textStyle="bold"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/browser_margin"
     android:layout_below="@+id/browser_listItemIcon"
     android:layout_centerHorizontal="true"
-    android:layout_marginTop="@dimen/browser_margin"
     android:ellipsize="marquee"
     android:gravity="center_horizontal|top"
-    android:maxLines="4"
-    android:textStyle="bold"/>
+    android:maxLines="4"/>
 
   <TextView
     android:id="@+id/browser_listItemExtra"
+    android:textStyle="italic"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/browser_margin"
     android:layout_alignParentRight="true"
     android:layout_below="@+id/browser_listItemText"
     android:layout_centerVertical="true"
-    android:layout_marginTop="@dimen/browser_margin"
     android:ellipsize="marquee"
     android:gravity="top|center_horizontal"
     android:maxLines="2"
-    android:singleLine="false"
-    android:textStyle="italic"/>
+    android:singleLine="false"/>
 
   <ProgressBar
     android:id="@+id/browser_listItemProgress"
