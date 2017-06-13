@@ -1,12 +1,19 @@
 language: android
+sudo: required
 jdk: oraclejdk8
 android:
   components:
     - tools
-    - build-tools-25.0.2 # Match build-tools version used in build.gradle
     - platform-tools
-    - extra-google-m2repository
-    - extra-android-m2repository
+    - tools
+    - build-tools-25.0.2
+    - android-25
+    - add-on
+    - extra
+    licenses:
+      - 'android-sdk-preview-license-.+'
+      - 'android-sdk-license-.+'
+      - 'google-gdk-license-.+'
 script: "./gradlew :FileBrowser:assembleRelease"
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -17,7 +24,7 @@ cache:
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
 before_install:
-  - mkdir $ANDROID_HOME/licenses
+  - sudo mkdir $ANDROID_HOME/licenses
   - echo -e '\\n8933bad161af4178b1185d1a37fbf41ea5269c55' | sudo tee $ANDROID_HOME/licenses/android-sdk-license
   - chmod +x gradlew
   - cp local.properties.ci local.properties
