@@ -52,11 +52,15 @@ public abstract class Utils {
       inDrawable = context.getResources().getDrawable(drawableId);
     }
 
-    if (inDrawable == null) {
+    return getTintedDrawable(context, inDrawable);
+  }
+
+  public static Drawable getTintedDrawable(Context context, Drawable drawable) {
+    if (drawable == null) {
       return null;
     }
 
-    final Drawable outDrawable = DrawableCompat.wrap(inDrawable);
+    final Drawable outDrawable = DrawableCompat.wrap(drawable);
     DrawableCompat.setTintMode(outDrawable, PorterDuff.Mode.SRC_IN);
 
     final TypedValue value = new TypedValue();

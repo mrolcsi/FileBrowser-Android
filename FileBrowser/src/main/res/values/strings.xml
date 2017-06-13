@@ -65,4 +65,5 @@
   <string name="browser_pleaseConnectUsb">Please connect a USB Mass Storage device.</string>
   <string name="browser_menu_showHiddenFiles">Show Hidden Files</string>
   <string name="browser_menu_dontShowHiddenFiles">Don\'t Show Hidden Files</string>
+  <string name="browser_options">Options</string>
 </resources>
