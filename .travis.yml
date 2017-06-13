@@ -10,3 +10,4 @@ android:
 script: "./gradlew :FileBrowser:assembleRelease"
 before_install:
 - chmod +x gradlew
+- cp local.properties.ci local.properties
