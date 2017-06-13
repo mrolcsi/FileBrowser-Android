@@ -30,7 +30,6 @@ import hu.mrolcsi.android.filebrowser.util.itemclicksupport.ItemClickSupport;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
@@ -288,6 +287,29 @@ public class UsbBrowserDialog extends BrowserDialog {
     }
   }
 
+  protected void showHiddenFiles() {
+    mShowHiddenFiles = true;
+    try {
+      loadList(mCurrentDir);
+      menuShowHiddenFiles.setTitle(R.string.browser_menu_dontShowHiddenFiles);
+      menuShowHiddenFiles.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_hide));
+    } catch (IOException e) {
+      showErrorDialog(Error.FOLDER_NOT_READABLE);
+    }
+  }
+
+  protected void dontShowHiddenFiles() {
+    mShowHiddenFiles = false;
+    try {
+      loadList(mCurrentDir);
+      menuShowHiddenFiles.setTitle(R.string.browser_menu_showHiddenFiles);
+      menuShowHiddenFiles.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_show));
+    } catch (IOException e) {
+      showErrorDialog(Error.FOLDER_NOT_READABLE);
+    }
+
+  }
+
   private void loadList(final UsbFile directory) throws IOException {
     //assume it's readable
 
@@ -302,13 +324,18 @@ public class UsbBrowserDialog extends BrowserDialog {
 
     if (mBrowseMode == BrowseMode.OPEN_FILE || mBrowseMode == BrowseMode.SAVE_FILE) {
       final UsbFile[] usbFiles = directory.listFiles();
-      if (mExtensionFilter != null) {
-        for (UsbFile file : usbFiles) {
-          if (file.isDirectory()) {
-            filesToLoad.add(file);
-            continue;
-          }
+      for (UsbFile file : usbFiles) {
+        if (file.getName().startsWith(".") && !mShowHiddenFiles) {
+          // skip hidden file
+          continue;
+        }
 
+        if (file.isDirectory()) {
+          filesToLoad.add(file);
+          continue;
+        }
+
+        if (mExtensionFilter != null) {
           String ext = FileUtils.getExtension(file.getName());
           int i = 0;
           int n = mExtensionFilter.length;
@@ -318,9 +345,9 @@ public class UsbBrowserDialog extends BrowserDialog {
           if (i < n) {
             filesToLoad.add(file);
           }
+        } else {
+          filesToLoad.add(file);
         }
-      } else {
-        filesToLoad = Arrays.asList(usbFiles);
       }
     } else {
       final UsbFile[] usbFiles = directory.listFiles();

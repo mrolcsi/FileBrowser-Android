@@ -180,7 +180,7 @@ public class BrowserDialog extends DialogFragment {
   private String mCurrentExtension;
   private String mCurrentPath = mStartPath;
   private Layout mActiveLayout = Layout.LIST;
-  private boolean mShowHiddenFiles = false;
+  protected boolean mShowHiddenFiles = false;
   private Button btnSave;
   private LinearLayoutManager mLinearLayout;
   private GridLayoutManager mGridLayout;
@@ -197,7 +197,7 @@ public class BrowserDialog extends DialogFragment {
   private MenuItem menuNewFolder;
   private MenuItem menuSortMode;
   private MenuItem menuSwitchLayout;
-  private MenuItem menuShowHiddenFiles;
+  protected MenuItem menuShowHiddenFiles;
 
   //endregion
 
