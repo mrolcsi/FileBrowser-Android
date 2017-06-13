@@ -8,14 +8,17 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +41,7 @@ import hu.mrolcsi.android.filebrowser.util.Utils;
 import hu.mrolcsi.android.filebrowser.util.itemclicksupport.ItemClickSupport;
 import java.io.File;
 import java.io.FileFilter;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -54,6 +58,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BrowserDialog extends DialogFragment {
 
   //region Public stuff
+  public static final String TAG = "BrowserDialog";
+
   /**
    * Browsing mode: <ul> <li>Open File: {@link hu.mrolcsi.android.filebrowser.option.BrowseMode#OPEN_FILE
    * OPEN_FILE}</li> <li>Select Directory: {@link hu.mrolcsi.android.filebrowser.option.BrowseMode#SELECT_DIR
@@ -337,14 +343,30 @@ public class BrowserDialog extends DialogFragment {
       }
     }
 
-    mToolbar.getMenu().findItem(R.id.browser_menuNewFolder)
+    mToolbar.setOverflowIcon(Utils.getTintedDrawable(getContext(), mToolbar.getOverflowIcon()));
+
+    final Menu menu = mToolbar.getMenu();
+
+    if (menu.getClass().equals(MenuBuilder.class)) {
+      try {
+        Method m = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
+        m.setAccessible(true);
+        m.invoke(menu, true);
+      } catch (NoSuchMethodException e) {
+        Log.e(TAG, "onMenuOpened", e);
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    }
+
+    menu.findItem(R.id.browser_menuNewFolder)
         .setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_open_folder));
 
-    menuSortMode = mToolbar.getMenu().findItem(R.id.browser_menuSort);
+    menuSortMode = menu.findItem(R.id.browser_menuSort);
 
     setupSortMode();
 
-    menuSwitchLayout = mToolbar.getMenu().findItem(R.id.browser_menuSwitchLayout);
+    menuSwitchLayout = menu.findItem(R.id.browser_menuSwitchLayout);
     if (mActiveLayout == Layout.LIST) {
       menuSwitchLayout.setTitle(R.string.browser_menu_viewAsGrid);
       menuSwitchLayout.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_grid));
@@ -353,7 +375,7 @@ public class BrowserDialog extends DialogFragment {
       menuSwitchLayout.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_list));
     }
 
-    menuShowHiddenFiles = mToolbar.getMenu().findItem(R.id.browser_menuShowHidden);
+    menuShowHiddenFiles = menu.findItem(R.id.browser_menuShowHidden);
     if (mShowHiddenFiles) {
       menuShowHiddenFiles.setTitle(R.string.browser_menu_dontShowHiddenFiles);
       menuShowHiddenFiles
