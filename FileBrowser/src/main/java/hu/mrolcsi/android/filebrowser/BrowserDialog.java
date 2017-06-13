@@ -194,6 +194,7 @@ public class BrowserDialog extends DialogFragment {
     }
   };
 
+  private MenuItem menuNewFolder;
   private MenuItem menuSortMode;
   private MenuItem menuSwitchLayout;
   private MenuItem menuShowHiddenFiles;
@@ -359,8 +360,8 @@ public class BrowserDialog extends DialogFragment {
       }
     }
 
-    menu.findItem(R.id.browser_menuNewFolder)
-        .setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_open_folder));
+    menuNewFolder = menu.findItem(R.id.browser_menuNewFolder);
+    menuNewFolder.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_new_folder));
 
     menuSortMode = menu.findItem(R.id.browser_menuSort);
 
@@ -709,7 +710,7 @@ public class BrowserDialog extends DialogFragment {
         }
 
         File currentFile = new File(mCurrentPath);
-        mToolbar.getMenu().findItem(R.id.browser_menuNewFolder).setVisible(currentFile.canWrite());
+        menuNewFolder.setVisible(currentFile.canWrite());
 
       }
     }.execute(filesToLoad);
@@ -741,7 +742,7 @@ public class BrowserDialog extends DialogFragment {
 
     AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), tv.resourceId)
         .setTitle(R.string.browser_menu_newFolder)
-        .setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_open_folder))
+        .setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_new_folder))
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialogInterface, int i) {
