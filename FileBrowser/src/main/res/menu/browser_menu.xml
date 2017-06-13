@@ -14,5 +14,10 @@
   <item
     android:id="@+id/browser_menuSwitchLayout"
     android:title="@string/browser_menu_viewAsGrid"
-    app:showAsAction="always"/>
+    app:showAsAction="ifRoom"/>
+  <item
+    android:id="@+id/browser_menuShowHidden"
+    android:title="@string/browser_menu_showHiddenFiles"
+    app:showAsAction="never"
+  />
 </menu>
