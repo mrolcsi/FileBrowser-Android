@@ -190,6 +190,7 @@ public class BrowserDialog extends DialogFragment {
 
   private MenuItem menuSortMode;
   private MenuItem menuSwitchLayout;
+  private MenuItem menuShowHiddenFiles;
 
   //endregion
 
@@ -344,7 +345,24 @@ public class BrowserDialog extends DialogFragment {
     setupSortMode();
 
     menuSwitchLayout = mToolbar.getMenu().findItem(R.id.browser_menuSwitchLayout);
-    menuSwitchLayout.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_grid));
+    if (mActiveLayout == Layout.LIST) {
+      menuSwitchLayout.setTitle(R.string.browser_menu_viewAsGrid);
+      menuSwitchLayout.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_grid));
+    } else {
+      menuSwitchLayout.setTitle(R.string.browser_menu_viewAsList);
+      menuSwitchLayout.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_list));
+    }
+
+    menuShowHiddenFiles = mToolbar.getMenu().findItem(R.id.browser_menuShowHidden);
+    if (mShowHiddenFiles) {
+      menuShowHiddenFiles.setTitle(R.string.browser_menu_dontShowHiddenFiles);
+      menuShowHiddenFiles
+          .setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_hide));
+    } else {
+      menuShowHiddenFiles.setTitle(R.string.browser_menu_showHiddenFiles);
+      menuShowHiddenFiles
+          .setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_show));
+    }
 
     mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
       @Override
@@ -366,6 +384,13 @@ public class BrowserDialog extends DialogFragment {
             menuItem.setTitle(R.string.browser_menu_viewAsGrid);
             menuItem.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_grid));
             toListView();
+          }
+          return true;
+        } else if (id == R.id.browser_menuShowHidden) {
+          if (mShowHiddenFiles) {
+            dontShowHiddenFiles();
+          } else {
+            showHiddenFiles();
           }
           return true;
         }
@@ -416,6 +441,22 @@ public class BrowserDialog extends DialogFragment {
 
     menuSwitchLayout.setTitle(R.string.browser_menu_viewAsList);
     menuSwitchLayout.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_list));
+  }
+
+  protected void showHiddenFiles() {
+    mShowHiddenFiles = true;
+    loadList(new File(mCurrentPath));
+
+    menuShowHiddenFiles.setTitle(R.string.browser_menu_dontShowHiddenFiles);
+    menuShowHiddenFiles.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_hide));
+  }
+
+  protected void dontShowHiddenFiles() {
+    mShowHiddenFiles = false;
+    loadList(new File(mCurrentPath));
+
+    menuShowHiddenFiles.setTitle(R.string.browser_menu_showHiddenFiles);
+    menuShowHiddenFiles.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_show));
   }
 
   protected void showSortDialog() {

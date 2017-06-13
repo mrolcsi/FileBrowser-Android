@@ -56,4 +56,6 @@
   <string name="browser_error_usbError_onlyFat32partitions">Csak FAT32 fájlrendszer támogatott.
   </string>
   <string name="browser_pleaseConnectUsb">Csatlakoztasson egy USB háttértár eszközt.</string>
+  <string name="browser_menu_showHiddenFiles">Rejtett fájlok megjelenítése</string>
+  <string name="browser_menu_dontShowHiddenFiles">Ne jelenjenek meg rejtett fájlok</string>
 </resources>
