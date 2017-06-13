@@ -12,7 +12,7 @@
 
   <item
     android:id="@+id/browser_menuNewFolder"
-    android:icon="@drawable/browser_open_folder"
+    android:icon="@drawable/browser_new_folder"
     android:title="@string/browser_menu_newFolder"
     app:showAsAction="ifRoom"/>
 
