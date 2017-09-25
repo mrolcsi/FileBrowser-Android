@@ -13,7 +13,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -83,14 +82,13 @@ public class BrowserDialog extends DialogFragment {
    */
   private static final String RESULT;
   /**
-   * Sort Mode: (Directories always have priority before files) <ul> <li>By filename (ascending):
-   * {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_NAME_ASC BY_NAME_ASC}</li> <li>By
-   * filename (descending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_NAME_DESC
-   * BY_NAME_DESC}</li> <li>By extension (ascending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_EXTENSION_ASC
-   * BY_EXTENSION_ASC}</li> <li>By extension (descending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_EXTENSION_DESC
-   * BY_EXTENSION_DESC}</li> <li>By modification date (ascending): {@link
-   * hu.mrolcsi.android.filebrowser.option.SortMode#BY_DATE_ASC BY_DATE_ASC}</li> <li>By
-   * modification date (descending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_DATE_DESC
+   * Sort Mode: (Directories always have priority before files) <ul> <li>By filename (ascending): {@link
+   * hu.mrolcsi.android.filebrowser.option.SortMode#BY_NAME_ASC BY_NAME_ASC}</li> <li>By filename (descending): {@link
+   * hu.mrolcsi.android.filebrowser.option.SortMode#BY_NAME_DESC BY_NAME_DESC}</li> <li>By extension (ascending): {@link
+   * hu.mrolcsi.android.filebrowser.option.SortMode#BY_EXTENSION_ASC BY_EXTENSION_ASC}</li> <li>By extension
+   * (descending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_EXTENSION_DESC BY_EXTENSION_DESC}</li>
+   * <li>By modification date (ascending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_DATE_ASC
+   * BY_DATE_ASC}</li> <li>By modification date (descending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_DATE_DESC
    * BY_DATE_DESC}</li> <li>By size (ascending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_SIZE_ASC
    * BY_SIZE_ASC}</li> <li>By size (descending): {@link hu.mrolcsi.android.filebrowser.option.SortMode#BY_SIZE_DESC
    * BY_SIZE_DESC}</li> </ul> Default: by filename (ascending)
@@ -693,8 +691,7 @@ public class BrowserDialog extends DialogFragment {
 
         pd.dismiss();
 
-        mToolbar.setSubtitle(
-            Html.fromHtml(getString(R.string.browser_currentDirectory, mCurrentPath)));
+        mToolbar.setSubtitle(mCurrentPath);
 
         boolean isRoot =
             mStartIsRoot ? mCurrentPath.equals(mStartPath) || mCurrentPath.equals(mRootPath)

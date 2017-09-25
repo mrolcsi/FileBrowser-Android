@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import com.github.mjdev.libaums.UsbMassStorageDevice;
 import com.github.mjdev.libaums.fs.FileSystem;
@@ -30,6 +31,7 @@ import hu.mrolcsi.android.filebrowser.util.itemclicksupport.ItemClickSupport;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
@@ -41,12 +43,12 @@ import java.util.Stack;
 public class UsbBrowserDialog extends BrowserDialog {
 
   private static final String TAG = "UsbBrowserDialog";
-  private static final String ACTION_USB_PERMISSION =
-      BuildConfig.APPLICATION_ID + ".USB_PERMISSION";
+  private static final String ACTION_USB_PERMISSION = BuildConfig.APPLICATION_ID + ".USB_PERMISSION";
   private final Stack<UsbFile> mHistory = new Stack<>();
   private UsbMassStorageDevice mDevice;
   private AlertDialog mWaitingForUsbDialog;
   private OnDialogResultListener mOnDialogResultListener;
+  private UsbFile mRoot;
   private UsbFile mCurrentDir;
   private FileSystem mFileSystem;
   private String mPathToRestore;
@@ -185,18 +187,46 @@ public class UsbBrowserDialog extends BrowserDialog {
       }
 
       mFileSystem = partitions.get(0).getFileSystem();
-      mCurrentDir = mFileSystem.getRootDirectory();
       mHistory.clear();
-      mHistory.push(mFileSystem.getRootDirectory());   //root is always first
 
       if (mPathToRestore != null) {
-        final String[] paths = mPathToRestore.substring(1, mPathToRestore.length() - 1)
-            .split(File.separator);
+        final String[] paths = mPathToRestore.substring(1, mPathToRestore.length() - 1).split(File.separator);
         for (String dir : paths) {
           mCurrentDir = mCurrentDir.search(dir);
           mHistory.push(mCurrentDir);
         }
+      } else if (getStartPath() != null) {
+        mCurrentDir = mFileSystem.getRootDirectory().search(getStartPath());
+        if (mCurrentDir == null) {
+          // create directory
+          mCurrentDir = mFileSystem.getRootDirectory();
+          mHistory.push(mCurrentDir);
+          final String[] paths = getStartPath().split(File.separator);
+          for (String path : paths) {
+            if (!TextUtils.isEmpty(path)) {
+              mCurrentDir = mCurrentDir.createDirectory(path);
+              mHistory.push(mCurrentDir);
+            }
+          }
+        } else {
+          // build history from start path
+          List<UsbFile> parents = new ArrayList<>();
+          UsbFile dir = mCurrentDir;
+          while (dir != null) {
+            parents.add(dir);
+            dir = dir.getParent();
+          }
+          Collections.reverse(parents);
+          for (UsbFile parent : parents) {
+            mHistory.push(parent);
+          }
+        }
+      } else {
+        mCurrentDir = mFileSystem.getRootDirectory();
+        mHistory.push(mCurrentDir);
       }
+
+      mRoot = mCurrentDir;
 
       loadList(mCurrentDir);
     } catch (IOException e) {
@@ -387,9 +417,8 @@ public class UsbBrowserDialog extends BrowserDialog {
 
         mToolbar.setSubtitle(getCurrentPath());
 
-        rvFileList.setAdapter(
-            new UsbFileListAdapter(getContext(), mItemLayoutID, mBrowseMode, mSortMode, directory,
-                files, mCurrentDir.isRoot()));
+        rvFileList.setAdapter(new UsbFileListAdapter(getContext(), mItemLayoutID, mBrowseMode, mSortMode, directory,
+            files, mCurrentDir == mRoot));
 
         Parcelable state = mStates.get(mCurrentDir.getName());
         if (state != null) {

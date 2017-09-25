@@ -23,6 +23,8 @@ import java.util.Locale;
 public class UsbFileListAdapter extends FileListAdapter {
 
   private static final DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance();
+  private final boolean mIsRoot;
+
   private List<UsbFile> mFiles;
   private UsbFile mCurrentDir;
 
@@ -32,6 +34,7 @@ public class UsbFileListAdapter extends FileListAdapter {
 
     mCurrentDir = directory;
     mFiles = contents;
+    mIsRoot = isRoot;
     refresh();
   }
 
@@ -64,7 +67,7 @@ public class UsbFileListAdapter extends FileListAdapter {
       }
     }
 
-    if (!mCurrentDir.isRoot()) {
+    if (!mIsRoot && !mCurrentDir.isRoot()) {
       mFiles.add(0, new DummyFile() {
         @Override
         public String getName() {

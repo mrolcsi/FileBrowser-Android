@@ -105,6 +105,9 @@ public class ExportFileFragment extends Fragment {
       public void onClick(View view) {
         final UsbBrowserDialog dialog = new UsbBrowserDialog();
         dialog.setBrowseMode(BrowseMode.SAVE_FILE);
+        dialog.setStartIsRoot(true);
+        dialog.setStartPath("a/b/c");
+        dialog.setStartIsRoot(true);
         dialog.setOnDialogResultListener(new UsbBrowserDialog.OnDialogResultListener() {
           @Override
           public void onPositiveResult(UsbFile file, FileSystem currentFs) {
