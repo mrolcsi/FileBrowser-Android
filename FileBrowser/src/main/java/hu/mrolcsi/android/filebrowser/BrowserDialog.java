@@ -131,6 +131,11 @@ public class BrowserDialog extends DialogFragment {
    */
   private static final String OPTION_SHOW_HIDDEN_FILES;
 
+  /**
+   * Boolean: can the user change directory?
+   */
+  private static final String OPTION_LOCKED_FOLDER;
+
   public static final SortMode[] SORT_HASHES = new SortMode[]{
       SortMode.BY_NAME_ASC,
       SortMode.BY_NAME_DESC,
@@ -154,6 +159,7 @@ public class BrowserDialog extends DialogFragment {
     OPTION_LAYOUT = "layout";
     OPTION_DIALOG_TITLE = "dialogTitle";
     OPTION_SHOW_HIDDEN_FILES = "showHiddenFiles";
+    OPTION_LOCKED_FOLDER = "lockedFolder";
   }
 
   //region Privates
@@ -179,6 +185,7 @@ public class BrowserDialog extends DialogFragment {
   private String mCurrentPath = mStartPath;
   private Layout mActiveLayout = Layout.LIST;
   protected boolean mShowHiddenFiles = false;
+  protected boolean mLocked = false;
   private Button btnSave;
   private LinearLayoutManager mLinearLayout;
   private GridLayoutManager mGridLayout;
@@ -214,6 +221,7 @@ public class BrowserDialog extends DialogFragment {
       mDefaultFileName = savedInstanceState.getString(OPTION_DEFAULT_FILENAME);
       mDialogTitle = savedInstanceState.getString(OPTION_DIALOG_TITLE);
       mShowHiddenFiles = savedInstanceState.getBoolean(OPTION_SHOW_HIDDEN_FILES, false);
+      mLocked = savedInstanceState.getBoolean(OPTION_LOCKED_FOLDER, false);
     } else {
       mCurrentPath = mStartPath;
     }
@@ -322,6 +330,7 @@ public class BrowserDialog extends DialogFragment {
     outState.putString(OPTION_DEFAULT_FILENAME, mDefaultFileName);
     outState.putString(OPTION_DIALOG_TITLE, mDialogTitle);
     outState.putBoolean(OPTION_SHOW_HIDDEN_FILES, mShowHiddenFiles);
+    outState.putBoolean(OPTION_LOCKED_FOLDER, mLocked);
   }
 
   private void setupToolbar() {
@@ -551,15 +560,14 @@ public class BrowserDialog extends DialogFragment {
       @Override
       public void onItemClick(RecyclerView parent, View view, int position, long id) {
         FileListAdapter.FileHolder holder = (FileListAdapter.FileHolder) view.getTag();
-        if (holder.file.getAbsolutePath()
-            .equals(File.separator + getString(R.string.browser_upFolder))) {
+        if (holder.file.getAbsolutePath().equals(File.separator + getString(R.string.browser_upFolder))) {
           loadList(new File(mCurrentPath).getParentFile());
         } else if (mBrowseMode == BrowseMode.SELECT_DIR && holder.file.getAbsolutePath()
             .equals(File.separator + getString(R.string.browser_titleSelectDir))) {
           onDialogResultListener.onPositiveResult(mCurrentPath);
           dismiss();
         } else {
-          if (holder.file.isDirectory()) {
+          if (holder.file.isDirectory() && !mLocked) {
             loadList(holder.file);
           }
           if (holder.file.isFile()) {
@@ -762,7 +770,11 @@ public class BrowserDialog extends DialogFragment {
     if (FileUtils.isFilenameValid(folderName)) {
       File newDir = new File(mCurrentPath + "/" + folderName);
       if (newDir.mkdir()) {
-        loadList(new File(mCurrentPath));
+        if (mLocked) {
+          loadList(new File(mCurrentPath));
+        } else {
+          loadList(newDir);
+        }
       } else {
         showErrorDialog(Error.CANT_CREATE_FOLDER);
       }
@@ -928,6 +940,11 @@ public class BrowserDialog extends DialogFragment {
 
   public BrowserDialog setShowHiddenFiles(boolean showHiddenFiles) {
     mShowHiddenFiles = showHiddenFiles;
+    return this;
+  }
+
+  public BrowserDialog setLockedFolder(boolean isLocked) {
+    mLocked = isLocked;
     return this;
   }
 

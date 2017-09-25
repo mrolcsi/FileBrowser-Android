@@ -53,7 +53,7 @@ public abstract class DummyFile implements UsbFile {
 
   @Override
   public long getLength() {
-    return 0;
+    return -1;
   }
 
   @Override

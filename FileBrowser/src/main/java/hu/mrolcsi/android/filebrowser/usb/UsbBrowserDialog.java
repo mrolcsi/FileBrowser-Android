@@ -261,13 +261,18 @@ public class UsbBrowserDialog extends BrowserDialog {
           dismiss();
         } else {
           if (holder.usbFile.isDirectory()) {
-            try {
-              mHistory.push(holder.usbFile);
-              loadList(holder.usbFile);
-            } catch (IOException e) {
-              showErrorDialog(Error.FOLDER_NOT_READABLE);
+            if (mLocked && mBrowseMode == BrowseMode.SELECT_DIR) {
+              mOnDialogResultListener.onPositiveResult(holder.usbFile, mFileSystem);
+              dismiss();
+            } else {
+              try {
+                mHistory.push(holder.usbFile);
+                loadList(holder.usbFile);
+              } catch (IOException e) {
+                showErrorDialog(Error.FOLDER_NOT_READABLE);
+              }
             }
-          } else {
+          } else if (!holder.usbFile.isDirectory() && holder.usbFile.getLength() != -1) {
             if (mBrowseMode == BrowseMode.SAVE_FILE) {
               etFilename.setText(holder.usbFile.getName());
             } else {
@@ -417,8 +422,9 @@ public class UsbBrowserDialog extends BrowserDialog {
 
         mToolbar.setSubtitle(getCurrentPath());
 
-        rvFileList.setAdapter(new UsbFileListAdapter(getContext(), mItemLayoutID, mBrowseMode, mSortMode, directory,
-            files, mCurrentDir == mRoot));
+        rvFileList.setAdapter(
+            new UsbFileListAdapter(getContext(), mItemLayoutID, mLocked ? BrowseMode.OPEN_FILE : mBrowseMode, mSortMode,
+                directory, files, mCurrentDir == mRoot));
 
         Parcelable state = mStates.get(mCurrentDir.getName());
         if (state != null) {
@@ -477,8 +483,13 @@ public class UsbBrowserDialog extends BrowserDialog {
     if (FileUtils.isFilenameValid(folderName)) {
       try {
         final UsbFile newDir = mCurrentDir.createDirectory(folderName);
-        mHistory.push(newDir);
-        loadList(newDir);
+        if (mLocked) {
+          // reload current directory to see newly created folder
+          loadList(mCurrentDir);
+        } else {
+          mHistory.push(newDir);
+          loadList(newDir);
+        }
       } catch (IOException e) {
         showErrorDialog(Error.CANT_CREATE_FOLDER);
       }
