@@ -20,7 +20,7 @@ import hu.mrolcsi.android.filebrowser.option.SortMode;
 public class TestFragment extends Fragment {
 
   private TextView tvPath;
-  private BrowserDialog.OnDialogResultListener onDialogResultListener;
+  private BrowserDialog.OnFileSelectedListener mOnFileSelectedListener;
   @SuppressWarnings("unused")
   private View mRootView;
 
@@ -46,18 +46,9 @@ public class TestFragment extends Fragment {
     Button btnOpenUsb = view.findViewById(R.id.buttonOpenUsb);
     tvPath = view.findViewById(R.id.textViewPath);
 
-    onDialogResultListener = new BrowserDialog.OnDialogResultListener() {
-      @Override
-      public void onPositiveResult(String path) {
-        tvPath.setText(path);
-        ((MainActivity) getActivity()).swapFragment(TestFragment.this);
-      }
-
-      @Override
-      public void onNegativeResult() {
-        tvPath.setText(android.R.string.cancel);
-        ((MainActivity) getActivity()).swapFragment(TestFragment.this);
-      }
+    mOnFileSelectedListener = pathToFile -> {
+      tvPath.setText(pathToFile);
+      ((MainActivity) getActivity()).swapFragment(TestFragment.this);
     };
 
     btnOpenFile.setOnClickListener(v -> {
@@ -67,14 +58,14 @@ public class TestFragment extends Fragment {
           .setStartIsRoot(false)
           .setRootPath(Environment.getExternalStorageDirectory().getAbsolutePath())
           .setDialogTitle("Select file for testing")
-          .setOnDialogResultListener(onDialogResultListener);
+          .setOnFileSelectedListener(mOnFileSelectedListener);
       dialog.show(getChildFragmentManager(), dialog.toString());
     });
 
     btnSelectDir.setOnClickListener(v -> {
       BrowserDialog dialog = new BrowserDialog()
           .setBrowseMode(BrowseMode.SELECT_DIR)
-          .setOnDialogResultListener(onDialogResultListener);
+          .setOnFileSelectedListener(mOnFileSelectedListener);
       dialog.show(getChildFragmentManager(), dialog.toString());
     });
 
@@ -86,7 +77,7 @@ public class TestFragment extends Fragment {
           .setRootPath(Environment.getExternalStorageDirectory().getAbsolutePath())
           .setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath())
           .setStartIsRoot(false)
-          .setOnDialogResultListener(onDialogResultListener);
+          .setOnFileSelectedListener(mOnFileSelectedListener);
       dialog.show(getChildFragmentManager(), dialog.toString());
     });
 
@@ -97,7 +88,7 @@ public class TestFragment extends Fragment {
           .setStartIsRoot(false)
           .setSortMode(SortMode.BY_EXTENSION_ASC)
           .setBrowseMode(BrowseMode.SAVE_FILE)
-          .setOnDialogResultListener(onDialogResultListener);
+          .setOnFileSelectedListener(mOnFileSelectedListener);
       dialog.show(getChildFragmentManager(), dialog.toString());
     });
 
@@ -109,7 +100,7 @@ public class TestFragment extends Fragment {
           .setSortMode(SortMode.BY_DATE_DESC)
           .setBrowseMode(BrowseMode.SAVE_FILE)
           .setLayout(Layout.GRID)
-          .setOnDialogResultListener(onDialogResultListener);
+          .setOnFileSelectedListener(mOnFileSelectedListener);
       ((MainActivity) getActivity()).swapFragment(dialog);
     });
 

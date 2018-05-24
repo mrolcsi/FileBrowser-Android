@@ -18,7 +18,6 @@ import com.github.mjdev.libaums.fs.FileSystem;
 import com.github.mjdev.libaums.fs.UsbFile;
 import com.github.mjdev.libaums.fs.UsbFileStreamFactory;
 import hu.mrolcsi.android.filebrowser.BrowserDialog;
-import hu.mrolcsi.android.filebrowser.BrowserDialog.OnDialogResultListener;
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
 import hu.mrolcsi.android.filebrowser.usb.UsbBrowserDialog;
 import hu.mrolcsi.android.filebrowser.util.FileUtils;
@@ -48,7 +47,7 @@ public class ExportFileFragment extends Fragment {
   private Button btnCopy;
 
   private File mSourceFile;
-  private UsbFile mDestFile;
+  private UsbFile mDestDir;
   private FileSystem mUsbFs;
 
   @Nullable
@@ -79,44 +78,21 @@ public class ExportFileFragment extends Fragment {
       final BrowserDialog dialog = new BrowserDialog();
       dialog.setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath());
       dialog.setStartIsRoot(true);
-      dialog.setOnDialogResultListener(new OnDialogResultListener() {
-        @Override
-        public void onPositiveResult(String path) {
-          mSourceFile = new File(path);
-          tvSource.setText(path);
-        }
-
-        @Override
-        public void onNegativeResult() {
-          if (mSourceFile == null) {
-            tvSource.setText("<nothing selected>");
-          }
-        }
+      dialog.setOnFileSelectedListener(pathToFile -> {
+        mSourceFile = new File(pathToFile);
+        tvSource.setText(pathToFile);
       });
       dialog.show(getChildFragmentManager(), "SourceBrowser");
     });
 
     btnDest.setOnClickListener(view -> {
       final UsbBrowserDialog dialog = new UsbBrowserDialog();
+      dialog.setStartPath("/");
       dialog.setBrowseMode(BrowseMode.SELECT_DIR);
-      dialog.setStartIsRoot(true);
-      dialog.setStartPath("a/b");
-      dialog.setLockedFolder(true);
-      dialog.setStartIsRoot(true);
-      dialog.setOnDialogResultListener(new UsbBrowserDialog.OnDialogResultListener() {
-        @Override
-        public void onPositiveResult(UsbFile file, FileSystem currentFs) {
-          mUsbFs = currentFs;
-          mDestFile = file;
-          tvDest.setText(FileUtils.getAbsolutePath(file));
-        }
-
-        @Override
-        public void onNegativeResult() {
-          if (mDestFile == null) {
-            tvDest.setText("<nothing selected>");
-          }
-        }
+      dialog.setOnFileSelectedListener((file, fileSystem) -> {
+        mUsbFs = fileSystem;
+        mDestDir = file;
+        tvDest.setText(FileUtils.getAbsolutePath(file));
       });
       dialog.show(getChildFragmentManager(), "DestinationBrowser");
     });
@@ -131,7 +107,8 @@ public class ExportFileFragment extends Fragment {
     protected Void doInBackground(Void... voids) {
       try {
         final InputStream in = new BufferedInputStream(new FileInputStream(mSourceFile));
-        final OutputStream out = UsbFileStreamFactory.createBufferedOutputStream(mDestFile, mUsbFs);
+        final OutputStream out = UsbFileStreamFactory
+            .createBufferedOutputStream(mDestDir.createFile(mSourceFile.getName()), mUsbFs);
 
         int bufferSize = mUsbFs.getChunkSize();
 

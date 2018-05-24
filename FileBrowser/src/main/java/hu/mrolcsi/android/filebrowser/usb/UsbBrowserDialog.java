@@ -13,9 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.View;
 import com.github.mjdev.libaums.UsbMassStorageDevice;
 import com.github.mjdev.libaums.fs.FileSystem;
 import com.github.mjdev.libaums.fs.UsbFile;
@@ -47,7 +45,20 @@ public class UsbBrowserDialog extends BrowserDialog {
   private final Stack<UsbFile> mHistory = new Stack<>();
   private UsbMassStorageDevice mDevice;
   private AlertDialog mWaitingForUsbDialog;
-  private OnDialogResultListener mOnDialogResultListener;
+  private OnDialogResultListener mOnDialogResultListener = new OnDialogResultListener() {
+    @Override
+    public void onPositiveResult(UsbFile file, FileSystem currentFs) {
+    }
+
+    @Override
+    public void onNegativeResult() {
+    }
+  };
+  private OnFileSelectedListener mOnFileSelectedListener = (file, fileSystem) -> {
+    if (mOnDialogResultListener != null) {
+      mOnDialogResultListener.onPositiveResult(file, fileSystem);
+    }
+  };
   private UsbFile mRoot;
   private UsbFile mCurrentDir;
   private FileSystem mFileSystem;
@@ -248,14 +259,14 @@ public class UsbBrowserDialog extends BrowserDialog {
         } catch (IOException e) {
           showErrorDialog(Error.FOLDER_NOT_READABLE);
         }
-      } else if (mBrowseMode == BrowseMode.SELECT_DIR && holder.usbFile.getName()
-          .equals(getString(R.string.browser_titleSelectDir))) {
-        mOnDialogResultListener.onPositiveResult(holder.usbFile.getParent(), mFileSystem);
+      } else if (mBrowseMode == BrowseMode.SELECT_DIR
+          && holder.usbFile.getName().equals(getString(R.string.browser_titleSelectDir))) {
+        mOnFileSelectedListener.onFileSelected(holder.usbFile.getParent(), mFileSystem);
         dismiss();
       } else {
         if (holder.usbFile.isDirectory()) {
           if (mLocked && mBrowseMode == BrowseMode.SELECT_DIR) {
-            mOnDialogResultListener.onPositiveResult(holder.usbFile, mFileSystem);
+            mOnFileSelectedListener.onFileSelected(holder.usbFile, mFileSystem);
             dismiss();
           } else {
             try {
@@ -269,19 +280,14 @@ public class UsbBrowserDialog extends BrowserDialog {
           if (mBrowseMode == BrowseMode.SAVE_FILE) {
             etFilename.setText(holder.usbFile.getName());
           } else {
-            mOnDialogResultListener.onPositiveResult(holder.usbFile, mFileSystem);
+            mOnFileSelectedListener.onFileSelected(holder.usbFile, mFileSystem);
             dismiss();
           }
         }
       }
     };
 
-    ItemClickSupport.OnItemLongClickListener onItemLongClickListener = new ItemClickSupport.OnItemLongClickListener() {
-      @Override
-      public boolean onItemLongClick(RecyclerView parent, View view, int position, long id) {
-        return false;
-      }
-    };
+    ItemClickSupport.OnItemLongClickListener onItemLongClickListener = (parent, view, position, id) -> false;
 
     mItemClickSupport.setOnItemClickListener(onItemClickListener);
     mItemClickSupport.setOnItemLongClickListener(onItemLongClickListener);
@@ -445,7 +451,7 @@ public class UsbBrowserDialog extends BrowserDialog {
         existingFile = mCurrentDir.search(filename);
         if (existingFile != null) {
           if (overwrite) {
-            mOnDialogResultListener.onPositiveResult(existingFile, mFileSystem);
+            mOnFileSelectedListener.onFileSelected(existingFile, mFileSystem);
             dismiss();
           } else {
             showOverwriteDialog(filename);
@@ -459,7 +465,7 @@ public class UsbBrowserDialog extends BrowserDialog {
       if (existingFile == null) {
         try {
           final UsbFile newFile = mCurrentDir.createFile(filename);
-          mOnDialogResultListener.onPositiveResult(newFile, mFileSystem);
+          mOnFileSelectedListener.onFileSelected(newFile, mFileSystem);
           dismiss();
         } catch (IOException e) {
           showErrorDialog(Error.CANT_CREATE_FILE);
@@ -520,15 +526,34 @@ public class UsbBrowserDialog extends BrowserDialog {
     ad.show();
   }
 
+  /**
+   * Deprecated. Use {@link #setOnFileSelectedListener(OnFileSelectedListener)} instead.
+   */
+  @Deprecated
   public UsbBrowserDialog setOnDialogResultListener(OnDialogResultListener listener) {
     mOnDialogResultListener = listener;
     return this;
   }
 
+  public UsbBrowserDialog setOnFileSelectedListener(OnFileSelectedListener listener) {
+    mOnFileSelectedListener = listener;
+    return this;
+  }
+
+  /**
+   * Deprecated. Use {@link OnFileSelectedListener} instead.
+   */
+  @Deprecated
   public interface OnDialogResultListener {
 
     void onPositiveResult(UsbFile file, FileSystem currentFs);
 
     void onNegativeResult();
+  }
+
+  @FunctionalInterface
+  public interface OnFileSelectedListener {
+
+    void onFileSelected(UsbFile file, FileSystem fileSystem);
   }
 }

@@ -195,6 +195,11 @@ public class BrowserDialog extends DialogFragment {
     public void onNegativeResult() {
     }
   };
+  private OnFileSelectedListener mOnFileSelectedListener = pathToFile -> {
+    if (onDialogResultListener != null) {
+      onDialogResultListener.onPositiveResult(pathToFile);
+    }
+  };
 
   private MenuItem menuNewFolder;
   private MenuItem menuSortMode;
@@ -423,11 +428,11 @@ public class BrowserDialog extends DialogFragment {
         if (!overwrite) {
           showOverwriteDialog(filename);
         } else {
-          onDialogResultListener.onPositiveResult(result);
+          mOnFileSelectedListener.onFileSelected(result);
           dismiss();
         }
       } else {
-        onDialogResultListener.onPositiveResult(result);
+        mOnFileSelectedListener.onFileSelected(result);
         dismiss();
       }
     } else {
@@ -535,7 +540,7 @@ public class BrowserDialog extends DialogFragment {
         loadList(new File(mCurrentPath).getParentFile());
       } else if (mBrowseMode == BrowseMode.SELECT_DIR && holder.file.getAbsolutePath()
           .equals(File.separator + getString(R.string.browser_titleSelectDir))) {
-        onDialogResultListener.onPositiveResult(mCurrentPath);
+        mOnFileSelectedListener.onFileSelected(mCurrentPath);
         dismiss();
       } else {
         if (holder.file.isDirectory() && !mLocked) {
@@ -545,7 +550,7 @@ public class BrowserDialog extends DialogFragment {
           if (mBrowseMode == BrowseMode.SAVE_FILE) {
             etFilename.setText(holder.file.getName());
           } else {
-            onDialogResultListener.onPositiveResult(holder.file.getAbsolutePath());
+            mOnFileSelectedListener.onFileSelected(holder.file.getAbsolutePath());
             dismiss();
           }
         }
@@ -556,7 +561,7 @@ public class BrowserDialog extends DialogFragment {
       FileListAdapter.FileHolder holder = (FileListAdapter.FileHolder) view.getTag();
       if (mBrowseMode == BrowseMode.OPEN_FILE && holder.file.isFile()
           || mBrowseMode == BrowseMode.SELECT_DIR && holder.file.isDirectory()) {
-        onDialogResultListener.onPositiveResult(holder.file.getAbsolutePath());
+        mOnFileSelectedListener.onFileSelected(holder.file.getAbsolutePath());
         dismiss();
         return true;
       }
@@ -655,7 +660,7 @@ public class BrowserDialog extends DialogFragment {
 
         boolean isRoot = mStartIsRoot ?
             mCurrentPath.equals(mStartPath) || mCurrentPath.equals(mRootPath)
-                : mCurrentPath.equals(mRootPath);
+            : mCurrentPath.equals(mRootPath);
 
         rvFileList.setAdapter(new FileListAdapter(getContext(), mItemLayoutID, files, mBrowseMode, mSortMode, isRoot));
 
@@ -786,8 +791,17 @@ public class BrowserDialog extends DialogFragment {
     }
   }
 
+  /**
+   * Deprecated. Use {@link #setOnFileSelectedListener(OnFileSelectedListener)} instead.
+   */
+  @Deprecated
   public BrowserDialog setOnDialogResultListener(OnDialogResultListener listener) {
     onDialogResultListener = listener;
+    return this;
+  }
+
+  public BrowserDialog setOnFileSelectedListener(OnFileSelectedListener listener) {
+    mOnFileSelectedListener = listener;
     return this;
   }
 
@@ -889,10 +903,20 @@ public class BrowserDialog extends DialogFragment {
     return mShowHiddenFiles;
   }
 
+  /**
+   * Deprecated. Use {@link OnFileSelectedListener} instead.
+   */
+  @Deprecated
   public interface OnDialogResultListener {
 
     void onPositiveResult(String path);
 
     void onNegativeResult();
+  }
+
+  @FunctionalInterface
+  public interface OnFileSelectedListener {
+
+    void onFileSelected(String pathToFile);
   }
 }
