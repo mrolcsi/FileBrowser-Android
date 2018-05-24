@@ -58,13 +58,7 @@ public abstract class FileComparator {
     public int compare(File f1, File f2) {
       long f1mod = f1.lastModified();
       long f2mod = f2.lastModified();
-      if (f1mod < f2mod) {
-        return -1;
-      } else if (f1mod > f2mod) {
-        return 1;
-      } else {
-        return 0;
-      }
+      return Long.compare(f1mod, f2mod);
     }
   }
 
@@ -88,13 +82,7 @@ public abstract class FileComparator {
         f1size = FileUtils.dirSize(f1);
         f2size = FileUtils.dirSize(f2);
       }
-      if (f1size < f2size) {
-        return -1;
-      } else if (f1size > f2size) {
-        return 1;
-      } else {
-        return 0;
-      }
+      return Long.compare(f1size, f2size);
     }
   }
 }

@@ -44,7 +44,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHo
     this.sortMode = sortMode;
     inflater = LayoutInflater.from(context);
 
-    data = inputData == null ? new ArrayList<File>() : inputData;
+    data = inputData == null ? new ArrayList<>() : inputData;
 
     if (browseMode == BrowseMode.SELECT_DIR) {
       data.add(0, new File(context.getString(R.string.browser_titleSelectDir)));
@@ -194,10 +194,10 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHo
     public FileHolder(View itemView) {
       super(itemView);
 
-      icon = (ImageView) itemView.findViewById(R.id.browser_listItemIcon);
-      text = (TextView) itemView.findViewById(R.id.browser_listItemText);
-      extra = (TextView) itemView.findViewById(R.id.browser_listItemExtra);
-      progress = (ProgressBar) itemView.findViewById(R.id.browser_listItemProgress);
+      icon = itemView.findViewById(R.id.browser_listItemIcon);
+      text = itemView.findViewById(R.id.browser_listItemText);
+      extra = itemView.findViewById(R.id.browser_listItemExtra);
+      progress = itemView.findViewById(R.id.browser_listItemProgress);
     }
   }
 }

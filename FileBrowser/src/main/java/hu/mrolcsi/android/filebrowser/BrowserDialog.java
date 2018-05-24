@@ -15,7 +15,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,7 +38,6 @@ import hu.mrolcsi.android.filebrowser.util.FileUtils;
 import hu.mrolcsi.android.filebrowser.util.Utils;
 import hu.mrolcsi.android.filebrowser.util.itemclicksupport.ItemClickSupport;
 import java.io.File;
-import java.io.FileFilter;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
@@ -168,9 +166,8 @@ public class BrowserDialog extends DialogFragment {
   protected final Map<String, Parcelable> mStates = new ConcurrentHashMap<>();
   protected SortMode mSortMode = SortMode.BY_NAME_ASC;
   protected String[] mExtensionFilter;
-  private String mStartPath =
-      Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ? Environment
-          .getExternalStorageDirectory().getAbsolutePath() : "/";
+  private String mStartPath = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ?
+      Environment.getExternalStorageDirectory().getAbsolutePath() : "/";
   private String mRootPath = File.listRoots()[0].getAbsolutePath();
   private boolean mStartIsRoot = true;
   protected int mItemLayoutID = R.layout.browser_listitem_layout;
@@ -237,12 +234,11 @@ public class BrowserDialog extends DialogFragment {
   @Override
   public void onViewCreated(final View view, Bundle savedInstanceState) {
 
-    mToolbar = (Toolbar) view.findViewById(R.id.browser_toolbar);
+    mToolbar = view.findViewById(R.id.browser_toolbar);
     setupToolbar();
 
-    rvFileList = (RecyclerView) view.findViewById(R.id.browser_recyclerView);
-    DividerItemDecoration listItemDecor = new DividerItemDecoration(getContext(),
-        DividerItemDecoration.VERTICAL_LIST);
+    rvFileList = view.findViewById(R.id.browser_recyclerView);
+    DividerItemDecoration listItemDecor = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST);
     mLinearLayout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     mGridLayout = new GridLayoutManager(getContext(),
         getResources().getInteger(R.integer.browser_columnCount), LinearLayoutManager.VERTICAL,
@@ -262,28 +258,25 @@ public class BrowserDialog extends DialogFragment {
 
     if (mBrowseMode == BrowseMode.SAVE_FILE) {
       if (btnSave == null) {
-        btnSave = (Button) view.findViewById(R.id.browser_imageButtonSave);
+        btnSave = view.findViewById(R.id.browser_imageButtonSave);
         //btnSave.setImageDrawable(Utils.tintDrawable(getContext(), R.drawable.browser_save));
       }
 
       if (etFilename == null) {
-        etFilename = (EditText) view.findViewById(R.id.browser_editTextFileName);
-        etFilename.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-          @Override
-          public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-            if (i == EditorInfo.IME_ACTION_DONE) {
-              saveFile(false);
-              return true;
-            }
-            return false;
+        etFilename = view.findViewById(R.id.browser_editTextFileName);
+        etFilename.setOnEditorActionListener((textView, i, keyEvent) -> {
+          if (i == EditorInfo.IME_ACTION_DONE) {
+            saveFile(false);
+            return true;
           }
+          return false;
         });
       }
 
-      RelativeLayout rlSave = (RelativeLayout) view.findViewById(R.id.browser_rlSave);
+      RelativeLayout rlSave = view.findViewById(R.id.browser_rlSave);
       rlSave.setVisibility(View.VISIBLE);
 
-      final Spinner spnExtension = (Spinner) view.findViewById(R.id.browser_spnExtension);
+      final Spinner spnExtension = view.findViewById(R.id.browser_spnExtension);
       if (mExtensionFilter != null) {
         final ArrayAdapter<String> extensionAdapter = new ArrayAdapter<>(getContext(),
             android.R.layout.simple_spinner_item, mExtensionFilter);
@@ -307,12 +300,7 @@ public class BrowserDialog extends DialogFragment {
         etFilename.setText(mDefaultFileName);
       }
 
-      btnSave.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-          saveFile(false);
-        }
-      });
+      btnSave.setOnClickListener(v -> saveFile(false));
     }
   }
 
@@ -357,6 +345,7 @@ public class BrowserDialog extends DialogFragment {
 
     if (menu.getClass().equals(MenuBuilder.class)) {
       try {
+        @SuppressLint("PrivateApi")
         Method m = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
         m.setAccessible(true);
         m.invoke(menu, true);
@@ -386,46 +375,41 @@ public class BrowserDialog extends DialogFragment {
     menuShowHiddenFiles = menu.findItem(R.id.browser_menuShowHidden);
     if (mShowHiddenFiles) {
       menuShowHiddenFiles.setTitle(R.string.browser_menu_dontShowHiddenFiles);
-      menuShowHiddenFiles
-          .setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_hide));
+      menuShowHiddenFiles.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_hide));
     } else {
       menuShowHiddenFiles.setTitle(R.string.browser_menu_showHiddenFiles);
-      menuShowHiddenFiles
-          .setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_show));
+      menuShowHiddenFiles.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_show));
     }
 
-    mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-      @Override
-      public boolean onMenuItemClick(MenuItem menuItem) {
-        final int id = menuItem.getItemId();
+    mToolbar.setOnMenuItemClickListener(menuItem -> {
+      final int id = menuItem.getItemId();
 
-        if (id == R.id.browser_menuNewFolder) {
-          showNewFolderDialog();
-          return true;
-        } else if (id == R.id.browser_menuSort) {
-          showSortDialog();
-          return true;
-        } else if (id == R.id.browser_menuSwitchLayout) {
-          if (mActiveLayout == Layout.LIST) {
-            menuItem.setTitle(R.string.browser_menu_viewAsList);
-            menuItem.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_list));
-            toGridView();
-          } else if (mActiveLayout == Layout.GRID) {
-            menuItem.setTitle(R.string.browser_menu_viewAsGrid);
-            menuItem.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_grid));
-            toListView();
-          }
-          return true;
-        } else if (id == R.id.browser_menuShowHidden) {
-          if (mShowHiddenFiles) {
-            dontShowHiddenFiles();
-          } else {
-            showHiddenFiles();
-          }
-          return true;
+      if (id == R.id.browser_menuNewFolder) {
+        showNewFolderDialog();
+        return true;
+      } else if (id == R.id.browser_menuSort) {
+        showSortDialog();
+        return true;
+      } else if (id == R.id.browser_menuSwitchLayout) {
+        if (mActiveLayout == Layout.LIST) {
+          menuItem.setTitle(R.string.browser_menu_viewAsList);
+          menuItem.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_list));
+          toGridView();
+        } else if (mActiveLayout == Layout.GRID) {
+          menuItem.setTitle(R.string.browser_menu_viewAsGrid);
+          menuItem.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_grid));
+          toListView();
         }
-        return false;
+        return true;
+      } else if (id == R.id.browser_menuShowHidden) {
+        if (mShowHiddenFiles) {
+          dontShowHiddenFiles();
+        } else {
+          showHiddenFiles();
+        }
+        return true;
       }
+      return false;
     });
   }
 
@@ -493,15 +477,12 @@ public class BrowserDialog extends DialogFragment {
     AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
         .setTitle(R.string.browser_menu_sortBy)
         .setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_asc))
-        .setItems(R.array.browser_sortOptions, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialogInterface, int i) {
-            mSortMode = SORT_HASHES[i];
+        .setItems(R.array.browser_sortOptions, (dialogInterface, i) -> {
+          mSortMode = SORT_HASHES[i];
 
-            setupSortMode();
+          setupSortMode();
 
-            loadList(new File(mCurrentPath));
-          }
+          loadList(new File(mCurrentPath));
         });
     AlertDialog ad = builder.create();
     ad.show();
@@ -513,91 +494,77 @@ public class BrowserDialog extends DialogFragment {
     switch (mSortMode) {
       case BY_NAME_ASC:
         menuSortMode.setTitle(sortOptions[0]);
-        menuSortMode.setIcon(
-            Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_asc));
+        menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_asc));
         break;
       case BY_NAME_DESC:
         menuSortMode.setTitle(sortOptions[1]);
-        menuSortMode.setIcon(
-            Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_desc));
+        menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_desc));
         break;
       case BY_EXTENSION_ASC:
         menuSortMode.setTitle(sortOptions[2]);
-        menuSortMode.setIcon(
-            Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_asc));
+        menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_asc));
         break;
       case BY_EXTENSION_DESC:
         menuSortMode.setTitle(sortOptions[3]);
-        menuSortMode.setIcon(
-            Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_desc));
+        menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_desc));
         break;
       case BY_DATE_ASC:
         menuSortMode.setTitle(sortOptions[4]);
-        menuSortMode.setIcon(
-            Utils.getTintedDrawable(getContext(), R.drawable.browser_numerical_sorting_asc));
+        menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_numerical_sorting_asc));
         break;
       case BY_DATE_DESC:
         menuSortMode.setTitle(sortOptions[5]);
-        menuSortMode.setIcon(
-            Utils.getTintedDrawable(getContext(), R.drawable.browser_numerical_sorting_desc));
+        menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_numerical_sorting_desc));
         break;
       case BY_SIZE_ASC:
         menuSortMode.setTitle(sortOptions[6]);
-        menuSortMode.setIcon(
-            Utils.getTintedDrawable(getContext(), R.drawable.browser_numerical_sorting_asc));
+        menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_numerical_sorting_asc));
         break;
       case BY_SIZE_DESC:
         menuSortMode.setTitle(sortOptions[7]);
-        menuSortMode.setIcon(
-            Utils.getTintedDrawable(getContext(), R.drawable.browser_numerical_sorting_desc));
+        menuSortMode.setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_numerical_sorting_desc));
         break;
     }
   }
 
   protected void setListListeners() {
 
-    ItemClickSupport.OnItemClickListener onItemClickListener = new ItemClickSupport.OnItemClickListener() {
-      @Override
-      public void onItemClick(RecyclerView parent, View view, int position, long id) {
-        FileListAdapter.FileHolder holder = (FileListAdapter.FileHolder) view.getTag();
-        if (holder.file.getAbsolutePath().equals(File.separator + getString(R.string.browser_upFolder))) {
-          loadList(new File(mCurrentPath).getParentFile());
-        } else if (mBrowseMode == BrowseMode.SELECT_DIR && holder.file.getAbsolutePath()
-            .equals(File.separator + getString(R.string.browser_titleSelectDir))) {
-          onDialogResultListener.onPositiveResult(mCurrentPath);
-          dismiss();
-        } else {
-          if (holder.file.isDirectory() && !mLocked) {
-            loadList(holder.file);
-          }
-          if (holder.file.isFile()) {
-            if (mBrowseMode == BrowseMode.SAVE_FILE) {
-              etFilename.setText(holder.file.getName());
-            } else {
-              onDialogResultListener.onPositiveResult(holder.file.getAbsolutePath());
-              dismiss();
-            }
+    ItemClickSupport.OnItemClickListener onItemClickListener = (parent, view, position, id) -> {
+      FileListAdapter.FileHolder holder = (FileListAdapter.FileHolder) view.getTag();
+      if (holder.file.getAbsolutePath().equals(File.separator + getString(R.string.browser_upFolder))) {
+        loadList(new File(mCurrentPath).getParentFile());
+      } else if (mBrowseMode == BrowseMode.SELECT_DIR && holder.file.getAbsolutePath()
+          .equals(File.separator + getString(R.string.browser_titleSelectDir))) {
+        onDialogResultListener.onPositiveResult(mCurrentPath);
+        dismiss();
+      } else {
+        if (holder.file.isDirectory() && !mLocked) {
+          loadList(holder.file);
+        }
+        if (holder.file.isFile()) {
+          if (mBrowseMode == BrowseMode.SAVE_FILE) {
+            etFilename.setText(holder.file.getName());
+          } else {
+            onDialogResultListener.onPositiveResult(holder.file.getAbsolutePath());
+            dismiss();
           }
         }
       }
     };
 
-    ItemClickSupport.OnItemLongClickListener onItemLongClickListener = new ItemClickSupport.OnItemLongClickListener() {
-      @Override
-      public boolean onItemLongClick(RecyclerView parent, View view, int position, long id) {
-        FileListAdapter.FileHolder holder = (FileListAdapter.FileHolder) view.getTag();
-        if (mBrowseMode == BrowseMode.OPEN_FILE && holder.file.isFile()
-            || mBrowseMode == BrowseMode.SELECT_DIR && holder.file.isDirectory()) {
-          onDialogResultListener.onPositiveResult(holder.file.getAbsolutePath());
-          dismiss();
-          return true;
-        }
-        if (mBrowseMode == BrowseMode.SAVE_FILE && holder.file.isFile()) {
-          showOverwriteDialog(holder.file.getAbsolutePath());
-          return true;
-        }
-        return false;
+    ItemClickSupport.OnItemLongClickListener onItemLongClickListener = (parent, view, position, id) -> {
+      FileListAdapter.FileHolder holder = (FileListAdapter.FileHolder) view.getTag();
+      if (mBrowseMode == BrowseMode.OPEN_FILE && holder.file.isFile()
+          || mBrowseMode == BrowseMode.SELECT_DIR && holder.file.isDirectory()) {
+        onDialogResultListener.onPositiveResult(holder.file.getAbsolutePath());
+        dismiss();
+        return true;
       }
+      if (mBrowseMode == BrowseMode.SAVE_FILE && holder.file.isFile()) {
+        showOverwriteDialog(holder.file.getAbsolutePath());
+        return true;
+      }
+      return false;
     };
 
     mItemClickSupport.setOnItemClickListener(onItemClickListener);
@@ -621,42 +588,30 @@ public class BrowserDialog extends DialogFragment {
 
     if (mBrowseMode == BrowseMode.OPEN_FILE || mBrowseMode == BrowseMode.SAVE_FILE) {
       if (mExtensionFilter != null) {
-        filesToLoad = directory.listFiles(new FileFilter() {
-          @Override
-          public boolean accept(File file) {
-            if (file.isFile()) {
-              if (file.isHidden() && !mShowHiddenFiles) {
-                return false;
-              }
-
-              String ext = FileUtils.getExtension(file.getName());
-              int i = 0;
-              int n = mExtensionFilter.length;
-              while (i < n && !mExtensionFilter[i].toLowerCase(Locale.getDefault())
-                  .equals(ext)) {
-                i++;
-              }
-              return file.canRead() && i < n;
-            } else {
-              return !(file.isHidden() && !mShowHiddenFiles) && file.canRead();
+        filesToLoad = directory.listFiles(file -> {
+          if (file.isFile()) {
+            if (file.isHidden() && !mShowHiddenFiles) {
+              return false;
             }
-          }
-        });
-      } else {
-        filesToLoad = directory.listFiles(new FileFilter() {
-          @Override
-          public boolean accept(File file) {
+
+            String ext = FileUtils.getExtension(file.getName());
+            int i = 0;
+            int n = mExtensionFilter.length;
+            while (i < n && !mExtensionFilter[i].toLowerCase(Locale.getDefault())
+                .equals(ext)) {
+              i++;
+            }
+            return file.canRead() && i < n;
+          } else {
             return !(file.isHidden() && !mShowHiddenFiles) && file.canRead();
           }
         });
+      } else {
+        filesToLoad = directory.listFiles(file -> !(file.isHidden() && !mShowHiddenFiles) && file.canRead());
       }
     } else {
-      filesToLoad = directory.listFiles(new FileFilter() {
-        @Override
-        public boolean accept(File file) {
-          return file.isDirectory() && !(file.isHidden() && !mShowHiddenFiles) && file.canRead();
-        }
-      });
+      filesToLoad = directory.listFiles(file ->
+          file.isDirectory() && !(file.isHidden() && !mShowHiddenFiles) && file.canRead());
     }
 
     mCurrentPath = directory.getAbsolutePath();
@@ -672,12 +627,9 @@ public class BrowserDialog extends DialogFragment {
 
         pd = Utils.showProgressDialog(getContext(), getString(R.string.browser_loadingFileList));
         pd.setCanceledOnTouchOutside(false);
-        pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
-          @Override
-          public void onCancel(DialogInterface dialogInterface) {
-            mFileSorter.cancel(true);
-            mFileSorter = null;
-          }
+        pd.setOnCancelListener(dialogInterface -> {
+          mFileSorter.cancel(true);
+          mFileSorter = null;
         });
 
         startTime = System.currentTimeMillis();
@@ -701,13 +653,11 @@ public class BrowserDialog extends DialogFragment {
 
         mToolbar.setSubtitle(mCurrentPath);
 
-        boolean isRoot =
-            mStartIsRoot ? mCurrentPath.equals(mStartPath) || mCurrentPath.equals(mRootPath)
+        boolean isRoot = mStartIsRoot ?
+            mCurrentPath.equals(mStartPath) || mCurrentPath.equals(mRootPath)
                 : mCurrentPath.equals(mRootPath);
 
-        rvFileList.setAdapter(
-            new FileListAdapter(getContext(), mItemLayoutID, files, mBrowseMode, mSortMode,
-                isRoot));
+        rvFileList.setAdapter(new FileListAdapter(getContext(), mItemLayoutID, files, mBrowseMode, mSortMode, isRoot));
 
         Parcelable state = mStates.get(mCurrentPath);
         if (state != null) {
@@ -727,12 +677,7 @@ public class BrowserDialog extends DialogFragment {
         .setIcon(Utils.getTintedDrawable(getContext(), android.R.drawable.ic_dialog_alert))
         .setMessage(R.string.browser_fileExists_message)
         .setTitle(R.string.browser_fileExists_title)
-        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialogInterface, int i) {
-            saveFile(true);
-          }
-        })
+        .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> saveFile(true))
         .setNegativeButton(android.R.string.no, null);
     AlertDialog ad = builder.create();
     ad.show();
@@ -748,19 +693,11 @@ public class BrowserDialog extends DialogFragment {
     AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), tv.resourceId)
         .setTitle(R.string.browser_menu_newFolder)
         .setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_new_folder))
-        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialogInterface, int i) {
-            EditText etFolderName = (EditText) view.findViewById(R.id.browser_etNewFolder);
-            createFolder(etFolderName.getText().toString());
-          }
+        .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
+          EditText etFolderName = view.findViewById(R.id.browser_etNewFolder);
+          createFolder(etFolderName.getText().toString());
         })
-        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialogInterface, int i) {
-            dialogInterface.dismiss();
-          }
-        })
+        .setNegativeButton(android.R.string.no, (dialogInterface, i) -> dialogInterface.dismiss())
         .setView(view);
     AlertDialog ad = builder.create();
     ad.show();
@@ -790,7 +727,7 @@ public class BrowserDialog extends DialogFragment {
 
     @SuppressLint("InflateParams") final View view = LayoutInflater.from(getContext())
         .inflate(R.layout.browser_error_extra, null);
-    TextView tvExtra = (TextView) view.findViewById(R.id.tvExtra);
+    TextView tvExtra = view.findViewById(R.id.tvExtra);
     builder.setView(view);
 
     switch (error) {

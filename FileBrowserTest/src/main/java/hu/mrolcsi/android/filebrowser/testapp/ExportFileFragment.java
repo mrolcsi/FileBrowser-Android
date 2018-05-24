@@ -10,7 +10,6 @@ import android.support.v7.app.AlertDialog.Builder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -62,78 +61,67 @@ public class ExportFileFragment extends Fragment {
   @Override
   public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-    tvSource = (TextView) view.findViewById(R.id.tvSource);
-    tvDest = (TextView) view.findViewById(R.id.tvDest);
+    tvSource = view.findViewById(R.id.tvSource);
+    tvDest = view.findViewById(R.id.tvDest);
 
-    pbProgressBar = (ProgressBar) view.findViewById(R.id.pbProgressBar);
+    pbProgressBar = view.findViewById(R.id.pbProgressBar);
 
-    btnSource = (Button) view.findViewById(R.id.btnSource);
-    btnDest = (Button) view.findViewById(R.id.btnDest);
-    btnCopy = (Button) view.findViewById(R.id.btnCopy);
+    btnSource = view.findViewById(R.id.btnSource);
+    btnDest = view.findViewById(R.id.btnDest);
+    btnCopy = view.findViewById(R.id.btnCopy);
 
     initListeners();
   }
 
   private void initListeners() {
 
-    btnSource.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        final BrowserDialog dialog = new BrowserDialog();
-        dialog.setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath());
-        dialog.setStartIsRoot(true);
-        dialog.setOnDialogResultListener(new OnDialogResultListener() {
-          @Override
-          public void onPositiveResult(String path) {
-            mSourceFile = new File(path);
-            tvSource.setText(path);
-          }
+    btnSource.setOnClickListener(view -> {
+      final BrowserDialog dialog = new BrowserDialog();
+      dialog.setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath());
+      dialog.setStartIsRoot(true);
+      dialog.setOnDialogResultListener(new OnDialogResultListener() {
+        @Override
+        public void onPositiveResult(String path) {
+          mSourceFile = new File(path);
+          tvSource.setText(path);
+        }
 
-          @Override
-          public void onNegativeResult() {
-            if (mSourceFile == null) {
-              tvSource.setText("<nothing selected>");
-            }
+        @Override
+        public void onNegativeResult() {
+          if (mSourceFile == null) {
+            tvSource.setText("<nothing selected>");
           }
-        });
-        dialog.show(getChildFragmentManager(), "SourceBrowser");
-      }
+        }
+      });
+      dialog.show(getChildFragmentManager(), "SourceBrowser");
     });
 
-    btnDest.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        final UsbBrowserDialog dialog = new UsbBrowserDialog();
-        dialog.setBrowseMode(BrowseMode.SELECT_DIR);
-        dialog.setStartIsRoot(true);
-        dialog.setStartPath("a/b");
-        dialog.setLockedFolder(true);
-        dialog.setStartIsRoot(true);
-        dialog.setOnDialogResultListener(new UsbBrowserDialog.OnDialogResultListener() {
-          @Override
-          public void onPositiveResult(UsbFile file, FileSystem currentFs) {
-            mUsbFs = currentFs;
-            mDestFile = file;
-            tvDest.setText(FileUtils.getAbsolutePath(file));
-          }
+    btnDest.setOnClickListener(view -> {
+      final UsbBrowserDialog dialog = new UsbBrowserDialog();
+      dialog.setBrowseMode(BrowseMode.SELECT_DIR);
+      dialog.setStartIsRoot(true);
+      dialog.setStartPath("a/b");
+      dialog.setLockedFolder(true);
+      dialog.setStartIsRoot(true);
+      dialog.setOnDialogResultListener(new UsbBrowserDialog.OnDialogResultListener() {
+        @Override
+        public void onPositiveResult(UsbFile file, FileSystem currentFs) {
+          mUsbFs = currentFs;
+          mDestFile = file;
+          tvDest.setText(FileUtils.getAbsolutePath(file));
+        }
 
-          @Override
-          public void onNegativeResult() {
-            if (mDestFile == null) {
-              tvDest.setText("<nothing selected>");
-            }
+        @Override
+        public void onNegativeResult() {
+          if (mDestFile == null) {
+            tvDest.setText("<nothing selected>");
           }
-        });
-        dialog.show(getChildFragmentManager(), "DestinationBrowser");
-      }
+        }
+      });
+      dialog.show(getChildFragmentManager(), "DestinationBrowser");
     });
 
-    btnCopy.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        new CopyToUsbTask().execute();
-      }
-    });
+    btnCopy.setOnClickListener(view -> new CopyToUsbTask().execute());
 
   }
 

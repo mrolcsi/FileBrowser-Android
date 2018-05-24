@@ -18,6 +18,11 @@ android {
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
         applicationId "hu.mrolcsi.android.filebrowser"
         minSdkVersion 14

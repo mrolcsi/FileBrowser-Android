@@ -84,7 +84,7 @@ public abstract class Utils {
     @SuppressLint("InflateParams") final View contentView = LayoutInflater.from(context)
         .inflate(R.layout.browser_progress_dialog, null);
     ((TextView) contentView.findViewById(android.R.id.message)).setText(message);
-    final ProgressBar progressBar = (ProgressBar) contentView.findViewById(android.R.id.progress);
+    final ProgressBar progressBar = contentView.findViewById(android.R.id.progress);
     final Drawable indeterminateDrawable = progressBar.getIndeterminateDrawable().mutate();
 
     //get accent color from attrs

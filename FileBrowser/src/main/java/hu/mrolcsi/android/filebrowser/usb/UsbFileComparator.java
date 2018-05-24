@@ -82,13 +82,7 @@ public abstract class UsbFileComparator {
         f2size = FileUtils.dirSize(f2);
       }
 
-      if (f1size < f2size) {
-        return -1;
-      } else if (f1size > f2size) {
-        return 1;
-      } else {
-        return 0;
-      }
+      return Long.compare(f1size, f2size);
     }
   }
 }

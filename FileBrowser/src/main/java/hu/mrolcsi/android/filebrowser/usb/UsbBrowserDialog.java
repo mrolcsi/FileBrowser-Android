@@ -135,12 +135,7 @@ public class UsbBrowserDialog extends BrowserDialog {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setCancelable(false);
         builder.setMessage(R.string.browser_pleaseConnectUsb);
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialogInterface, int i) {
-            dismiss();
-          }
-        });
+        builder.setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> dismiss());
         mWaitingForUsbDialog = builder.create();
       }
 
@@ -242,43 +237,40 @@ public class UsbBrowserDialog extends BrowserDialog {
 
   @Override
   protected void setListListeners() {
-    ItemClickSupport.OnItemClickListener onItemClickListener = new ItemClickSupport.OnItemClickListener() {
-      @Override
-      public void onItemClick(RecyclerView parent, View view, int position, long id) {
-        UsbFileListAdapter.UsbFileHolder holder = (UsbFileListAdapter.UsbFileHolder) view.getTag();
+    ItemClickSupport.OnItemClickListener onItemClickListener = (parent, view, position, id) -> {
+      UsbFileListAdapter.UsbFileHolder holder = (UsbFileListAdapter.UsbFileHolder) view.getTag();
 
-        if (holder.usbFile.getName().equals(getString(R.string.browser_upFolder))) {
-          //go up one dir
-          try {
-            mHistory.pop();
-            loadList(holder.usbFile.getParent());
-          } catch (IOException e) {
-            showErrorDialog(Error.FOLDER_NOT_READABLE);
+      if (holder.usbFile.getName().equals(getString(R.string.browser_upFolder))) {
+        //go up one dir
+        try {
+          mHistory.pop();
+          loadList(holder.usbFile.getParent());
+        } catch (IOException e) {
+          showErrorDialog(Error.FOLDER_NOT_READABLE);
+        }
+      } else if (mBrowseMode == BrowseMode.SELECT_DIR && holder.usbFile.getName()
+          .equals(getString(R.string.browser_titleSelectDir))) {
+        mOnDialogResultListener.onPositiveResult(holder.usbFile.getParent(), mFileSystem);
+        dismiss();
+      } else {
+        if (holder.usbFile.isDirectory()) {
+          if (mLocked && mBrowseMode == BrowseMode.SELECT_DIR) {
+            mOnDialogResultListener.onPositiveResult(holder.usbFile, mFileSystem);
+            dismiss();
+          } else {
+            try {
+              mHistory.push(holder.usbFile);
+              loadList(holder.usbFile);
+            } catch (IOException e) {
+              showErrorDialog(Error.FOLDER_NOT_READABLE);
+            }
           }
-        } else if (mBrowseMode == BrowseMode.SELECT_DIR && holder.usbFile.getName()
-            .equals(getString(R.string.browser_titleSelectDir))) {
-          mOnDialogResultListener.onPositiveResult(holder.usbFile.getParent(), mFileSystem);
-          dismiss();
-        } else {
-          if (holder.usbFile.isDirectory()) {
-            if (mLocked && mBrowseMode == BrowseMode.SELECT_DIR) {
-              mOnDialogResultListener.onPositiveResult(holder.usbFile, mFileSystem);
-              dismiss();
-            } else {
-              try {
-                mHistory.push(holder.usbFile);
-                loadList(holder.usbFile);
-              } catch (IOException e) {
-                showErrorDialog(Error.FOLDER_NOT_READABLE);
-              }
-            }
-          } else if (!holder.usbFile.isDirectory() && holder.usbFile.getLength() != -1) {
-            if (mBrowseMode == BrowseMode.SAVE_FILE) {
-              etFilename.setText(holder.usbFile.getName());
-            } else {
-              mOnDialogResultListener.onPositiveResult(holder.usbFile, mFileSystem);
-              dismiss();
-            }
+        } else if (!holder.usbFile.isDirectory() && holder.usbFile.getLength() != -1) {
+          if (mBrowseMode == BrowseMode.SAVE_FILE) {
+            etFilename.setText(holder.usbFile.getName());
+          } else {
+            mOnDialogResultListener.onPositiveResult(holder.usbFile, mFileSystem);
+            dismiss();
           }
         }
       }
@@ -513,18 +505,15 @@ public class UsbBrowserDialog extends BrowserDialog {
     AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
         .setTitle(R.string.browser_menu_sortBy)
         .setIcon(Utils.getTintedDrawable(getContext(), R.drawable.browser_alphabetical_sorting_asc))
-        .setItems(R.array.browser_sortOptions, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialogInterface, int i) {
-            mSortMode = SORT_HASHES[i];
+        .setItems(R.array.browser_sortOptions, (dialogInterface, i) -> {
+          mSortMode = SORT_HASHES[i];
 
-            setupSortMode();
+          setupSortMode();
 
-            try {
-              loadList(mCurrentDir);
-            } catch (IOException e) {
-              showErrorDialog(Error.FOLDER_NOT_READABLE);
-            }
+          try {
+            loadList(mCurrentDir);
+          } catch (IOException e) {
+            showErrorDialog(Error.FOLDER_NOT_READABLE);
           }
         });
     AlertDialog ad = builder.create();
