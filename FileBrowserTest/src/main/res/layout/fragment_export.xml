@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
@@ -16,6 +17,7 @@
     android:text="Source:"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintTop_toTopOf="parent"/>
+
   <TextView
     android:id="@+id/tvSource"
     android:layout_width="0dp"
@@ -29,6 +31,7 @@
     app:layout_constraintLeft_toLeftOf="@+id/lblSource"
     app:layout_constraintRight_toRightOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/lblSource"/>
+
   <TextView
     android:id="@+id/lblDest"
     android:layout_width="wrap_content"
@@ -40,6 +43,7 @@
     android:text="Destination:"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/tvSource"/>
+
   <TextView
     android:id="@+id/tvDest"
     android:layout_width="0dp"
@@ -53,6 +57,7 @@
     app:layout_constraintLeft_toLeftOf="@+id/lblDest"
     app:layout_constraintRight_toRightOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/lblDest"/>
+
   <Button
     android:id="@+id/btnSource"
     android:layout_width="0dp"
@@ -65,6 +70,7 @@
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toLeftOf="@+id/btnDest"
     android:layout_marginRight="4dp"/>
+
   <Button
     android:id="@+id/btnDest"
     android:layout_width="0dp"
@@ -79,6 +85,7 @@
     app:layout_constraintHorizontal_bias="0.5"
     app:layout_constraintLeft_toRightOf="@+id/btnSource"
     app:layout_constraintRight_toRightOf="parent"/>
+
   <Button
     android:id="@+id/btnCopy"
     android:layout_width="0dp"
@@ -90,6 +97,7 @@
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintRight_toRightOf="parent"/>
+
   <ProgressBar
     android:id="@+id/pbProgressBar"
     style="?android:attr/progressBarStyleHorizontal"
@@ -98,11 +106,12 @@
     android:layout_marginTop="8dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
-    app:layout_constraintLeft_toLeftOf="@+id/lblProgress:"
+    app:layout_constraintLeft_toLeftOf="@+id/lblProgress"
     app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/lblProgress:"/>
+    app:layout_constraintTop_toBottomOf="@+id/lblProgress"/>
+
   <TextView
-    android:id="@+id/lblProgress:"
+    android:id="@+id/lblProgress"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
@@ -111,4 +120,5 @@
     android:text="TextView"
     app:layout_constraintLeft_toLeftOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/tvDest"/>
+
 </android.support.constraint.ConstraintLayout>
