@@ -38,6 +38,7 @@ import hu.mrolcsi.android.filebrowser.util.FileUtils;
 import hu.mrolcsi.android.filebrowser.util.Utils;
 import hu.mrolcsi.android.filebrowser.util.itemclicksupport.ItemClickSupport;
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
@@ -621,59 +622,7 @@ public class BrowserDialog extends DialogFragment {
 
     mCurrentPath = directory.getAbsolutePath();
 
-    mFileSorter = new FileSorterTask(mSortMode) {
-
-      long startTime;
-      private AlertDialog pd;
-
-      @Override
-      protected void onPreExecute() {
-        super.onPreExecute();
-
-        pd = Utils.showProgressDialog(getContext(), getString(R.string.browser_loadingFileList));
-        pd.setCanceledOnTouchOutside(false);
-        pd.setOnCancelListener(dialogInterface -> {
-          mFileSorter.cancel(true);
-          mFileSorter = null;
-        });
-
-        startTime = System.currentTimeMillis();
-      }
-
-      @Override
-      protected void onProgressUpdate(Integer... values) {
-        super.onProgressUpdate(values);
-//                pd.setProgress(values[0]);
-//                pd.setMax(values[1]);
-
-        //if (System.currentTimeMillis() - startTime > 3000)
-        pd.show();
-      }
-
-      @Override
-      protected void onPostExecute(List<File> files) {
-        super.onPostExecute(files);
-
-        pd.dismiss();
-
-        mToolbar.setSubtitle(mCurrentPath);
-
-        boolean isRoot = mStartIsRoot ?
-            mCurrentPath.equals(mStartPath) || mCurrentPath.equals(mRootPath)
-            : mCurrentPath.equals(mRootPath);
-
-        rvFileList.setAdapter(new FileListAdapter(getContext(), mItemLayoutID, files, mBrowseMode, mSortMode, isRoot));
-
-        Parcelable state = mStates.get(mCurrentPath);
-        if (state != null) {
-          rvFileList.getLayoutManager().onRestoreInstanceState(state);
-        }
-
-        File currentFile = new File(mCurrentPath);
-        menuNewFolder.setVisible(currentFile.canWrite());
-
-      }
-    }.execute(filesToLoad);
+    mFileSorter = new InnerFileSorterTask(this, mSortMode).execute(filesToLoad);
 
   }
 
@@ -901,6 +850,67 @@ public class BrowserDialog extends DialogFragment {
 
   public boolean getShowHiddenFiles() {
     return mShowHiddenFiles;
+  }
+
+  private static class InnerFileSorterTask extends FileSorterTask {
+
+    private WeakReference<BrowserDialog> wrDialog;
+
+    private long startTime;
+    private AlertDialog pd;
+
+    public InnerFileSorterTask(BrowserDialog dialog, SortMode sortMode) {
+      super(sortMode);
+      this.wrDialog = new WeakReference<>(dialog);
+    }
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+
+      pd = Utils
+          .showProgressDialog(wrDialog.get().getContext(), wrDialog.get().getString(R.string.browser_loadingFileList));
+      pd.setCanceledOnTouchOutside(false);
+      pd.setOnCancelListener(dialogInterface -> {
+        wrDialog.get().mFileSorter.cancel(true);
+        wrDialog.get().mFileSorter = null;
+      });
+
+      startTime = System.currentTimeMillis();
+    }
+
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+      super.onProgressUpdate(values);
+      pd.show();
+    }
+
+    @Override
+    protected void onPostExecute(List<File> files) {
+      super.onPostExecute(files);
+
+      pd.dismiss();
+
+      wrDialog.get().mToolbar.setSubtitle(wrDialog.get().mCurrentPath);
+
+      boolean isRoot = wrDialog.get().mStartIsRoot ?
+          wrDialog.get().mCurrentPath.equals(wrDialog.get().mStartPath)
+              || wrDialog.get().mCurrentPath.equals(wrDialog.get().mRootPath)
+          : wrDialog.get().mCurrentPath.equals(wrDialog.get().mRootPath);
+
+      wrDialog.get().rvFileList.setAdapter(
+          new FileListAdapter(wrDialog.get().getContext(), wrDialog.get().mItemLayoutID, files,
+              wrDialog.get().mBrowseMode, wrDialog.get().mSortMode, isRoot));
+
+      Parcelable state = wrDialog.get().mStates.get(wrDialog.get().mCurrentPath);
+      if (state != null) {
+        wrDialog.get().rvFileList.getLayoutManager().onRestoreInstanceState(state);
+      }
+
+      File currentFile = new File(wrDialog.get().mCurrentPath);
+      wrDialog.get().menuNewFolder.setVisible(currentFile.canWrite());
+
+    }
   }
 
   /**

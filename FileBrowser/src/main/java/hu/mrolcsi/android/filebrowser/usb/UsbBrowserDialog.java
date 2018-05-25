@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDevice;
@@ -22,12 +21,14 @@ import hu.mrolcsi.android.filebrowser.BrowserDialog;
 import hu.mrolcsi.android.filebrowser.BuildConfig;
 import hu.mrolcsi.android.filebrowser.R;
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
+import hu.mrolcsi.android.filebrowser.option.SortMode;
 import hu.mrolcsi.android.filebrowser.util.Error;
 import hu.mrolcsi.android.filebrowser.util.FileUtils;
 import hu.mrolcsi.android.filebrowser.util.Utils;
 import hu.mrolcsi.android.filebrowser.util.itemclicksupport.ItemClickSupport;
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,8 +42,11 @@ import java.util.Stack;
 public class UsbBrowserDialog extends BrowserDialog {
 
   private static final String TAG = "UsbBrowserDialog";
+
   private static final String ACTION_USB_PERMISSION = BuildConfig.APPLICATION_ID + ".USB_PERMISSION";
+
   private final Stack<UsbFile> mHistory = new Stack<>();
+
   private UsbMassStorageDevice mDevice;
   private AlertDialog mWaitingForUsbDialog;
   private OnDialogResultListener mOnDialogResultListener = new OnDialogResultListener() {
@@ -393,52 +397,8 @@ public class UsbBrowserDialog extends BrowserDialog {
 
     mCurrentDir = directory;
 
-    mFileSorter = new UsbFileSorterTask(mSortMode) {
-      private AlertDialog pd;
-
-      @Override
-      protected void onPreExecute() {
-        super.onPreExecute();
-
-        pd = Utils.showProgressDialog(getContext(), getString(R.string.browser_loadingFileList));
-        pd.setCanceledOnTouchOutside(false);
-        pd.setOnCancelListener(new DialogInterface.OnCancelListener() {
-          @Override
-          public void onCancel(DialogInterface dialogInterface) {
-            mFileSorter.cancel(true);
-            mFileSorter = null;
-          }
-        });
-        pd.show();
-      }
-
-      @Override
-      protected void onPostExecute(List<UsbFile> files) {
-        super.onPostExecute(files);
-
-        pd.dismiss();
-
-        mToolbar.setSubtitle(getCurrentPath());
-
-        rvFileList.setAdapter(
-            new UsbFileListAdapter(getContext(), mItemLayoutID, mLocked ? BrowseMode.OPEN_FILE : mBrowseMode, mSortMode,
-                directory, files, mCurrentDir == mRoot));
-
-        Parcelable state = mStates.get(mCurrentDir.getName());
-        if (state != null) {
-          rvFileList.getLayoutManager().onRestoreInstanceState(state);
-        }
-
-        mToolbar.getMenu().findItem(R.id.browser_menuNewFolder).setVisible(true);
-      }
-
-      @Override
-      protected void onCancelled() {
-        super.onCancelled();
-
-        pd.dismiss();
-      }
-    }.execute(filesToLoad.toArray(new UsbFile[filesToLoad.size()]));
+    mFileSorter = new InnerUsbFileSorterTask(this, mSortMode)
+        .execute(filesToLoad.toArray(new UsbFile[filesToLoad.size()]));
   }
 
   @Override
@@ -538,6 +498,60 @@ public class UsbBrowserDialog extends BrowserDialog {
   public UsbBrowserDialog setOnFileSelectedListener(OnFileSelectedListener listener) {
     mOnFileSelectedListener = listener;
     return this;
+  }
+
+  private static class InnerUsbFileSorterTask extends UsbFileSorterTask {
+
+    private WeakReference<UsbBrowserDialog> wrDialog;
+
+    private AlertDialog pd;
+
+    public InnerUsbFileSorterTask(UsbBrowserDialog dialog, SortMode sortMode) {
+      super(sortMode);
+      this.wrDialog = new WeakReference<>(dialog);
+    }
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+
+      pd = Utils
+          .showProgressDialog(wrDialog.get().getContext(), wrDialog.get().getString(R.string.browser_loadingFileList));
+      pd.setCanceledOnTouchOutside(false);
+      pd.setOnCancelListener(dialogInterface -> {
+        wrDialog.get().mFileSorter.cancel(true);
+        wrDialog.get().mFileSorter = null;
+      });
+      pd.show();
+    }
+
+    @Override
+    protected void onPostExecute(List<UsbFile> files) {
+      super.onPostExecute(files);
+
+      pd.dismiss();
+
+      wrDialog.get().mToolbar.setSubtitle(wrDialog.get().getCurrentPath());
+
+      wrDialog.get().rvFileList.setAdapter(
+          new UsbFileListAdapter(wrDialog.get().getContext(), wrDialog.get().mItemLayoutID,
+              wrDialog.get().mLocked ? BrowseMode.OPEN_FILE : wrDialog.get().mBrowseMode, wrDialog.get().mSortMode,
+              wrDialog.get().mCurrentDir, files, wrDialog.get().mCurrentDir == wrDialog.get().mRoot));
+
+      Parcelable state = wrDialog.get().mStates.get(wrDialog.get().mCurrentDir.getName());
+      if (state != null) {
+        wrDialog.get().rvFileList.getLayoutManager().onRestoreInstanceState(state);
+      }
+
+      wrDialog.get().mToolbar.getMenu().findItem(R.id.browser_menuNewFolder).setVisible(true);
+    }
+
+    @Override
+    protected void onCancelled() {
+      super.onCancelled();
+
+      pd.dismiss();
+    }
   }
 
   /**

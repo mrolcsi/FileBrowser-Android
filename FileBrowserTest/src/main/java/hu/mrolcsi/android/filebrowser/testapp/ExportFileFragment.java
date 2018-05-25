@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.util.Locale;
 
 /**
@@ -78,6 +79,7 @@ public class ExportFileFragment extends Fragment {
       final BrowserDialog dialog = new BrowserDialog();
       dialog.setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath());
       dialog.setStartIsRoot(true);
+      dialog.setShowHiddenFiles(true);
       dialog.setOnFileSelectedListener(pathToFile -> {
         mSourceFile = new File(pathToFile);
         tvSource.setText(pathToFile);
@@ -97,24 +99,30 @@ public class ExportFileFragment extends Fragment {
       dialog.show(getChildFragmentManager(), "DestinationBrowser");
     });
 
-    btnCopy.setOnClickListener(view -> new CopyToUsbTask().execute());
+    btnCopy.setOnClickListener(view -> new CopyToUsbTask(this).execute());
 
   }
 
-  private class CopyToUsbTask extends AsyncTask<Void, Long, Void> {
+  private static class CopyToUsbTask extends AsyncTask<Void, Long, Void> {
+
+    private WeakReference<ExportFileFragment> wrFragment;
+
+    public CopyToUsbTask(ExportFileFragment fragment) {
+      this.wrFragment = new WeakReference<>(fragment);
+    }
 
     @Override
     protected Void doInBackground(Void... voids) {
       try {
-        final InputStream in = new BufferedInputStream(new FileInputStream(mSourceFile));
-        final OutputStream out = UsbFileStreamFactory
-            .createBufferedOutputStream(mDestDir.createFile(mSourceFile.getName()), mUsbFs);
+        final InputStream in = new BufferedInputStream(new FileInputStream(wrFragment.get().mSourceFile));
+        final OutputStream out = UsbFileStreamFactory.createBufferedOutputStream(
+            wrFragment.get().mDestDir.createFile(wrFragment.get().mSourceFile.getName()), wrFragment.get().mUsbFs);
 
-        int bufferSize = mUsbFs.getChunkSize();
+        int bufferSize = wrFragment.get().mUsbFs.getChunkSize();
 
         byte[] buffer = new byte[bufferSize];
         long copied = 0;
-        long total = mSourceFile.length();
+        long total = wrFragment.get().mSourceFile.length();
         int len;
 
         while ((len = in.read(buffer)) != -1) {
@@ -127,7 +135,7 @@ public class ExportFileFragment extends Fragment {
         in.close();
 
       } catch (IOException e) {
-        e.printStackTrace();
+        Log.e(getClass().getSimpleName(), Log.getStackTraceString(e));
       }
 
       return null;
@@ -138,15 +146,15 @@ public class ExportFileFragment extends Fragment {
       final int progress = values[0].intValue();
       final int max = values[1].intValue();
 
-      Log.d("UsbCopy", String.format(Locale.getDefault(), "Progress=%1$d Max=%2$d", progress, max));
+      Log.d(getClass().getSimpleName(), String.format(Locale.getDefault(), "Progress=%1$d Max=%2$d", progress, max));
 
-      pbProgressBar.setMax(max);
-      pbProgressBar.setProgress(progress);
+      wrFragment.get().pbProgressBar.setMax(max);
+      wrFragment.get().pbProgressBar.setProgress(progress);
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
-      AlertDialog.Builder builder = new Builder(getContext());
+      AlertDialog.Builder builder = new Builder(wrFragment.get().getContext());
       builder.setMessage("Finished copying.");
       builder.setPositiveButton(android.R.string.ok, null);
       builder.show();
