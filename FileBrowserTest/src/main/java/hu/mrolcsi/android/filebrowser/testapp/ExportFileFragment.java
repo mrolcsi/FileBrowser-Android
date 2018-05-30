@@ -2,7 +2,6 @@ package hu.mrolcsi.android.filebrowser.testapp;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -77,8 +76,6 @@ public class ExportFileFragment extends Fragment {
 
     btnSource.setOnClickListener(view -> {
       final BrowserDialog dialog = new BrowserDialog();
-      dialog.setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath());
-      dialog.setStartIsRoot(true);
       dialog.setShowHiddenFiles(true);
       dialog.setOnFileSelectedListener(pathToFile -> {
         mSourceFile = new File(pathToFile);
@@ -89,8 +86,7 @@ public class ExportFileFragment extends Fragment {
 
     btnDest.setOnClickListener(view -> {
       final UsbBrowserDialog dialog = new UsbBrowserDialog();
-      dialog.setStartPath("/");
-      dialog.setBrowseMode(BrowseMode.SELECT_DIR);
+      dialog.setBrowseMode(BrowseMode.SAVE_FILE);
       dialog.setOnFileSelectedListener((file, fileSystem) -> {
         mUsbFs = fileSystem;
         mDestDir = file;
@@ -100,7 +96,6 @@ public class ExportFileFragment extends Fragment {
     });
 
     btnCopy.setOnClickListener(view -> new CopyToUsbTask(this).execute());
-
   }
 
   private static class CopyToUsbTask extends AsyncTask<Void, Long, Void> {

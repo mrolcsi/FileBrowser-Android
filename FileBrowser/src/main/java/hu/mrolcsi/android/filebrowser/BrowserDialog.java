@@ -13,6 +13,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -102,12 +103,6 @@ public class BrowserDialog extends DialogFragment {
    */
   private static final String OPTION_DEFAULT_FILENAME;
   /**
-   * Boolean: Should the specified start path be considered as Root?
-   *
-   * @see #OPTION_START_PATH
-   */
-  private static final String OPTION_START_IS_ROOT;
-  /**
    * Starting layout (can be change at runtime)
    * <ul>
    * <li>List {@link hu.mrolcsi.android.filebrowser.option.Layout#LIST LIST}</li>
@@ -148,7 +143,6 @@ public class BrowserDialog extends DialogFragment {
   //endregion
 
   static {
-    OPTION_START_IS_ROOT = "startIsRoot";
     OPTION_DEFAULT_FILENAME = "defaultFileName";
     OPTION_SORT_MODE = "sort";
     RESULT = "result";
@@ -169,9 +163,10 @@ public class BrowserDialog extends DialogFragment {
   protected String[] mExtensionFilter;
   private String mStartPath = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ?
       Environment.getExternalStorageDirectory().getAbsolutePath() : "/";
-  private String mRootPath = File.listRoots()[0].getAbsolutePath();
-  private boolean mStartIsRoot = true;
-  protected int mItemLayoutID = R.layout.browser_listitem_layout;
+  private String mRootPath = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ?
+      Environment.getExternalStorageDirectory().getAbsolutePath() : "/";
+  protected boolean mCreateStartDir = false;
+  protected int mItemLayoutId = R.layout.browser_listitem_layout;
   protected AsyncTask mFileSorter;
   protected RecyclerView rvFileList;
   protected EditText etFilename;
@@ -218,9 +213,8 @@ public class BrowserDialog extends DialogFragment {
       mBrowseMode = (BrowseMode) savedInstanceState.getSerializable(OPTION_BROWSE_MODE);
       mSortMode = (SortMode) savedInstanceState.getSerializable(OPTION_SORT_MODE);
       mExtensionFilter = savedInstanceState.getStringArray(OPTION_EXTENSION_FILTER);
-      mStartIsRoot = savedInstanceState.getBoolean(OPTION_START_IS_ROOT, true);
       mActiveLayout = (Layout) savedInstanceState.getSerializable(OPTION_LAYOUT);
-      mItemLayoutID = savedInstanceState.getInt("itemLayoutID");
+      mItemLayoutId = savedInstanceState.getInt("itemLayoutID");
       mDefaultFileName = savedInstanceState.getString(OPTION_DEFAULT_FILENAME);
       mDialogTitle = savedInstanceState.getString(OPTION_DIALOG_TITLE);
       mShowHiddenFiles = savedInstanceState.getBoolean(OPTION_SHOW_HIDDEN_FILES, false);
@@ -250,6 +244,18 @@ public class BrowserDialog extends DialogFragment {
         false);
     mItemClickSupport = ItemClickSupport.addTo(rvFileList);
     setListListeners();
+
+    // check start dir
+    final File currentDir = new File(mCurrentPath);
+    if (!currentDir.exists()) {
+      if (mCreateStartDir) {
+        // create dir
+        final boolean mkdirs = currentDir.mkdirs();
+      } else {
+        // set start path to root path
+        mCurrentPath = getRootPath();
+      }
+    }
 
     switch (mActiveLayout) {
       default:
@@ -330,6 +336,12 @@ public class BrowserDialog extends DialogFragment {
       // resize dialog if needed
       getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
     }
+
+    // start and root validation
+    if (!getStartPath().startsWith(getRootPath())) {
+      throw new IllegalArgumentException(
+          "startPath (\"" + getStartPath() + "\") is not a child of rootPath (\"" + getRootPath() + "\").");
+    }
   }
 
   @Override
@@ -340,9 +352,8 @@ public class BrowserDialog extends DialogFragment {
     outState.putSerializable(OPTION_SORT_MODE, mSortMode);
     outState.putStringArray(OPTION_EXTENSION_FILTER, mExtensionFilter);
     outState.putString(OPTION_START_PATH, mStartPath);
-    outState.putBoolean(OPTION_START_IS_ROOT, mStartIsRoot);
     outState.putSerializable(OPTION_LAYOUT, mActiveLayout);
-    outState.putInt("itemLayoutID", mItemLayoutID);
+    outState.putInt("itemLayoutID", mItemLayoutId);
     outState.putString(OPTION_DEFAULT_FILENAME, mDefaultFileName);
     outState.putString(OPTION_DIALOG_TITLE, mDialogTitle);
     outState.putBoolean(OPTION_SHOW_HIDDEN_FILES, mShowHiddenFiles);
@@ -465,7 +476,7 @@ public class BrowserDialog extends DialogFragment {
 
   protected void toListView() {
     mActiveLayout = Layout.LIST;
-    mItemLayoutID = R.layout.browser_listitem_layout;
+    mItemLayoutId = R.layout.browser_listitem_layout;
     //rvFileList.addItemDecoration(mListItemDecor);
     rvFileList.setLayoutManager(mLinearLayout);
     loadList(new File(mCurrentPath));
@@ -478,7 +489,7 @@ public class BrowserDialog extends DialogFragment {
     mActiveLayout = Layout.GRID;
     rvFileList.setLayoutManager(mGridLayout);
     //rvFileList.removeItemDecoration(mListItemDecor);
-    mItemLayoutID = R.layout.browser_griditem_layout;
+    mItemLayoutId = R.layout.browser_griditem_layout;
     loadList(new File(mCurrentPath));
 
     menuSwitchLayout.setTitle(R.string.browser_menu_viewAsList);
@@ -625,8 +636,7 @@ public class BrowserDialog extends DialogFragment {
             String ext = FileUtils.getExtension(file.getName());
             int i = 0;
             int n = mExtensionFilter.length;
-            while (i < n && !mExtensionFilter[i].toLowerCase(Locale.getDefault())
-                .equals(ext)) {
+            while (i < n && !mExtensionFilter[i].toLowerCase(Locale.getDefault()).equals(ext)) {
               i++;
             }
             return file.canRead() && i < n;
@@ -841,17 +851,39 @@ public class BrowserDialog extends DialogFragment {
     return this;
   }
 
+  public BrowserDialog setStartPath(String startPath, boolean createIfNotExists) {
+    setStartPath(startPath);
+    mCreateStartDir = createIfNotExists;
+    return this;
+  }
+
+  public String getRootPath() {
+    return mRootPath;
+  }
+
   public BrowserDialog setRootPath(String rootPath) {
+    // check if path exists
+    if (!new File(rootPath).exists()) {
+      throw new IllegalArgumentException("rootPath (" + rootPath + ") does not exist!");
+    }
+
     mRootPath = rootPath;
     return this;
   }
 
+  @Deprecated
   public boolean isStartRoot() {
-    return mStartIsRoot;
+    return TextUtils.equals(mStartPath, mRootPath);
   }
 
+  /**
+   * Deprecated. Use {@link #setRootPath(String)}.
+   */
+  @Deprecated
   public BrowserDialog setStartIsRoot(boolean startIsRoot) {
-    mStartIsRoot = startIsRoot;
+    if (startIsRoot) {
+      mRootPath = mStartPath;
+    }
     return this;
   }
 
@@ -915,13 +947,10 @@ public class BrowserDialog extends DialogFragment {
 
       wrDialog.get().mToolbar.setSubtitle(wrDialog.get().mCurrentPath);
 
-      boolean isRoot = wrDialog.get().mStartIsRoot ?
-          wrDialog.get().mCurrentPath.equals(wrDialog.get().mStartPath)
-              || wrDialog.get().mCurrentPath.equals(wrDialog.get().mRootPath)
-          : wrDialog.get().mCurrentPath.equals(wrDialog.get().mRootPath);
+      boolean isRoot = wrDialog.get().mCurrentPath.equals(wrDialog.get().mRootPath);
 
       wrDialog.get().rvFileList.setAdapter(
-          new FileListAdapter(wrDialog.get().getContext(), wrDialog.get().mItemLayoutID, files,
+          new FileListAdapter(wrDialog.get().getContext(), wrDialog.get().mItemLayoutId, files,
               wrDialog.get().mBrowseMode, wrDialog.get().mSortMode, isRoot));
 
       Parcelable state = wrDialog.get().mStates.get(wrDialog.get().mCurrentPath);

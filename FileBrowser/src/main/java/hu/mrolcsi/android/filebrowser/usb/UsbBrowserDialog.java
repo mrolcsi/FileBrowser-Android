@@ -66,6 +66,8 @@ public class UsbBrowserDialog extends BrowserDialog {
   private UsbFile mRoot;
   private UsbFile mCurrentDir;
   private FileSystem mFileSystem;
+  private String mStartPath = "/";
+  private String mRootPath = mStartPath;
   private String mPathToRestore;
   private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
     @Override
@@ -484,6 +486,28 @@ public class UsbBrowserDialog extends BrowserDialog {
         });
     AlertDialog ad = builder.create();
     ad.show();
+  }
+
+  @Override
+  public String getStartPath() {
+    return mStartPath;
+  }
+
+  @Override
+  public BrowserDialog setStartPath(String startPath) {
+    mStartPath = startPath;
+    return this;
+  }
+
+  @Override
+  public String getRootPath() {
+    return mRootPath;
+  }
+
+  @Override
+  public BrowserDialog setRootPath(String rootPath) {
+    mRootPath = rootPath;
+    return this;
   }
 
   /**
