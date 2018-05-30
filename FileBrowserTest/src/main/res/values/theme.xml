@@ -2,7 +2,7 @@
 <resources>
 
   <style name="Theme.FileBrowser"
-    parent="Theme.AppCompat.Light">
-    <item name="colorAccent">#FFAA00AA</item>
+    parent="Theme.AppCompat">
+    <item name="colorAccent">#2d50ff</item>
   </style>
 </resources>

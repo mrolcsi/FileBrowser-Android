@@ -20,12 +20,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
@@ -232,8 +232,7 @@ public class BrowserDialog extends DialogFragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     return inflater.inflate(R.layout.browser_layout_dialog, container, false);
   }
 
@@ -277,10 +276,23 @@ public class BrowserDialog extends DialogFragment {
           }
           return false;
         });
+        etFilename.requestFocus();
       }
 
-      RelativeLayout rlSave = view.findViewById(R.id.browser_rlSave);
-      rlSave.setVisibility(View.VISIBLE);
+      // make saveBar visible
+      ViewGroup saveBar = view.findViewById(R.id.browser_saveBar);
+      saveBar.setVisibility(View.VISIBLE);
+
+      // add padding to recyclerView
+      final TypedValue actionBarSizeAttribute = new TypedValue();
+      getContext().getTheme().resolveAttribute(R.attr.actionBarSize, actionBarSizeAttribute, true);
+      final int actionBarSizeValue = getResources().getDimensionPixelSize(actionBarSizeAttribute.resourceId);
+      rvFileList.setPadding(
+          rvFileList.getPaddingLeft(),
+          rvFileList.getPaddingTop(),
+          rvFileList.getPaddingRight(),
+          actionBarSizeValue
+      );
 
       final Spinner spnExtension = view.findViewById(R.id.browser_spnExtension);
       if (mExtensionFilter != null) {
@@ -307,6 +319,16 @@ public class BrowserDialog extends DialogFragment {
       }
 
       btnSave.setOnClickListener(v -> saveFile(false));
+    }
+  }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+
+    if (getDialog() != null) {
+      // resize dialog if needed
+      getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
     }
   }
 

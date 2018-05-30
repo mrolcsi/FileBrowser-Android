@@ -1,53 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:padding="@dimen/browser_margin"
-  android:background="@drawable/browser_selectable_background"
-  android:orientation="vertical">
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:background="@drawable/browser_selectable_background">
 
   <ImageView
     android:id="@+id/browser_listItemIcon"
     android:layout_width="@dimen/browser_iconSize"
     android:layout_height="@dimen/browser_iconSize"
+    android:layout_marginTop="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
     android:layout_alignParentTop="true"
     android:layout_centerHorizontal="true"
-    android:layout_gravity="center_horizontal"/>
+    android:layout_gravity="center_horizontal"
+    android:contentDescription="@string/browser_contentDescription_fileIcon"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"/>
 
   <TextView
     android:id="@+id/browser_listItemText"
     android:textStyle="bold"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/browser_margin"
+    android:layout_marginTop="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
     android:layout_below="@+id/browser_listItemIcon"
     android:layout_centerHorizontal="true"
     android:ellipsize="marquee"
     android:gravity="center_horizontal|top"
-    android:maxLines="4"/>
+    android:maxLines="4"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/browser_listItemIcon"/>
 
   <TextView
     android:id="@+id/browser_listItemExtra"
     android:textStyle="italic"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/browser_margin"
+    android:layout_marginTop="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_alignParentEnd="true"
     android:layout_alignParentRight="true"
     android:layout_below="@+id/browser_listItemText"
     android:layout_centerVertical="true"
     android:ellipsize="marquee"
     android:gravity="top|center_horizontal"
     android:maxLines="2"
-    android:singleLine="false"/>
+    android:singleLine="false"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/browser_listItemText"/>
 
   <ProgressBar
     android:id="@+id/browser_listItemProgress"
     android:layout_width="@dimen/browser_toolbarIconSize"
     android:layout_height="@dimen/browser_toolbarIconSize"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
     android:layout_alignBottom="@+id/browser_listItemIcon"
     android:layout_alignTop="@+id/browser_listItemIcon"
     android:layout_centerHorizontal="true"
-    android:visibility="gone"/>
+    android:visibility="gone"
+    app:layout_constraintBottom_toBottomOf="@+id/browser_listItemIcon"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="@+id/browser_listItemIcon"/>
+
   <!--http://stackoverflow.com/questions/2160619/android-ellipsize-multiline-textview-->
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

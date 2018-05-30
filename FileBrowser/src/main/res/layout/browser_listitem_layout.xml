@@ -1,52 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  android:background="@drawable/browser_selectable_background"
-  android:orientation="horizontal">
+  android:background="@drawable/browser_selectable_background">
 
   <ImageView
     android:id="@+id/browser_listItemIcon"
     android:layout_width="@dimen/browser_iconSize"
     android:layout_height="@dimen/browser_iconSize"
-    android:layout_marginLeft="@dimen/browser_margin"
+    android:layout_marginStart="8dp"
+    android:layout_marginLeft="8dp"
     android:layout_alignParentLeft="true"
-    android:layout_centerVertical="true"/>
+    android:layout_alignParentStart="true"
+    android:layout_centerVertical="true"
+    android:contentDescription="@string/browser_contentDescription_fileIcon"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toStartOf="@+id/browser_listItemText"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"/>
 
   <TextView
     android:id="@+id/browser_listItemText"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="@dimen/browser_margin"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
     android:layout_centerVertical="true"
+    android:layout_toEndOf="@+id/browser_listItemIcon"
     android:layout_toLeftOf="@+id/browser_listItemExtra"
     android:layout_toRightOf="@+id/browser_listItemIcon"
+    android:layout_toStartOf="@+id/browser_listItemExtra"
     android:ellipsize="marquee"
     android:gravity="center_vertical"
     android:singleLine="false"
-    android:text="@string/browser_placeholder"/>
+    android:text="@string/browser_placeholder"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toStartOf="@+id/browser_listItemExtra"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toEndOf="@+id/browser_listItemIcon"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_chainStyle="spread_inside"/>
 
   <TextView
     android:id="@+id/browser_listItemExtra"
     android:textStyle="italic"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="@dimen/browser_margin"
-    android:layout_marginRight="@dimen/browser_margin"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_alignParentEnd="true"
     android:layout_alignParentRight="true"
     android:layout_centerVertical="true"
-    android:layout_gravity="center_vertical|right"
-    android:gravity="center_vertical|right"
-    android:singleLine="false"/>
+    android:layout_gravity="center_vertical|end"
+    android:gravity="center_vertical|end"
+    android:singleLine="false"
+    android:visibility="visible"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintEnd_toStartOf="@+id/browser_listItemProgress"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toEndOf="@+id/browser_listItemText"
+    app:layout_constraintTop_toTopOf="parent"/>
 
   <ProgressBar
     android:id="@+id/browser_listItemProgress"
     android:layout_width="wrap_content"
     android:layout_height="@dimen/browser_toolbarIconSize"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_alignParentEnd="true"
     android:layout_alignParentRight="true"
     android:layout_centerVertical="true"
     android:indeterminate="true"
-    android:visibility="gone"/>
+    android:visibility="gone"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"/>
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
