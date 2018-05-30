@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="browser_sortOptions">
+    <item>@string/browser_sortOption_nameAscending</item>
+    <item>@string/browser_sortOption_nameDescending</item>
+    <item>@string/browser_sortOption_extensionAscending</item>
+    <item>@string/browser_sortOption_extensionDescending</item>
+    <item>@string/browser_sortOption_dateAscending</item>
+    <item>@string/browser_sortOption_dateDescending</item>
+    <item>@string/browser_sortOption_sizeAscending</item>
+    <item>@string/browser_sortOption_sizeDescending</item>
+  </string-array>
+</resources>

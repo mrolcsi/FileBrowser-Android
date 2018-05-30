@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <plurals name="browser_numberOfFiles">
+    <item quantity="one">@string/browser_numberOfFiles_one</item>
+    <item quantity="other">@string/browser_numberOfFiles_other</item>
+  </plurals>
+</resources>
