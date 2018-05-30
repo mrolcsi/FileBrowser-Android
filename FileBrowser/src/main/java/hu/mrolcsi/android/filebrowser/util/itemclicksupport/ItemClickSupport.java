@@ -25,13 +25,12 @@ public class ItemClickSupport {
     if (itemClickSupport == null) {
       itemClickSupport = new ItemClickSupport(recyclerView);
       recyclerView.setTag(R.id.browser_item_click_support, itemClickSupport);
-    } else {
-      // TODO: Log warning
-    }
+    }  // TODO: Log warning
 
     return itemClickSupport;
   }
 
+  @SuppressWarnings("unused")
   public static void removeFrom(RecyclerView recyclerView) {
     final ItemClickSupport itemClickSupport = from(recyclerView);
     if (itemClickSupport == null) {

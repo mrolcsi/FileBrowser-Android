@@ -14,7 +14,7 @@ public class Cache {
 
   private static final Cache ourInstance = new Cache();
 
-  Map<String, Long> sizeCache = new ConcurrentHashMap<>();
+  final Map<String, Long> sizeCache = new ConcurrentHashMap<>();
 
   private Cache() {
   }

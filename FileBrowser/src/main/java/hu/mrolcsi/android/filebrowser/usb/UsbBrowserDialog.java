@@ -41,8 +41,6 @@ import java.util.Stack;
 @TargetApi(16)
 public class UsbBrowserDialog extends BrowserDialog {
 
-  private static final String TAG = "UsbBrowserDialog";
-
   private static final String ACTION_USB_PERMISSION = BuildConfig.APPLICATION_ID + ".USB_PERMISSION";
 
   private final Stack<UsbFile> mHistory = new Stack<>();
@@ -73,34 +71,38 @@ public class UsbBrowserDialog extends BrowserDialog {
     public void onReceive(Context context, Intent intent) {
 
       String action = intent.getAction();
-      if (ACTION_USB_PERMISSION.equals(action)) {
+      switch (action) {
+        case ACTION_USB_PERMISSION: {
+          UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+          if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+            if (device != null) {
+              setupDevice();
+            }
+          }
+          break;
+        }
+        case UsbManager.ACTION_USB_DEVICE_ATTACHED: {
+          UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
 
-        UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-        if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-
+          // determine if connected device is a mass storage device
           if (device != null) {
-            setupDevice();
+            discoverDevice(intent);
           }
+          break;
         }
+        case UsbManager.ACTION_USB_DEVICE_DETACHED: {
+          UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
 
-      } else if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
-        UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-
-        // determine if connected device is a mass storage device
-        if (device != null) {
-          discoverDevice(intent);
-        }
-      } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-        UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-
-        // determine if connected device is a mass storage device
-        if (device != null) {
-          if (UsbBrowserDialog.this.mDevice != null) {
-            UsbBrowserDialog.this.mDevice.close();
+          // determine if connected device is a mass storage device
+          if (device != null) {
+            if (UsbBrowserDialog.this.mDevice != null) {
+              UsbBrowserDialog.this.mDevice.close();
+            }
+            // check if there are other devices or set action bar title
+            // to no device if not
+            discoverDevice(intent);
           }
-          // check if there are other devices or set action bar title
-          // to no device if not
-          discoverDevice(intent);
+          break;
         }
       }
     }
@@ -525,7 +527,7 @@ public class UsbBrowserDialog extends BrowserDialog {
 
   private static class InnerUsbFileSorterTask extends UsbFileSorterTask {
 
-    private WeakReference<UsbBrowserDialog> wrDialog;
+    private final WeakReference<UsbBrowserDialog> wrDialog;
 
     private AlertDialog pd;
 
@@ -587,6 +589,7 @@ public class UsbBrowserDialog extends BrowserDialog {
   /**
    * Deprecated. Use {@link OnFileSelectedListener} instead.
    */
+  @SuppressWarnings({"EmptyMethod", "unused"})
   @Deprecated
   public interface OnDialogResultListener {
 

@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!-- @formatter:off -->
-  <string name="browser_activityName">FileBrowser</string>
-  <string name="browser_confirmOverwrite">Press \'Save\' again to overwrite file.</string>
   <string name="browser_contentDescription_fileIcon">File Icon</string>
-  <string name="browser_currentDirectory"><![CDATA[Current directory: <i>%s</i>]]></string>
   <string name="browser_emptyFolder">This folder is empty.</string>
   <string name="browser_error_cantCreateFile_message">There was a write error while trying to save the file.</string>
   <string name="browser_error_cantCreateFile_title">Couldn\'t Create File</string>
@@ -30,13 +27,10 @@
   <string name="browser_menu_viewAsGrid">View as Grid</string>
   <string name="browser_menu_viewAsList">View as List</string>
   <string name="browser_newFolderHint">Enter Folder Name</string>
-  <string name="browser_numberOfFiles_one">%d file</string>
-  <string name="browser_numberOfFiles_other">%d files</string>
-  <string name="browser_options">Options</string>
-  <string name="browser_pathPlaceholder">Opened file\'s path goes here</string>
+  <string name="browser_numberOfFiles_one" tools:ignore="PluralsCandidate">%d file</string>
+  <string name="browser_numberOfFiles_other" tools:ignore="PluralsCandidate">%d files</string>
   <string name="browser_placeholder" translatable="false">ads:DsaDF:FdsADS:F</string>
   <string name="browser_pleaseConnectUsb">Please connect a USB Mass Storage device.</string>
-  <string name="browser_pressAgainToCancel">Press again to cancel.</string>
   <string name="browser_save">SAVE</string>
   <string name="browser_sortOption_dateAscending">Date (ascending)</string>
   <string name="browser_sortOption_dateDescending">Date (descending)</string>
@@ -49,7 +43,6 @@
   <string name="browser_titleOpenFile">Open File…</string>
   <string name="browser_titleSaveFile">Save File as…</string>
   <string name="browser_titleSelectDir">Select Directory</string>
-  <string name="browser_toast_noParentDir">Can\'t go further up.</string>
   <string name="browser_unknown">N/A</string>
   <string name="browser_upFolder" translatable="false">..</string>
   <!-- @formatter:on -->

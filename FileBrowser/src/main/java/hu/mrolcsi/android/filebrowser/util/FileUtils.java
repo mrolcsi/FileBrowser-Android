@@ -41,16 +41,6 @@ public abstract class FileUtils {
     return true;
   }
 
-  public static String getFriendlySize(File inputFile) {
-    long rawSize = 0;
-    if (inputFile.isFile()) {
-      rawSize = inputFile.length();
-    } else if (inputFile.isDirectory()) {
-      rawSize = dirSize(inputFile);
-    }
-    return getFriendlySize(rawSize);
-  }
-
   public static String getFriendlySize(long rawSize) {
     if (rawSize > 1000000000) {
       return String.format(Locale.getDefault(), "%.2f GB", (float) rawSize / 1000000000);

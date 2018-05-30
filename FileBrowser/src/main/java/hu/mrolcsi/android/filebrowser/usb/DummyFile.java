@@ -3,7 +3,6 @@ package hu.mrolcsi.android.filebrowser.usb;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.github.mjdev.libaums.fs.UsbFile;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -13,7 +12,7 @@ public abstract class DummyFile implements UsbFile {
 
   @Nullable
   @Override
-  public UsbFile search(@NonNull String path) throws IOException {
+  public UsbFile search(@NonNull String path) {
     return null;
   }
 
@@ -23,7 +22,7 @@ public abstract class DummyFile implements UsbFile {
   }
 
   @Override
-  public void setName(String newName) throws IOException {
+  public void setName(String newName) {
   }
 
   @Override
@@ -42,12 +41,12 @@ public abstract class DummyFile implements UsbFile {
   }
 
   @Override
-  public String[] list() throws IOException {
+  public String[] list() {
     return new String[0];
   }
 
   @Override
-  public UsbFile[] listFiles() throws IOException {
+  public UsbFile[] listFiles() {
     return new UsbFile[0];
   }
 
@@ -57,41 +56,41 @@ public abstract class DummyFile implements UsbFile {
   }
 
   @Override
-  public void setLength(long newLength) throws IOException {
+  public void setLength(long newLength) {
   }
 
   @Override
-  public void read(long offset, ByteBuffer destination) throws IOException {
+  public void read(long offset, ByteBuffer destination) {
   }
 
   @Override
-  public void write(long offset, ByteBuffer source) throws IOException {
+  public void write(long offset, ByteBuffer source) {
   }
 
   @Override
-  public void flush() throws IOException {
+  public void flush() {
   }
 
   @Override
-  public void close() throws IOException {
+  public void close() {
   }
 
   @Override
-  public UsbFile createDirectory(String name) throws IOException {
+  public UsbFile createDirectory(String name) {
     return null;
   }
 
   @Override
-  public UsbFile createFile(String name) throws IOException {
+  public UsbFile createFile(String name) {
     return null;
   }
 
   @Override
-  public void moveTo(UsbFile destination) throws IOException {
+  public void moveTo(UsbFile destination) {
   }
 
   @Override
-  public void delete() throws IOException {
+  public void delete() {
   }
 
   @Override

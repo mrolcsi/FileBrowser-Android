@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <!-- @formatter:off -->
-  <string name="browser_activityName">Tallózó</string>
-  <string name="browser_confirmOverwrite">Felülíráshoz nyomja meg mégyegyszer a \'Mentés\'-t!</string>
   <string name="browser_contentDescription_fileIcon">Fájl ikonja</string>
-  <string name="browser_currentDirectory"><![CDATA[Aktuális mappa: <i>%s</i>]]></string>
   <string name="browser_emptyFolder">Ez a mappa üres.</string>
   <string name="browser_error_cantCreateFile_message">Írási hiba tötént a fájl mentése közben.</string>
   <string name="browser_error_cantCreateFile_title">Fájl létrehozása sikertelen</string>
@@ -32,10 +29,7 @@
   <string name="browser_newFolderHint">Mappanév</string>
   <string name="browser_numberOfFiles_one">%d fájl</string>
   <string name="browser_numberOfFiles_other">%d fájl</string>
-  <string name="browser_options">Lehetőségek</string>
-  <string name="browser_pathPlaceholder">Megnyitott fájl elérési útja</string>
   <string name="browser_pleaseConnectUsb">Csatlakoztasson egy USB háttértár eszközt.</string>
-  <string name="browser_pressAgainToCancel">Nyomja meg mégegyszer a kilépéshez.</string>
   <string name="browser_save">MENTÉS</string>
   <string name="browser_sortOption_dateAscending">Dátum (növekvő)</string>
   <string name="browser_sortOption_dateDescending">Dátum (csökkenő)</string>
@@ -48,7 +42,6 @@
   <string name="browser_titleOpenFile">Fájl megnyitása…</string>
   <string name="browser_titleSaveFile">Mentés másként…</string>
   <string name="browser_titleSelectDir">Mappa kiválasztása</string>
-  <string name="browser_toast_noParentDir">Nem lehet feljebb menni.</string>
   <string name="browser_unknown">N/A</string>
   <!-- @formatter:on -->
 </resources>

@@ -15,6 +15,7 @@ import hu.mrolcsi.android.filebrowser.util.FileUtils;
 import hu.mrolcsi.android.filebrowser.util.SizeCalculatorTask;
 import hu.mrolcsi.android.filebrowser.util.Utils;
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -33,7 +34,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHo
   protected final BrowseMode browseMode;
   protected final SortMode sortMode;
   protected final LayoutInflater inflater;
-  private List<File> data;
+  private final List<File> data;
 
   public FileListAdapter(Context context, int layoutResourceId, List<File> inputData,
       BrowseMode browseMode, SortMode sortMode, boolean isRoot) {
@@ -137,41 +138,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHo
           break;
         case BY_SIZE_ASC:
         case BY_SIZE_DESC:
-          holder.sizeCalculator = new SizeCalculatorTask() {
-            @Override
-            protected void onPreExecute() {
-              super.onPreExecute();
-              holder.extra.setVisibility(View.GONE);
-              holder.progress.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            protected void onProgressUpdate(Long... values) {
-              super.onProgressUpdate(values);
-              holder.extra.setText(FileUtils.getFriendlySize(values[0]));
-            }
-
-            @Override
-            protected void onPostExecute(Long size) {
-              super.onPostExecute(size);
-              if (holder.file.isDirectory()) {
-                int count;
-                try {
-                  count = holder.file.listFiles().length;
-                  holder.extra.setText(String.format(Locale.getDefault(), "%s\n%s",
-                      context.getResources()
-                          .getQuantityString(R.plurals.browser_numberOfFiles, count, count),
-                      FileUtils.getFriendlySize(size)));
-                } catch (NullPointerException e) {
-                  holder.extra.setText(R.string.browser_unknown);
-                }
-              } else if (holder.file.isFile()) {
-                holder.extra.setText(FileUtils.getFriendlySize(size));
-              }
-              holder.extra.setVisibility(View.VISIBLE);
-              holder.progress.setVisibility(View.GONE);
-            }
-          }.execute(holder.file);
+          holder.sizeCalculator = new InnerSizeCalculatorTask(context, holder).execute(holder.file);
           break;
       }
     }
@@ -184,10 +151,10 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHo
 
   protected class FileHolder extends RecyclerView.ViewHolder {
 
-    public ImageView icon;
-    public TextView text;
-    public TextView extra;
-    public ProgressBar progress;
+    public final ImageView icon;
+    public final TextView text;
+    public final TextView extra;
+    public final ProgressBar progress;
     AsyncTask<File, Long, Long> sizeCalculator;
     File file;
 
@@ -198,6 +165,51 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileHo
       text = itemView.findViewById(R.id.browser_listItemText);
       extra = itemView.findViewById(R.id.browser_listItemExtra);
       progress = itemView.findViewById(R.id.browser_listItemProgress);
+    }
+  }
+
+  private static class InnerSizeCalculatorTask extends SizeCalculatorTask {
+
+    private final WeakReference<Context> wrContext;
+
+    private final FileHolder mHolder;
+
+    public InnerSizeCalculatorTask(Context context, FileHolder holder) {
+      wrContext = new WeakReference<>(context);
+      mHolder = holder;
+    }
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+      mHolder.extra.setVisibility(View.GONE);
+      mHolder.progress.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void onProgressUpdate(Long... values) {
+      super.onProgressUpdate(values);
+      mHolder.extra.setText(FileUtils.getFriendlySize(values[0]));
+    }
+
+    @Override
+    protected void onPostExecute(Long size) {
+      super.onPostExecute(size);
+      if (mHolder.file.isDirectory()) {
+        int count;
+        try {
+          count = mHolder.file.listFiles().length;
+          mHolder.extra.setText(String.format(Locale.getDefault(), "%s\n%s",
+              wrContext.get().getResources().getQuantityString(R.plurals.browser_numberOfFiles, count, count),
+              FileUtils.getFriendlySize(size)));
+        } catch (NullPointerException e) {
+          mHolder.extra.setText(R.string.browser_unknown);
+        }
+      } else if (mHolder.file.isFile()) {
+        mHolder.extra.setText(FileUtils.getFriendlySize(size));
+      }
+      mHolder.extra.setVisibility(View.VISIBLE);
+      mHolder.progress.setVisibility(View.GONE);
     }
   }
 }

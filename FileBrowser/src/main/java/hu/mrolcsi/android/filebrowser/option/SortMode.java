@@ -1,13 +1,6 @@
 package hu.mrolcsi.android.filebrowser.option;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Matusinka Roland
- * Date: 2015.02.11.
- * Time: 22:33
- */
-
-/**
  * Rendezés módja (mappák mindig elöl)
  * <ul>
  * <li>Név szerint növekvő: {@link #BY_NAME_ASC BY_NAME_ASC}</li>

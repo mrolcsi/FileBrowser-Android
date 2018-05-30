@@ -12,6 +12,7 @@ import hu.mrolcsi.android.filebrowser.option.SortMode;
 import hu.mrolcsi.android.filebrowser.util.FileUtils;
 import hu.mrolcsi.android.filebrowser.util.Utils;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -25,8 +26,8 @@ public class UsbFileListAdapter extends FileListAdapter {
   private static final DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance();
   private final boolean mIsRoot;
 
-  private List<UsbFile> mFiles;
-  private UsbFile mCurrentDir;
+  private final List<UsbFile> mFiles;
+  private final UsbFile mCurrentDir;
 
   public UsbFileListAdapter(Context context, int layoutResourceId, BrowseMode browseMode,
       SortMode sortMode, UsbFile directory, List<UsbFile> contents, boolean isRoot) {
@@ -96,6 +97,16 @@ public class UsbFileListAdapter extends FileListAdapter {
   }
 
   @Override
+  public void onViewRecycled(FileHolder holder) {
+    super.onViewRecycled(holder);
+    UsbFileHolder usbHolder = (UsbFileHolder) holder;
+    if (usbHolder.sizeCalculator != null) {
+      usbHolder.sizeCalculator.cancel(true);
+      usbHolder.sizeCalculator = null;
+    }
+  }
+
+  @Override
   public void onBindViewHolder(final FileHolder holder, int i) {
     final UsbFileHolder usbHolder = (UsbFileHolder) holder;
     usbHolder.usbFile = mFiles.get(i);
@@ -158,49 +169,7 @@ public class UsbFileListAdapter extends FileListAdapter {
           break;
         case BY_SIZE_ASC:
         case BY_SIZE_DESC:
-          usbHolder.sizeCalculator = new AsyncTask<UsbFile, Long, Long>() {
-            @Override
-            protected void onPreExecute() {
-              holder.extra.setVisibility(View.GONE);
-              holder.progress.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            protected Long doInBackground(UsbFile... usbFiles) {
-              if (!usbFiles[0].isDirectory()) {
-                return usbFiles[0].getLength();
-              } else {
-                return FileUtils.dirSize(usbFiles[0]);
-              }
-            }
-
-            @Override
-            protected void onProgressUpdate(Long... values) {
-              holder.extra.setText(FileUtils.getFriendlySize(values[0]));
-            }
-
-            @Override
-            protected void onPostExecute(Long size) {
-              if (usbHolder.usbFile.isDirectory()) {
-                int count;
-                try {
-                  count = usbHolder.usbFile.listFiles().length;
-                  usbHolder.extra.setText(String.format(Locale.getDefault(), "%s\n%s",
-                      context.getResources()
-                          .getQuantityString(R.plurals.browser_numberOfFiles, count, count),
-                      FileUtils.getFriendlySize(size)));
-                } catch (NullPointerException e) {
-                  usbHolder.extra.setText(R.string.browser_unknown);
-                } catch (IOException e) {
-                  usbHolder.extra.setText(R.string.browser_error_folderCantBeOpened_message);
-                }
-              } else {
-                usbHolder.extra.setText(FileUtils.getFriendlySize(usbHolder.usbFile.getLength()));
-              }
-              usbHolder.extra.setVisibility(View.VISIBLE);
-              usbHolder.progress.setVisibility(View.GONE);
-            }
-          }.execute(usbHolder.usbFile);
+          usbHolder.sizeCalculator = new SizeCalculatorTask(context, usbHolder).execute(usbHolder.usbFile);
           break;
       }
     }
@@ -213,6 +182,58 @@ public class UsbFileListAdapter extends FileListAdapter {
 
     UsbFileHolder(View itemView) {
       super(itemView);
+    }
+  }
+
+  private static class SizeCalculatorTask extends AsyncTask<UsbFile, Long, Long> {
+
+    private final WeakReference<Context> wrContext;
+    private final UsbFileHolder mHolder;
+
+    public SizeCalculatorTask(Context context, UsbFileHolder holder) {
+      wrContext = new WeakReference<>(context);
+      mHolder = holder;
+    }
+
+    @Override
+    protected void onPreExecute() {
+      mHolder.extra.setVisibility(View.GONE);
+      mHolder.progress.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected Long doInBackground(UsbFile... usbFiles) {
+      if (!usbFiles[0].isDirectory()) {
+        return usbFiles[0].getLength();
+      } else {
+        return FileUtils.dirSize(usbFiles[0]);
+      }
+    }
+
+    @Override
+    protected void onProgressUpdate(Long... values) {
+      mHolder.extra.setText(FileUtils.getFriendlySize(values[0]));
+    }
+
+    @Override
+    protected void onPostExecute(Long size) {
+      if (mHolder.usbFile.isDirectory()) {
+        int count;
+        try {
+          count = mHolder.usbFile.listFiles().length;
+          mHolder.extra.setText(String.format(Locale.getDefault(), "%s\n%s",
+              wrContext.get().getResources().getQuantityString(R.plurals.browser_numberOfFiles, count, count),
+              FileUtils.getFriendlySize(size)));
+        } catch (NullPointerException e) {
+          mHolder.extra.setText(R.string.browser_unknown);
+        } catch (IOException e) {
+          mHolder.extra.setText(R.string.browser_error_folderCantBeOpened_message);
+        }
+      } else {
+        mHolder.extra.setText(FileUtils.getFriendlySize(mHolder.usbFile.getLength()));
+      }
+      mHolder.extra.setVisibility(View.VISIBLE);
+      mHolder.progress.setVisibility(View.GONE);
     }
   }
 }

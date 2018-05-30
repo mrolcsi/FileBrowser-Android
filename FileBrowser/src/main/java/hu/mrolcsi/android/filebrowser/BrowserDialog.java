@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,7 +33,6 @@ import android.widget.TextView;
 import hu.mrolcsi.android.filebrowser.option.BrowseMode;
 import hu.mrolcsi.android.filebrowser.option.Layout;
 import hu.mrolcsi.android.filebrowser.option.SortMode;
-import hu.mrolcsi.android.filebrowser.util.DividerItemDecoration;
 import hu.mrolcsi.android.filebrowser.util.Error;
 import hu.mrolcsi.android.filebrowser.util.FileSorterTask;
 import hu.mrolcsi.android.filebrowser.util.FileUtils;
@@ -237,7 +237,7 @@ public class BrowserDialog extends DialogFragment {
     setupToolbar();
 
     rvFileList = view.findViewById(R.id.browser_recyclerView);
-    DividerItemDecoration listItemDecor = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST);
+    DividerItemDecoration listItemDecor = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
     mLinearLayout = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     mGridLayout = new GridLayoutManager(getContext(),
         getResources().getInteger(R.integer.browser_columnCount), LinearLayoutManager.VERTICAL,
@@ -967,6 +967,7 @@ public class BrowserDialog extends DialogFragment {
   /**
    * Deprecated. Use {@link OnFileSelectedListener} instead.
    */
+  @SuppressWarnings("EmptyMethod")
   @Deprecated
   public interface OnDialogResultListener {
 

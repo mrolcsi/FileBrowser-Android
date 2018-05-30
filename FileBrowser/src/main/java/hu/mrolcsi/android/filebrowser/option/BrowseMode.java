@@ -1,13 +1,6 @@
 package hu.mrolcsi.android.filebrowser.option;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Matusinka Roland
- * Date: 2015.02.11.
- * Time: 22:05
- */
-
-/**
  * Tallózás módja:
  * <ul>
  * <li>Fájl megnyitása: {@link #OPEN_FILE OPEN_FILE}</li>

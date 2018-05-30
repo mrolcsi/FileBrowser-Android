@@ -3,7 +3,6 @@ package hu.mrolcsi.android.filebrowser.util.itemclicksupport;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.support.v4.view.GestureDetectorCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnItemTouchListener;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -11,8 +10,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 abstract class ClickItemTouchListener implements OnItemTouchListener {
-
-  private static final String LOGTAG = "ClickItemTouchListener";
 
   private final GestureDetectorCompat mGestureDetector;
   private final ClickGestureListener mClickGestureListener;
@@ -43,7 +40,7 @@ abstract class ClickItemTouchListener implements OnItemTouchListener {
 
     mGestureDetector.onTouchEvent(event);
 
-    final int action = event.getAction() & MotionEventCompat.ACTION_MASK;
+    final int action = event.getAction() & MotionEvent.ACTION_MASK;
     if (action == MotionEvent.ACTION_UP) {
       mClickGestureListener.dispatchSingleTapUpIfNeeded(event);
     }
