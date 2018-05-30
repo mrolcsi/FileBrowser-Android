@@ -55,8 +55,8 @@ public class TestFragment extends Fragment {
       BrowserDialog dialog = new BrowserDialog()
           .setBrowseMode(BrowseMode.OPEN_FILE)
           .setSortMode(SortMode.BY_EXTENSION_ASC)
-          .setStartIsRoot(false)
           .setRootPath(Environment.getExternalStorageDirectory().getAbsolutePath())
+          .setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/test_dir", true)
           .setDialogTitle("Select file for testing")
           .setOnFileSelectedListener(mOnFileSelectedListener);
       dialog.show(getChildFragmentManager(), dialog.toString());
@@ -76,7 +76,6 @@ public class TestFragment extends Fragment {
           .setExtensionFilter("txt", "xml", "csv")
           .setRootPath(Environment.getExternalStorageDirectory().getAbsolutePath())
           .setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath())
-          .setStartIsRoot(false)
           .setOnFileSelectedListener(mOnFileSelectedListener);
       dialog.show(getChildFragmentManager(), dialog.toString());
     });
@@ -85,7 +84,6 @@ public class TestFragment extends Fragment {
       BrowserDialog dialog = new BrowserDialog()
           .setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath())
           .setExtensionFilter("mp3;wav")
-          .setStartIsRoot(false)
           .setSortMode(SortMode.BY_EXTENSION_ASC)
           .setBrowseMode(BrowseMode.SAVE_FILE)
           .setOnFileSelectedListener(mOnFileSelectedListener);
@@ -96,7 +94,6 @@ public class TestFragment extends Fragment {
       BrowserDialog dialog = new BrowserDialog()
           .setStartPath(Environment.getExternalStorageDirectory().getAbsolutePath())
           .setExtensionFilter("mp3;wav")
-          .setStartIsRoot(false)
           .setSortMode(SortMode.BY_DATE_DESC)
           .setBrowseMode(BrowseMode.SAVE_FILE)
           .setLayout(Layout.GRID)

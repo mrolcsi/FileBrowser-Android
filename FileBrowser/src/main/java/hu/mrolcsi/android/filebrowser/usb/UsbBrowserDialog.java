@@ -63,11 +63,10 @@ public class UsbBrowserDialog extends BrowserDialog {
       mOnDialogResultListener.onPositiveResult(file, fileSystem);
     }
   };
-  private UsbFile mRoot;
   private UsbFile mCurrentDir;
   private FileSystem mFileSystem;
-  private String mStartPath = "/";
-  private String mRootPath = mStartPath;
+  private String mStartPath = File.separator;
+  private String mRootPath = File.separator;
   private String mPathToRestore;
   private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
     @Override
@@ -192,8 +191,7 @@ public class UsbBrowserDialog extends BrowserDialog {
       // we always use the first partition of the device
       final List<Partition> partitions = mDevice.getPartitions();
       if (partitions.size() < 1) {
-        showErrorDialog(Error.USB_ERROR,
-            getString(R.string.browser_error_usbError_onlyFat32partitions));
+        showErrorDialog(Error.USB_ERROR, getString(R.string.browser_error_usbError_onlyFat32partitions));
         dismiss();
         return;
       }
@@ -208,6 +206,9 @@ public class UsbBrowserDialog extends BrowserDialog {
           mHistory.push(mCurrentDir);
         }
       } else if (getStartPath() != null) {
+        if (mStartPath.startsWith("/")) {
+          mStartPath = mStartPath.substring(1, mStartPath.length());
+        }
         mCurrentDir = mFileSystem.getRootDirectory().search(getStartPath());
         if (mCurrentDir == null) {
           // create directory
@@ -237,8 +238,6 @@ public class UsbBrowserDialog extends BrowserDialog {
         mCurrentDir = mFileSystem.getRootDirectory();
         mHistory.push(mCurrentDir);
       }
-
-      mRoot = mCurrentDir;
 
       loadList(mCurrentDir);
     } catch (IOException e) {
@@ -557,10 +556,17 @@ public class UsbBrowserDialog extends BrowserDialog {
 
       wrDialog.get().mToolbar.setSubtitle(wrDialog.get().getCurrentPath());
 
-      wrDialog.get().rvFileList.setAdapter(
-          new UsbFileListAdapter(wrDialog.get().getContext(), wrDialog.get().mItemLayoutID,
-              wrDialog.get().mLocked ? BrowseMode.OPEN_FILE : wrDialog.get().mBrowseMode, wrDialog.get().mSortMode,
-              wrDialog.get().mCurrentDir, files, wrDialog.get().mCurrentDir == wrDialog.get().mRoot));
+      final String currentDirPath = FileUtils.getAbsolutePath(wrDialog.get().mCurrentDir);
+      boolean isRoot = currentDirPath.equals(wrDialog.get().mRootPath);
+
+      wrDialog.get().rvFileList.setAdapter(new UsbFileListAdapter(
+          wrDialog.get().getContext(),
+          wrDialog.get().mItemLayoutId,
+          wrDialog.get().mLocked ? BrowseMode.OPEN_FILE : wrDialog.get().mBrowseMode,
+          wrDialog.get().mSortMode,
+          wrDialog.get().mCurrentDir,
+          files,
+          isRoot));
 
       Parcelable state = wrDialog.get().mStates.get(wrDialog.get().mCurrentDir.getName());
       if (state != null) {

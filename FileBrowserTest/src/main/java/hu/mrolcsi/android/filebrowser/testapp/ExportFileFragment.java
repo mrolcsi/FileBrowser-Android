@@ -87,6 +87,7 @@ public class ExportFileFragment extends Fragment {
     btnDest.setOnClickListener(view -> {
       final UsbBrowserDialog dialog = new UsbBrowserDialog();
       dialog.setBrowseMode(BrowseMode.SAVE_FILE);
+      dialog.setStartPath("/a/b", true);
       dialog.setOnFileSelectedListener((file, fileSystem) -> {
         mUsbFs = fileSystem;
         mDestDir = file;
