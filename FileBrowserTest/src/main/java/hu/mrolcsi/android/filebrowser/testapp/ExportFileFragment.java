@@ -47,7 +47,7 @@ public class ExportFileFragment extends Fragment {
   private Button btnCopy;
 
   private File mSourceFile;
-  private UsbFile mDestDir;
+  private UsbFile mDestFile;
   private FileSystem mUsbFs;
 
   @Nullable
@@ -90,7 +90,7 @@ public class ExportFileFragment extends Fragment {
       dialog.setStartPath("/a/b", true);
       dialog.setOnFileSelectedListener((file, fileSystem) -> {
         mUsbFs = fileSystem;
-        mDestDir = file;
+        mDestFile = file;
         tvDest.setText(FileUtils.getAbsolutePath(file));
       });
       dialog.show(getChildFragmentManager(), "DestinationBrowser");
@@ -111,8 +111,8 @@ public class ExportFileFragment extends Fragment {
     protected Void doInBackground(Void... voids) {
       try {
         final InputStream in = new BufferedInputStream(new FileInputStream(wrFragment.get().mSourceFile));
-        final OutputStream out = UsbFileStreamFactory.createBufferedOutputStream(
-            wrFragment.get().mDestDir.createFile(wrFragment.get().mSourceFile.getName()), wrFragment.get().mUsbFs);
+        final OutputStream out = UsbFileStreamFactory
+            .createBufferedOutputStream(wrFragment.get().mDestFile, wrFragment.get().mUsbFs);
 
         int bufferSize = wrFragment.get().mUsbFs.getChunkSize();
 
