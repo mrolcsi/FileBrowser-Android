@@ -5,38 +5,21 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath "guru.stefma.bintrayrelease:bintrayrelease:1.0.0"
     }
 }
+
 apply plugin: 'com.android.library'
+apply plugin: 'guru.stefma.bintrayrelease'
 apply from: 'https://gist.githubusercontent.com/mrolcsi/588d5dd7a309fab501fc/raw/30b88f5217596c425c43d101dd29708a785b05f1/Version%2520code%2520and%2520name%2520generation%2520using%2520Gradle'
 
-ext {
-    bintrayRepo = 'maven'
-    bintrayName = 'file-browser-android'
-
-    publishedGroupId = 'hu.mrolcsi.android'
-    libraryName = 'FileBrowser'
-    artifact = 'FileBrowser'
-
-    libraryDescription = 'An easy to use, ready to go file browser library for Android applications.'
-
-    siteUrl = 'https://github.com/mrolcsi/FileBrowser-Android'
-    gitUrl = 'https://github.com/mrolcsi/FileBrowser-Android.git'
-
-    libraryVersion = makeVersionNameRelease()
-
-    developerId = 'mrolcsi'
-    developerName = 'Matusinka Roland'
-    developerEmail = 'matusinka.roland@outlook.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
-}
-
-repositories {
-    jcenter()
-    google()
+group = 'hu.mrolcsi.android'
+version = makeVersionNameRelease().toString()
+publish {
+    userOrg = 'mrolcsi'
+    artifactId = 'FileBrowser'
+    desc = 'An easy to use, ready to go file browser library for Android applications.'
+    website = 'https://github.com/mrolcsi/FileBrowser-Android'
 }
 
 android {
@@ -71,13 +54,4 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
-}
-
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
-
-afterEvaluate {
-    javadoc.classpath += files(android.libraryVariants.collect { variant ->
-        variant.getJavaCompiler().classpath.files
-    })
 }
