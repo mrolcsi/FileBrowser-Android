@@ -217,7 +217,7 @@ public class UsbBrowserDialog extends BrowserDialog {
       mFileSystem = partitions.get(0).getFileSystem();
       mHistory.clear();
 
-      if (mPathToRestore != null) {
+      if (!TextUtils.isEmpty(mPathToRestore)) {
         final String[] paths = mPathToRestore.substring(1, mPathToRestore.length() - 1).split(File.separator);
         for (String dir : paths) {
           mCurrentDir = mCurrentDir.search(dir);
@@ -417,7 +417,7 @@ public class UsbBrowserDialog extends BrowserDialog {
     mCurrentDir = directory;
 
     mFileSorter = new InnerUsbFileSorterTask(this, mSortMode)
-        .execute(filesToLoad.toArray(new UsbFile[filesToLoad.size()]));
+        .execute(filesToLoad.toArray(new UsbFile[0]));
   }
 
   @Override
